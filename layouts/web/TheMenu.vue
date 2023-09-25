@@ -22,7 +22,7 @@ const menu = computed(() => webMenuItems )
     <div v-if="isVisible" class="container">
       <header>
         <figure>
-          <img src="@/assets/logo-small.png" alt="Predix">
+          <img src="@/assets/videobox.png" alt="Predix">
         </figure>
         <button @click="closeMenu">
           <span>
@@ -53,7 +53,7 @@ const menu = computed(() => webMenuItems )
   right: 0; 
   height: 100vh;
   width: 100%;
-  background-color: $white;
+  background-color: $dark-purple;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -64,12 +64,10 @@ const menu = computed(() => webMenuItems )
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
     figure {
-      height: 24px;
-      width: 24px;
       img {
         width: 100%;
-        height: 24px;
         object-fit: cover;
       }
     }
