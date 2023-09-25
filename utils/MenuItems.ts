@@ -47,16 +47,13 @@ export const userMenuItems: Navigation[] = [
 ];
 
 export const webMenuItems: Navigation[] = [
-  { name: "Contacto", 
+  { name: "Mis partidos", 
     link: "/contact" 
   },
-  { name: "Planes", 
-    link: "/subscriptions" 
-  },
-  { name: "Suscribirse", 
+  { name: "Registrarse", 
     link: "/subscriptions" 
   },
   { name: "Iniciar sesión", 
-    link: "/login" 
+    link: "/subscriptions" 
   },
 ]
