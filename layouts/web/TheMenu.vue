@@ -19,10 +19,14 @@ const menu = computed(() => webMenuItems )
 
 <template>
   <transition name="slide-in-right">
-    <div v-if="isVisible" class="container">
+    <div 
+      v-if="isVisible" 
+      class="container">
       <header>
         <figure>
-          <img src="@/assets/videobox.png" alt="Predix">
+          <img 
+            src="@/assets/videobox.png" 
+            alt="Predix">
         </figure>
         <button @click="closeMenu">
           <span>
@@ -32,11 +36,11 @@ const menu = computed(() => webMenuItems )
       </header>
       <div class="section">
         <RouterLink
-          class="section-button"
           v-for="(button, index) in menu"
           :key="index"
           :to="button.link"
           @click="closeMenu"
+          class="section-button"
         >
           {{ button.name }}
         </RouterLink>
