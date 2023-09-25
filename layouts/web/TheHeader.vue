@@ -41,8 +41,11 @@ const menu = computed(() => webMenuItems)
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 12px 16px;
-
+	gap: 8px;
+	padding: 24px 12px;
+	@media (min-width: $tablet-lower-breakpoint) {
+		padding: 24px;
+	}
 	&-icon {
 		display: flex;
 		color: $white;
@@ -61,17 +64,17 @@ const menu = computed(() => webMenuItems)
 			justify-content: space-around;
 			align-items: center;
 
-			& :first-child,
-			:nth-child(2) {
+			& :first-child {
 				color: $white;
 			}
 
-			& :nth-child(4) {
-				border: 1px solid $white;
+			& :nth-child(2) {
+				border: 1px solid $purple;
+
 			}
 
-			& :nth-child(5) {
-				background-color: $white;
+			& :nth-child(3) {
+				background-color: $purple;
 				color: $white;
 			}
 		}
