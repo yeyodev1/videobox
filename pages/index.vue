@@ -1,5 +1,9 @@
+<script setup lang="ts">
+import MainContent from '@/components/Home/MainContent.vue';
+</script>
+
 <template>
   <div>
-    esto es lo que carga al inicio
+    <MainContent/>
   </div>
 </template>
