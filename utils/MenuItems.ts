@@ -48,12 +48,12 @@ export const userMenuItems: Navigation[] = [
 
 export const webMenuItems: Navigation[] = [
   { name: "Mis partidos", 
-    link: "/contact" 
+    link: "/myGames" 
   },
   { name: "Registrarse", 
-    link: "/subscriptions" 
+    link: "/register" 
   },
   { name: "Iniciar sesión", 
-    link: "/subscriptions" 
+    link: "/userlogin" 
   },
 ]
