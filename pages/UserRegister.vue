@@ -165,7 +165,7 @@ function handleRegister(): void {
       ¿Ya tienes cuenta?
       <RouterLink 
         class="register-wrapper-span-link"
-        to="/login">
+        to="/userlogin">
         Inicia sesion ahora
       </RouterLink>
     </span>

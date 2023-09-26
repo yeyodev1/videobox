@@ -93,7 +93,7 @@ function handleLogin(): void {
       ¿Aún no tienes cuenta? 
       <RouterLink 
         class="login-wrapper-span-link"
-        to="/register">
+        to="/userregister">
         Regístrate ahora
       </RouterLink> 
     </span>
