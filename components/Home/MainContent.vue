@@ -1,22 +1,8 @@
 <script setup lang="ts">
-const fields = [
-  {
-    name: 'Complejo 1',
-    image: 'https://i.pinimg.com/736x/b1/c4/af/b1c4afe4e893582ffbda3c48ccca6c81.jpg'
-  },
-  {
-    name: 'Complejo 2',
-    image: 'https://i.pinimg.com/736x/b1/c4/af/b1c4afe4e893582ffbda3c48ccca6c81.jpg'
-  },
-  {
-    name: 'Complejo 3',
-    image: 'https://i.pinimg.com/736x/b1/c4/af/b1c4afe4e893582ffbda3c48ccca6c81.jpg'
-  },
-  {
-    name: 'Complejo 4',
-    image: 'https://i.pinimg.com/736x/b1/c4/af/b1c4afe4e893582ffbda3c48ccca6c81.jpg'
-  },
-]
+import useFieldStore from '@/store/FieldStore'
+
+
+const fieldStore = useFieldStore();
 </script>
 
 <template>
@@ -28,11 +14,12 @@ const fields = [
       ¿En dónde jugaste?
     </p>
     <div class="container-cards">
-      <FieldCard
-      v-for="(field, index) in fields"
-      :key="index"
-      :name="field.name"
-      :image="field.image"/>
+      <FieldSportCard
+        v-for="(field, index) in fieldStore.fields"
+        :key="index"
+        :name="field.name"
+        :image="field.image"
+        :id="field.id"/>
     </div>
   </div>
 </template>

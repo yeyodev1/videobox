@@ -7,12 +7,28 @@ const props = defineProps({
   image: {
     type: String,
     required: true,
+  },
+  id: {
+    type: String,
+    required: true
   }
-})
+});
+
+const route = useRoute();
+const isWatchField = computed(() => {
+  return route.path === `/${props.id}`;
+});
+const routeDirection = computed(() => {
+  return isWatchField.value ? '' : `${props.id}`; 
+});
+
 </script>
 
 <template>
-  <div class="card">
+  <NuxtLink 
+    :to="routeDirection"
+    class="link">
+    <div class="card">
     <img 
       :src="image" 
       :alt="name"
@@ -21,14 +37,13 @@ const props = defineProps({
       {{ name }}
     </p>
   </div>
+  </NuxtLink>
 </template>
 
 <style lang="scss" scoped>
-.card {
-  padding: 8px;
+.link {
   width: 100%;
-  border: 1px solid $white;
-  border-radius: 8px;
+  text-decoration: none;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -36,6 +51,11 @@ const props = defineProps({
   @media (min-width: $tablet-lower-breakpoint) {
     width: 40%;
   }
+  .card {
+  padding: 8px;
+  width: 100%;
+  border: 1px solid $white;
+  border-radius: 8px;
   &-image {
     width: 100%;
     object-fit: cover;
@@ -46,5 +66,6 @@ const props = defineProps({
     font-size: $body-font-size;
     text-transform: capitalize;
   }
+}
 }
 </style>
