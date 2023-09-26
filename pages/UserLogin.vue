@@ -50,11 +50,11 @@ function handleLogin(): void {
   console.log('nos estamos logeando')
 }
 
-function resetValue(): void {
-  userData.email = '';
-  userData.password = '';
-  textKey.value ++
-}
+// function resetValue(): void {
+//   userData.email = '';
+//   userData.password = '';
+//   textKey.value ++
+// }
 
 </script>
 
