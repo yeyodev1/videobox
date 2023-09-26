@@ -16,22 +16,11 @@ const useFieldStore = defineStore('useFieldStore', {
         link: 'complejo-1',
         sports: [
           {
-            name: 'futbol',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'futbol',
-            link: 'futbol-1'
-          },
-          {
-            name: 'basket',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'basket',
-            link: 'futbol-1'
-          },
-          {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
             id: 'tenis',
-            link: 'tenis-1'},
+            link: 'tenis-1'
+          },
         ]
       },
       {
@@ -41,22 +30,11 @@ const useFieldStore = defineStore('useFieldStore', {
         link: 'complejo-2',
         sports: [
           {
-            name: 'futbol',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'futbol',
-            link: 'futbol-1'
-          },
-          {
-            name: 'basket',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'basket',
-            link: 'futbol-1'
-          },
-          {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
             id: 'tenis',
-            link: 'tenis-1'},
+            link: 'tenis-2'
+          },
         ]
       },
       {
@@ -66,22 +44,11 @@ const useFieldStore = defineStore('useFieldStore', {
         link: 'Complejo-3',
         sports: [
           {
-            name: 'futbol',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'futbol',
-            link: 'futbol-1'
-          },
-          {
-            name: 'basket',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'basket',
-            link: 'futbol-1'
-          },
-          {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
             id: 'tenis',
-            link: 'tenis-1'},
+            link: 'tenis-3'
+          },
         ]
       },
       {
@@ -91,22 +58,11 @@ const useFieldStore = defineStore('useFieldStore', {
         link: 'Complejo-4',
         sports: [
           {
-            name: 'futbol',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'futbol',
-            link: 'futbol-1'
-          },
-          {
-            name: 'basket',
-            image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'basket',
-            link: 'futbol-1'
-          },
-          {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
             id: 'tenis',
-            link: 'tenis-1'},
+            link: 'tenis-4'
+          },
         ]
       },
     ]
