@@ -28,7 +28,7 @@ const fieldId = route.params.club
       <FieldSportCard
         :name="fieldSelected.sports[0].name"
         :image="fieldSelected.sports[0].image"
-        :id="`${fieldId}/${fieldSelected.sports[0].id}/schedule`" />
+        :id="`${fieldId}/${fieldSelected.sports[0].id}`" />
     </div>
   </div>
 </template>
