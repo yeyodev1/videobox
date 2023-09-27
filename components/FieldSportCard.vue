@@ -14,19 +14,19 @@ const props = defineProps({
   }
 });
 
-const route = useRoute();
-const isWatchField = computed(() => {
-  return route.path === `${props.id}`;
-});
-const routeDirection = computed(() => {
-  return isWatchField.value ? '' : `${props.id}`; 
-});
+// const route = useRoute();
+// const isWatchField = computed(() => {
+//   return route.path === `${props.id}`;
+// });
+// const routeDirection = computed(() => {
+//   return isWatchField.value ? '' : `${props.id}`; 
+// });
 
 </script>
 
 <template>
   <NuxtLink 
-    :to="routeDirection"
+    :to="id"
     class="link">
     <div class="card">
     <img 
