@@ -17,7 +17,25 @@ const useFieldStore = defineStore('useFieldStore', {
           {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'tenis',
+            id: 'esto-es-un-id-1',
+            schedule: [
+              {
+                startHour: '1PM',
+                endHour: '3PM'
+              },
+              {
+                startHour: '1PM',
+                endHour: '3PM'
+              },
+              {
+                startHour: '1PM',
+                endHour: '3PM'
+              },
+              {
+                startHour: '1PM',
+                endHour: '3PM'
+              },
+            ]
           },
         ]
       },
@@ -29,7 +47,13 @@ const useFieldStore = defineStore('useFieldStore', {
           {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'tenis-2',
+            id: 'esto-es-un-id-2',
+            schedule: [
+              {
+                startHour: '1PM',
+                endHour: '3PM'
+              }
+            ]
           },
         ]
       },
@@ -41,7 +65,13 @@ const useFieldStore = defineStore('useFieldStore', {
           {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'tenis-3',
+            id: 'esto-es-un-id-3',
+            schedule: [
+              {
+                startHour: '1PM',
+                endHour: '3PM'
+              }
+            ]
           },
         ]
       },
@@ -53,7 +83,13 @@ const useFieldStore = defineStore('useFieldStore', {
           {
             name: 'tenis',
             image: 'https://i.pinimg.com/736x/f6/52/12/f65212658964e531f7d6f4a4a2331712.jpg',
-            id: 'tenis-4',
+            id: 'esto-es-un-id-4',
+            schedule: [
+              {
+                startHour: '1PM',
+                endHour: '3PM'
+              }
+            ]
           },
         ]
       },
