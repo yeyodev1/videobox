@@ -3,11 +3,18 @@ interface Schedule {
   endHour: string 
 }
 
+
+interface Fields {
+  name: string,
+  id: string,
+  schedule: Schedule[]
+}
+
 interface Sport {
   image: string,
   name: string,
   id: string,
-  schedule: Schedule[]
+  fields: Fields[]
 }
 
 
@@ -20,5 +27,7 @@ interface Field {
 
 export type {
   Field,
-  Sport
+  Sport,
+  Fields,
+  Schedule,
 }
