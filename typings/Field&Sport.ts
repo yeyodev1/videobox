@@ -1,4 +1,6 @@
 interface Schedule {
+  day: string,
+  month: string
   startHour: string,
   endHour: string 
 }
