@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import useClubStore from '@/store/FieldStore';
-import type { Club } from '@/typings/Field&Sport';
+import useClubStore from '@/store/clubStore';
+import type { Club, Sport, Fields, Schedule } from '@/typings/Field&Sport';
+
+const sportSelected = ref<Sport | null>(null);
+const clubSelected = ref<Club | null>(null);
 
 
-const fieldSelected = ref<Club | null>(null);
-
-
-const fieldStore = useClubStore();
+const clubStore = useClubStore();
 const route = useRoute();
 
 onMounted(() => {
   const scheduleId = route.params.schedule;
-  console.log('scheduleId', scheduleId)
+  const sportId = route.params.sport;
+  console.log('route params', route.params)
 
+  clubSelected.value = clubStore.clubs.find((club: Club) => club.id === scheduleId) ?? null;
+  sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
 
-  fieldSelected.value = fieldStore.clubs.find((club: Club) => club.id === scheduleId) ?? null;
-  console.log('field selected',fieldSelected.value)
-
-})
+});
 
 </script>
 
@@ -33,7 +33,6 @@ onMounted(() => {
       <p class="schedule-container-question">Elige el día</p>
       <select name="days" class="schedule-select">
         <option value="" disabled selected>Seleccionar</option>
-        <option value="martes1">Martes 1</option>
         <option value="miercoles2">Miércoles 2</option>
         <option value="jueves3">Jueves 3</option>
         <option value="viernes4">Viernes 4</option>
