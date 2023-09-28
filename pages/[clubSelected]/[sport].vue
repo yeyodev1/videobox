@@ -17,7 +17,7 @@ onMounted(() => {
   const sportId = route.params.sport;
   fieldSelected.value = fieldStore.fields.find((field: Field) => field.id === clubId) ?? null;
   sportSelected.value = fieldSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
-  console.log(sportSelected.value)
+  console.log(route.params)
 });
 </script>
 
@@ -32,8 +32,8 @@ onMounted(() => {
       v-if="sportSelected"
       class="container-cards-card" >
       <NuxtLink
-        to=""
         v-for="(schedule, index) in sportSelected.schedule"
+        :to="`${sportSelected.id}/from${schedule.startHour}to${schedule.endHour}`"
         :key="index"
         class="container-cards-card-flag">
         Desde {{schedule.startHour}} hasta {{schedule.endHour}} 
@@ -72,6 +72,7 @@ onMounted(() => {
         text-align: center;
         background-color: $purple;
         margin: 0 auto;
+        text-decoration: none;
       }
     }
   }
