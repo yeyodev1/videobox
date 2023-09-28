@@ -34,7 +34,7 @@ onMounted(() => {
       <div v-if="sportSelected" class="container-cards-card">
         <NuxtLink
           v-for="(field, index) in sportSelected.fields"
-          :to="`${sportId}/schedule`"
+          :to="`${sportId}/${field.id}`"
           :key="index"
           class="container-cards-card-flag"
         >
