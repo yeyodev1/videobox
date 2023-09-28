@@ -2,15 +2,15 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import useClubStore from '@/store/clubStore';
-import type { Field } from '~/typings/Field&Sport';
+import type { Club } from '~/typings/Field&Sport';
 
 const clubStore = useClubStore();
 const route = useRoute();
-const clubSelected = ref<Field | null>(null);
+const clubSelected = ref<Club | null>(null);
 
 onMounted(() => {
-  const fieldId = route.params.club
-  clubSelected.value = clubStore.clubs.find((field: Field) => field.id === fieldId) ?? null;
+  const clubId = route.params.club
+  clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
 });
 const fieldId = route.params.club
 
