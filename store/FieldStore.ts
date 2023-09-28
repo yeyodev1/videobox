@@ -23,18 +23,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-1",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "8pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -45,18 +53,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-2",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -67,18 +83,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-3",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -89,18 +113,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-4",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -125,18 +157,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-1",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -147,18 +187,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-2",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -169,18 +217,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-3",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -191,18 +247,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-4",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -227,18 +291,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-1",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -249,18 +321,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-2",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -271,18 +351,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-3",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -293,18 +381,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-4",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -329,18 +425,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-1",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -351,18 +455,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-2",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -373,18 +485,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-3",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
@@ -395,18 +515,26 @@ const useFieldStore = defineStore("useFieldStore", {
 								id: "Cancha-4",
 								schedule: [
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
 									{
+										day: '1',
+										month: '3',
 										startHour: "1pm",
 										endHour: "3pm",
 									},
