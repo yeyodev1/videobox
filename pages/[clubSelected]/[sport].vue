@@ -28,13 +28,13 @@ onMounted(() => {
 <template>
   <div class="container" >
     <h2 class="container-title">
-      Estos son los horarios que hay
+      Escoge la cancha en la cual jugaste 
     </h2>
     <div class="container-cards">
       <div v-if="sportSelected" class="container-cards-card">
         <NuxtLink
           v-for="(field, index) in sportSelected.fields"
-          :to="`${sportId}/${field.schedule[0].startHour}to${field.schedule[0].endHour}`"
+          :to="`${sportId}/schedule`"
           :key="index"
           class="container-cards-card-flag"
         >
