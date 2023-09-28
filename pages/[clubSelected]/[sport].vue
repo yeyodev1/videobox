@@ -17,6 +17,7 @@ onMounted(() => {
   const sportId = route.params.sport;
   fieldSelected.value = fieldStore.fields.find((field: Field) => field.id === clubId) ?? null;
   sportSelected.value = fieldSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
+  console.log(sportSelected.value)
 });
 </script>
 
