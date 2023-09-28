@@ -2,14 +2,14 @@
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 
-import type { Field, Sport, Schedule } from '@/typings/Field&Sport';
-import useFieldStore from '@/store/FieldStore';
+import type { Club, Field, Sport } from '@/typings/Field&Sport';
+import useClubStore from '@/store/FieldStore';
 
 const route = useRoute();
 
-const fieldStore = useFieldStore();
+const fieldStore = useClubStore();
 
-const fieldSelected = ref<Field | null>(null);
+const clubSelected = ref<Club | null>(null);
 const sportSelected = ref<Sport | null>(null);
 
 const sportId = route.params.sport;
@@ -19,8 +19,8 @@ onMounted(() => {
   const sportId = route.params.sport;
   console.log(route.params)
 
-  fieldSelected.value = fieldStore.fields.find((field: Field) => field.id === clubId) ?? null;
-  sportSelected.value = fieldSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
+  clubSelected.value = fieldStore.clubs.find((field: Field) => field.id === clubId) ?? null;
+  sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
 
 });
 </script>

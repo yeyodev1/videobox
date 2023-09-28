@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import useFieldStore from '@/store/FieldStore'
+import useClubStore from '@/store/FieldStore'
 
 
-const fieldStore = useFieldStore();
+const fieldStore = useClubStore();
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const fieldStore = useFieldStore();
     </p>
     <div class="container-cards">
       <FieldSportCard
-        v-for="(field, index) in fieldStore.fields"
+        v-for="(field, index) in fieldStore.clubs"
         :key="index"
         :name="field.name"
         :image="field.image"

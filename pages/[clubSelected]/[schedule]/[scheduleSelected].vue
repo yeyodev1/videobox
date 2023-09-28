@@ -1,8 +1,23 @@
 <script setup lang="ts">
-import useFieldStore from '@/store/FieldStore';
+import useClubStore from '@/store/FieldStore';
+import type { Club } from '@/typings/Field&Sport';
 
-const fieldStore = useFieldStore();
 
+const fieldSelected = ref<Club | null>(null);
+
+
+const fieldStore = useClubStore();
+const route = useRoute();
+
+onMounted(() => {
+  const scheduleId = route.params.schedule;
+  console.log('scheduleId', scheduleId)
+
+
+  fieldSelected.value = fieldStore.clubs.find((club: Club) => club.id === scheduleId) ?? null;
+  console.log('field selected',fieldSelected.value)
+
+})
 
 </script>
 

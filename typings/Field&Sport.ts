@@ -1,4 +1,5 @@
 interface Schedule {
+  id: string,
   day: string,
   month: string
   startHour: string,
@@ -20,7 +21,7 @@ interface Sport {
 }
 
 
-interface Field {
+interface Club {
   image: string,
   name: string,
   id: string,
@@ -28,7 +29,7 @@ interface Field {
 }
 
 export type {
-  Field,
+  Club,
   Sport,
   Fields,
   Schedule,

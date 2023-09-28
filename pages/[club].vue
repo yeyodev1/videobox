@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import useFieldStore from '@/store/FieldStore';
+import useClubStore from '@/store/FieldStore';
 import type { Field } from '~/typings/Field&Sport';
 
-const fieldStore = useFieldStore();
+const fieldStore = useClubStore();
 const route = useRoute();
-const fieldSelected = ref<Field | null>(null);
+const clubSelected = ref<Field | null>(null);
 
 onMounted(() => {
   const fieldId = route.params.club
-  fieldSelected.value = fieldStore.fields.find((field: Field) => field.id === fieldId) ?? null;
+  clubSelected.value = fieldStore.clubs.find((field: Field) => field.id === fieldId) ?? null;
 });
 const fieldId = route.params.club
 
@@ -19,16 +19,16 @@ const fieldId = route.params.club
 
 <template>
   <div 
-    v-if="fieldSelected"
+    v-if="clubSelected"
     class="container" >
     <h2 class="container-title">
-      Presiona tu deporte del {{ fieldSelected.name }}
+      Presiona tu deporte del {{ clubSelected.name }}
     </h2>
     <div class="container-cards">
       <FieldSportCard
-        :name="fieldSelected.sports[0].name"
-        :image="fieldSelected.sports[0].image"
-        :id="`${fieldId}/${fieldSelected.sports[0].id}`" />
+        :name="clubSelected.sports[0].name"
+        :image="clubSelected.sports[0].image"
+        :id="`${fieldId}/${clubSelected.sports[0].id}`" />
     </div>
   </div>
 </template>
