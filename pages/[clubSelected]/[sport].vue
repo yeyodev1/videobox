@@ -2,43 +2,45 @@
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 
-import type { Field, Sport } from '@/typings/Field&Sport';
+import type { Field, Sport, Schedule } from '@/typings/Field&Sport';
 import useFieldStore from '@/store/FieldStore';
 
-
+const route = useRoute();
 
 const fieldStore = useFieldStore();
-const route = useRoute();
+
 const fieldSelected = ref<Field | null>(null);
 const sportSelected = ref<Sport | null>(null);
+
+const sportId = route.params.sport;
 
 onMounted(() => {
   const clubId = route.params.clubSelected;
   const sportId = route.params.sport;
+  console.log(route.params)
+
   fieldSelected.value = fieldStore.fields.find((field: Field) => field.id === clubId) ?? null;
   sportSelected.value = fieldSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
-  console.log(route.params)
+
 });
 </script>
 
 <template>
-  <div 
-    class="container" >
+  <div class="container" >
     <h2 class="container-title">
       Estos son los horarios que hay
     </h2>
     <div class="container-cards">
-      <div 
-      v-if="sportSelected"
-      class="container-cards-card" >
-      <NuxtLink
-        v-for="(schedule, index) in sportSelected.schedule"
-        :to="`${sportSelected.id}/from${schedule.startHour}to${schedule.endHour}`"
-        :key="index"
-        class="container-cards-card-flag">
-        Desde {{schedule.startHour}} hasta {{schedule.endHour}} 
-      </NuxtLink>
-    </div>
+      <div v-if="sportSelected" class="container-cards-card">
+        <NuxtLink
+          v-for="(field, index) in sportSelected.fields"
+          :to="`${sportId}/${field.schedule[0].startHour}to${field.schedule[0].endHour}`"
+          :key="index"
+          class="container-cards-card-flag"
+        >
+          {{field.name}}
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
