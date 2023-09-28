@@ -22,7 +22,7 @@ const fieldId = route.params.club
     v-if="fieldSelected"
     class="container" >
     <h2 class="container-title">
-      Estas en la seccion de {{ fieldSelected.name }}
+      Presiona tu deporte del {{ fieldSelected.name }}
     </h2>
     <div class="container-cards">
       <FieldSportCard
@@ -41,6 +41,10 @@ const fieldId = route.params.club
   align-items: center;
   flex-wrap: wrap;
   gap: 24px;
+  padding: 24px;
+  &-title {
+    text-align: center;;
+  }
   &-cards {
     display: flex;
     justify-content: center;

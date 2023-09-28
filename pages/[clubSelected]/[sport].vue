@@ -52,6 +52,9 @@ onMounted(() => {
   align-items: center;
   flex-wrap: wrap;
   gap: 24px;
+  &-title {
+    text-align: center;
+  }
   &-cards {
     display: flex;
     justify-content: center;
