@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import useClubStore from '@/store/FieldStore';
+import useClubStore from '@/store/clubStore';
 import type { Field } from '~/typings/Field&Sport';
 
-const fieldStore = useClubStore();
+const clubStore = useClubStore();
 const route = useRoute();
 const clubSelected = ref<Field | null>(null);
 
 onMounted(() => {
   const fieldId = route.params.club
-  clubSelected.value = fieldStore.clubs.find((field: Field) => field.id === fieldId) ?? null;
+  clubSelected.value = clubStore.clubs.find((field: Field) => field.id === fieldId) ?? null;
 });
 const fieldId = route.params.club
 
