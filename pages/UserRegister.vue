@@ -109,7 +109,7 @@ function handleRegister(): void {
       Debes tener al menos 16 años
     </span>
     <p class="register-wrapper-title">
-      ¿Primera vez en Predix? 🌟 <br> Únete ya
+      ¿Primera vez en VideoBox? 🌟 <br> Únete ya
     </p>
     <!-- <span 
       v-if="userStore.errorMessage"
@@ -222,6 +222,12 @@ function handleRegister(): void {
     }
     .crush-button {
       margin-top: 12px;
+    }
+    :deep(.crush-text-field .input-container.active) {
+      border-color: $purple;
+    }
+    :deep(.crush-primary) {
+      background-color: $purple;
     }
   }
   &-span {

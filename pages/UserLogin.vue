@@ -151,6 +151,12 @@ function handleLogin(): void {
     .crush-button {
       margin-top: 12px;
     }
+    :deep(.crush-text-field .input-container.active) {
+      border-color: $purple;
+    }
+    :deep(.crush-primary) {
+      background-color: $purple;
+    }
   }
   &-span {
     color: $white;
