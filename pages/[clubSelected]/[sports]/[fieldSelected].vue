@@ -1,23 +1,40 @@
 <script setup lang="ts">
+import CrushButton from '@nabux-crush/crush-button';
+
 import useClubStore from '@/store/clubStore';
-import type { Club, Sport, Fields, Schedule } from '@/typings/Field&Sport';
+import type { Club, Fields, Sport } from '@/typings/Field&Sport';
 
 const sportSelected = ref<Sport | null>(null);
 const clubSelected = ref<Club | null>(null);
+const fieldSelected = ref<Fields | null>(null);
+const selectedDay = ref<string | null>(null);
+const selectedMonth = ref<string | null>(null);
+const selectedTime = ref<string | null>(null);
+
 
 
 const clubStore = useClubStore();
 const route = useRoute();
 
 onMounted(() => {
-  const scheduleId = route.params.schedule;
-  const sportId = route.params.sport;
-  console.log('route params', route.params)
+  console.log(route.params);
+  const clubId = route.params.clubSelected;
+  const sportId = route.params.sports ;
+  const fieldId = route.params.fieldSelected;
 
-  clubSelected.value = clubStore.clubs.find((club: Club) => club.id === scheduleId) ?? null;
+  console.log('field selected', fieldId)
+  console.log('sportId', sportId)
+  console.log('clubId', clubId)
+
+  clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
   sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
-
+  fieldSelected.value = sportSelected.value?.fields.find((field: Fields) => field.id === fieldId);
 });
+
+const allFieldsSelected = computed(() => {
+  return selectedDay.value !== null && selectedMonth.value !== null && selectedTime.value !== null;
+});
+
 
 </script>
 
@@ -31,14 +48,49 @@ onMounted(() => {
     </p>
     <div class="schedule-container">
       <p class="schedule-container-question">Elige el día</p>
-      <select name="days" class="schedule-select">
+      <select 
+        name="days" 
+        class="schedule-select"
+        v-model="selectedDay">
         <option value="" disabled selected>Seleccionar</option>
-        <option value="miercoles2">Miércoles 2</option>
-        <option value="jueves3">Jueves 3</option>
-        <option value="viernes4">Viernes 4</option>
-        <option value="viernes5">Viernes 5</option>
+        <option 
+          v-for="(scheduleItem, index) in fieldSelected?.schedule || []" 
+          :key="index" 
+          :value="`day${index}`">
+          {{ scheduleItem.day }}
+        </option>
+      </select>
+      <p class="schedule-container-question">Elige el mes</p>
+      <select 
+        name="days" 
+        class="schedule-select"
+        v-model="selectedMonth">
+        <option value="" disabled selected>Seleccionar</option>
+        <option 
+          v-for="(scheduleItem, index) in fieldSelected?.schedule || []" 
+          :key="index" 
+          :value="`day${index}`">
+          {{ scheduleItem.month }}
+        </option>
+      </select>
+      <p class="schedule-container-question">Elige el horario</p>
+      <select 
+        name="days" 
+        class="schedule-select"
+        v-model="selectedTime">
+        <option value="" disabled selected>Seleccionar</option>
+        <option 
+          v-for="(scheduleItem, index) in fieldSelected?.schedule || []" 
+          :key="index" 
+          :value="`day${index}`">
+          desde {{ scheduleItem.startHour }} hasta {{ scheduleItem.endHour }}
+        </option>
       </select>
     </div>
+    <CrushButton
+      varian="primary"
+      text="Buscar video" 
+      :disabled="!allFieldsSelected"/>
   </div>
 </template>
 
@@ -66,7 +118,6 @@ onMounted(() => {
     justify-content: center;
     flex-direction: column;
     padding: 24px;
-    border: 1px solid $purple;
     border-radius: 8px;
     gap: 12px;
     &-question {
@@ -74,19 +125,25 @@ onMounted(() => {
     }
   }
   &-select {
-    padding: 13px;
+    padding: 12px;
     background-color: $dark-purple;
+    border: 1px solid $purple;
     color: $white; 
-    border: none; 
     border-radius: 4px; 
     font-size: $body-font-size; 
     appearance: none; 
     -webkit-appearance: none;
     -moz-appearance: none; 
     cursor: pointer;
-    &:focus-visible {
-      outline: none;
-    }
+  }
+  :deep(.crush-primary) {
+    background-color: $grey;
+    border: none;
+    color: $white;
+  &:hover {
+    background-color: $purple;
+    border: none;
+  }
   }
 }
 </style>
