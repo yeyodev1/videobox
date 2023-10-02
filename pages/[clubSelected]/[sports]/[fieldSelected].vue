@@ -68,11 +68,12 @@ const allFieldsSelected = computed(() => {
             type="video/mp4">
             Tu navegador no soporta la etiqueta de video de HTML5.
         </video>
-        <div 
+        <NuxtLink
+          to="/userRegister"
           v-if="showMessage" 
           class="overlay-message">
-          Crea una cuenta para ver lo demás
-        </div>
+          <span class="overlay-message-span">Crea una cuenta</span> para ver lo demás
+        </NuxtLink>
       </div>
     <div class="schedule-container">
       <p class="schedule-container-question">Elige el día</p>
@@ -172,6 +173,10 @@ const allFieldsSelected = computed(() => {
         border-radius: 5px;
         color: white;
         text-align: center;
+        text-decoration: none;
+        &-span {
+          text-decoration: underline;
+        }
       }
     }
     &-question {
