@@ -10,11 +10,23 @@ const fieldSelected = ref<Fields | null>(null);
 const selectedDay = ref<string | null>(null);
 const selectedMonth = ref<string | null>(null);
 const selectedTime = ref<string | null>(null);
-
-
+const videoVisible = ref(false);
+const showMessage = ref(false);
 
 const clubStore = useClubStore();
 const route = useRoute();
+
+function handleTimeUpdate(event: Event) {
+  const videoElement = event.target as HTMLVideoElement;
+  if (videoElement.currentTime >= 10) {
+    videoElement.pause();
+    showMessage.value = true;
+  }
+}
+function showVideo() {
+  videoVisible.value = true;
+};
+
 
 onMounted(() => {
   console.log(route.params);
@@ -46,6 +58,22 @@ const allFieldsSelected = computed(() => {
     <p class="schedule-flag">
       Selecciona el horario de tu jugada
     </p>
+    <div 
+        v-if="videoVisible" 
+        class="schedule-container-video"
+        :class="{ blurred: showMessage }">
+        <video controls @timeupdate="handleTimeUpdate">
+          <source 
+            src="https://v3.cdnpk.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4" 
+            type="video/mp4">
+            Tu navegador no soporta la etiqueta de video de HTML5.
+        </video>
+        <div 
+          v-if="showMessage" 
+          class="overlay-message">
+          Crea una cuenta para ver lo demás
+        </div>
+      </div>
     <div class="schedule-container">
       <p class="schedule-container-question">Elige el día</p>
       <select 
@@ -90,7 +118,8 @@ const allFieldsSelected = computed(() => {
     <CrushButton
       varian="primary"
       text="Buscar video" 
-      :disabled="!allFieldsSelected"/>
+      :disabled="!allFieldsSelected"
+      @click="showVideo"/>
   </div>
 </template>
 
@@ -113,13 +142,38 @@ const allFieldsSelected = computed(() => {
   }
   &-container {
     width: 100%;
-    max-width: $mobile-lower-breakpoint;
+    max-width: $tablet-upper-breakpoint;
     display: flex;
     justify-content: center;
     flex-direction: column;
     padding: 24px;
     border-radius: 8px;
     gap: 12px;
+    &-video {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      video {
+        width: 100%;
+        max-width: $tablet-lower-breakpoint;
+      }
+      &.blurred video {
+        filter: blur(5px);
+      }
+      .overlay-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+      }
+    }
     &-question {
       font-size: $body-font-size;
     }
