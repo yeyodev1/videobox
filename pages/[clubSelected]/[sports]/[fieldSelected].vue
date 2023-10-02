@@ -17,9 +17,9 @@ const clubStore = useClubStore();
 const route = useRoute();
 
 function handleTimeUpdate(event: Event) {
-  const videoElement = event.target as HTMLVideoElement;
-  if (videoElement.currentTime >= 10) {
-    videoElement.pause();
+  const video = event.target as HTMLVideoElement;
+  if (video.currentTime >= 10) {
+    video.pause();
     showMessage.value = true;
   }
 }
