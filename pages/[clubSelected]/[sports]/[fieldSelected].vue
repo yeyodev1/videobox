@@ -22,7 +22,7 @@ function handleTimeUpdate(event: Event) {
     video.pause();
     showMessage.value = true;
   }
-}
+};
 function showVideo() {
   videoVisible.value = true;
 };
