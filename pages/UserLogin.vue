@@ -4,7 +4,11 @@ import { computed, reactive, ref } from 'vue';
 import CrushTextField from '@nabux-crush/crush-text-field';
 import CrushButton from '@nabux-crush/crush-button';
 
+import useUserStore from '@/store/userStore';
+
 import { validateEmail } from '@/utils/AuthValidations';
+
+const userStore = useUserStore();
 
 
 // it forces to re-render the component once the value change
@@ -47,14 +51,16 @@ const textType = computed(() => {
 
 
 function handleLogin(): void {
-  console.log('nos estamos logeando')
+  console.log('nos estamos logeando');
+  userStore.login(userData.email.trim().toLocaleLowerCase(), userData.password.trim());
+  resetValue();
 }
 
-// function resetValue(): void {
-//   userData.email = '';
-//   userData.password = '';
-//   textKey.value ++
-// }
+function resetValue(): void {
+  userData.email = '';
+  userData.password = '';
+  textKey.value ++
+}
 
 </script>
 

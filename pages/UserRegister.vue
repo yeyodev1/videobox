@@ -3,9 +3,13 @@ import CrushTextField from '@nabux-crush/crush-text-field';
 import CrushButton from '@nabux-crush/crush-button';
 import { computed, reactive, ref } from 'vue';
 
+import useUserStore from '@/store/userStore';
 import { calculateAge, validateEmail, validateSymbol } from '@/utils/AuthValidations';
 import CalendarInput from '@/components/CalendarInput.vue';
 
+const userStore = useUserStore();
+
+const router = useRouter();
 
 // it forces to re-render the component once the value change
 const textKey = ref(0);
@@ -94,9 +98,21 @@ function resetValue(): void {
   textKey.value ++
 }
 
-function handleRegister(): void {
-  console.log('etamos registrando');
-  resetValue();
+
+async function handleRegister(): Promise<void> {
+  try {
+    await userStore.register(
+      userData.email.trim().toLocaleLowerCase(), 
+      userData.password.trim(), 
+      userData.birthdate.trim()
+    );
+    console.log('Registro completado');
+    resetValue();
+
+    await router.push('/userlogin');
+  } catch (error) {
+    console.error('Error en el registro:', error);
+  }
 }
 
 </script>
