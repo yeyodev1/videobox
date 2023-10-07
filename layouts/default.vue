@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import TheHeader from '@/layouts/web/TheHeader.vue'
 import TheHeaderUser from '@/layouts/userRegister/Header.vue';
-import TheMenu from './web/TheMenu.vue';
+import TheHeader from '@/layouts/web/TheHeader.vue'
 import TheFooter from './web/TheFooter.vue';
+import TheMenu from './web/TheMenu.vue';
+
+import { useUserStore } from '@/store/userStore';
 
 const showWebMenu = ref(false);
+
+const userStore = useUserStore();
+
+const isUserLoggedIn = computed(() => userStore.user !== null);
 
 const toggleShowMenu = () => {
   showWebMenu.value = !showWebMenu.value;
@@ -13,8 +19,11 @@ const toggleShowMenu = () => {
 
 <template>
   <div class="app-container">
-    <TheHeader @toggle-menu="toggleShowMenu"/>
-    <TheHeaderUser />
+    <TheHeaderUser 
+      v-if="isUserLoggedIn" />
+    <TheHeader 
+      v-else
+      @toggle-menu="toggleShowMenu"/>
     <TheMenu
       :isVisible="showWebMenu"  
       @toggle-menu="toggleShowMenu"/>

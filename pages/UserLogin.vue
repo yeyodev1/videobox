@@ -56,7 +56,7 @@ async function handleLogin(): Promise<void> {
   try {
     await userStore.login(userData.email.trim().toLocaleLowerCase(), userData.password.trim());
     resetValue();
-    await router.push('/user')
+    await router.push('/')
   } catch (error) {
     console.error("Error during login:", error)
     await router.push('/')

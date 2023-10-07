@@ -2,6 +2,9 @@
 import { RouterLink } from "vue-router";
 import { userRegisterItems } from '@/utils/MenuItems';
 import { computed } from "vue";
+import { useUserStore } from '@/store/userStore';
+
+const userStore = useUserStore();
 
 const emit = defineEmits();
 
@@ -9,7 +12,11 @@ const toggleMenu = () => {
 	emit("toggle-menu");
 };
 
-const menu = computed(() => userRegisterItems)
+const menu = computed(() => userRegisterItems);
+
+function handleLogout(): void {
+  userStore.logout();
+}
 
 </script>
 
@@ -32,6 +39,10 @@ const menu = computed(() => userRegisterItems)
 			>
 				{{ button.name }}
 			</RouterLink>
+			<div>
+				<p @click="handleLogout">este es tu usuario</p>
+
+			</div>
 		</div>
 	</header>
 </template>
