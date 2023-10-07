@@ -4,6 +4,7 @@ import { computed, reactive, ref } from 'vue';
 import CrushTextField from '@nabux-crush/crush-text-field';
 import CrushButton from '@nabux-crush/crush-button';
 
+const router = useRouter();
 import useUserStore from '@/store/userStore';
 
 import { validateEmail } from '@/utils/AuthValidations';
@@ -50,10 +51,16 @@ const textType = computed(() => {
 });
 
 
-function handleLogin(): void {
+async function handleLogin(): Promise<void> {
   console.log('nos estamos logeando');
-  userStore.login(userData.email.trim().toLocaleLowerCase(), userData.password.trim());
-  resetValue();
+  try {
+    await userStore.login(userData.email.trim().toLocaleLowerCase(), userData.password.trim());
+    resetValue();
+    await router.push('/user')
+  } catch (error) {
+    console.error("Error during login:", error)
+    await router.push('/')
+  }
 }
 
 function resetValue(): void {

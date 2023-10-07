@@ -44,16 +44,9 @@ export const useUserStore = defineStore('UserStore', {
       try {
         const response = await userService.login(email, password)
         this.user = response.data
-
-        localStorage.setItem('access_token', this.user.email)
-
-        const router = useRouter()
-
-        if (localStorage.getItem('is-buying') === 'true') {
-          await router.push('/user-dashboard/subscription')
-        } else {
-          await router.push('/user-dashboard/picks')
-        }
+    
+        localStorage.setItem('access_token', this.user?.token!)
+        // No realizar redirección aquí
       } catch (error: any) {
         if (error.status === 401) {
           this.errorMessage = 'Usuario o contraseña no válidos'

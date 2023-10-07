@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TheHeader from '@/layouts/web/TheHeader.vue'
+import TheHeaderUser from '@/layouts/userRegister/Header.vue';
 import TheMenu from './web/TheMenu.vue';
 import TheFooter from './web/TheFooter.vue';
 
@@ -13,6 +14,7 @@ const toggleShowMenu = () => {
 <template>
   <div class="app-container">
     <TheHeader @toggle-menu="toggleShowMenu"/>
+    <TheHeaderUser />
     <TheMenu
       :isVisible="showWebMenu"  
       @toggle-menu="toggleShowMenu"/>
