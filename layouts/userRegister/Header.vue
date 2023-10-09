@@ -13,6 +13,8 @@ const toggleMenu = () => {
 };
 
 const menu = computed(() => userRegisterItems);
+const username = computed(() => userStore.user?.email)
+console.log(userStore.user)
 
 function handleLogout(): void {
   userStore.logout();
@@ -39,9 +41,11 @@ function handleLogout(): void {
 			>
 				{{ button.name }}
 			</RouterLink>
-			<div>
-				<p @click="handleLogout">este es tu usuario</p>
-
+			<div class="header-buttons-logout">
+				<p @click="handleLogout">{{ username || 'Invitado' }}</p>
+				<CrushButton 
+					class="button"
+					label="Cerrar Sesión" />
 			</div>
 		</div>
 	</header>
@@ -100,6 +104,14 @@ function handleLogout(): void {
 			outline: none;
 			font-weight: 700;
 			font-size: $body-font-size;
+		}
+		&-logout .button {
+			display: none;  
+		position: absolute;
+		top: 100%;  
+		left: 50%;  
+		transform: translateX(-50%); 
+		margin-top: 8px; 
 		}
 	}
 }
