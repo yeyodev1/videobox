@@ -5,6 +5,7 @@ class APIBase {
 
   constructor() {
     this.baseUrl = import.meta.env.NUXT_VIDEOBOX_API || 'http://localhost:8000/api';
+    console.log('API Base URL:', this.baseUrl);
   }
 
   private buildUrl(endpoint: string): string {
