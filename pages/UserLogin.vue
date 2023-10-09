@@ -9,6 +9,11 @@ import useUserStore from '@/store/userStore';
 
 import { validateEmail } from '@/utils/AuthValidations';
 
+const runtimeConfig = useRuntimeConfig();
+onMounted(() => {
+  console.log('api de backapp', runtimeConfig.public.NUXT_VIDEOBOX_API)
+})
+
 const userStore = useUserStore();
 
 
