@@ -4,7 +4,7 @@ class APIBase {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_VIDEOBOX_API || 'http://localhost:8000/api';
+    this.baseUrl = import.meta.env.NUXT_VIDEOBOX_API || 'http://localhost:8000/api';
   }
 
   private buildUrl(endpoint: string): string {
