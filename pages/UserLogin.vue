@@ -61,6 +61,9 @@ async function handleLogin(): Promise<void> {
   try {
     await userStore.login(userData.email.trim().toLocaleLowerCase(), userData.password.trim());
     resetValue();
+    if(userStore.user) {
+      router.push('/');
+    } 
   } catch (error) {
     console.error("Error during login:", error)
     await router.push('/')
@@ -81,6 +84,11 @@ function resetValue(): void {
     <p class="login-wrapper-title">
       Que gusto verte nuevamente 🌟 <br> Ingresa ahora
     </p>
+    <span 
+      v-if="userStore.errorMessage"
+      class="login-wrapper-warning">
+      *{{ userStore.errorMessage }}*
+    </span>
     <div class="login-wrapper-card">
       <CrushTextField
         :key="textKey"
@@ -138,6 +146,9 @@ function resetValue(): void {
     @media (min-width: $tablet-lower-breakpoint) {
       font-size: $h3-font-size;
     }
+  }
+  &-warning {
+    color: $red;
   }
   .date-message {
     color: $red;
