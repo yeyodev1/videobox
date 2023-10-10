@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import CrushButton from '@nabux-crush/crush-button';
 
-import useClubStore from '@/store/clubStore';
 import type { Club, Fields, Sport } from '@/typings/Field&Sport';
+
+import useClubStore from '@/store/clubStore';
+import useUserStore from '@/store/userStore';
+
 
 const sportSelected = ref<Sport | null>(null);
 const clubSelected = ref<Club | null>(null);
@@ -13,8 +16,15 @@ const selectedTime = ref<string | null>(null);
 const videoVisible = ref(false);
 const showMessage = ref(false);
 
-const clubStore = useClubStore();
 const route = useRoute();
+
+const userStore = useUserStore();
+const clubStore = useClubStore();
+
+const isLoggedIn = computed(() => userStore.user !== null);
+
+const linkDestination = computed(() => isLoggedIn.value ? `${route.params.fieldSelected}/purchase` : '/userRegister')
+const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 
 function handleTimeUpdate(event: Event) {
   const video = event.target as HTMLVideoElement;
@@ -41,6 +51,8 @@ onMounted(() => {
   clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
   sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
   fieldSelected.value = sportSelected.value?.fields.find((field: Fields) => field.id === fieldId);
+
+
 });
 
 const allFieldsSelected = computed(() => {
@@ -69,10 +81,10 @@ const allFieldsSelected = computed(() => {
             Tu navegador no soporta la etiqueta de video de HTML5.
         </video>
         <NuxtLink
-          to="/userRegister"
+          :to="linkDestination"
           v-if="showMessage" 
           class="overlay-message">
-          <span class="overlay-message-span">Crea una cuenta</span> para ver lo demás
+          <span class="overlay-message-span">{{ buttonText }}</span> para ver lo demás
         </NuxtLink>
       </div>
     <div class="schedule-container">
