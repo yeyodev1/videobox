@@ -39,7 +39,9 @@ function handleLogout(): void {
 				@mouseover="showLogoutButton = true"
 				@mouseleave="showLogoutButton = false" 
 				class="header-icon-logout">
-				<p>{{ username || 'Invitado' }} <i class="fa-solid fa-chevron-down"></i> </p>
+				<p>
+					{{ username || 'Invitado' }} <i class="fa-solid fa-chevron-down" /> 
+				</p>
 				<transition name="fade">
 					<CrushButton 
 						v-if="showLogoutButton"
@@ -61,11 +63,20 @@ function handleLogout(): void {
 			>
 				{{ button.name }}
 			</RouterLink>
-			<div class="header-buttons-logout">
-				<p @click="handleLogout">{{ username || 'Invitado' }}</p>
-				<CrushButton 
-					class="button"
-					label="Cerrar Sesión" />
+			<div
+				@mouseover="showLogoutButton = true"
+				@mouseleave="showLogoutButton = false" 
+				class="header-buttons-logout">
+				<p @click="handleLogout">
+					{{ username || 'Invitado' }} <i class="fa-solid fa-chevron-down" />
+				</p>
+				<transition name="fade">
+					<CrushButton 
+						v-if="showLogoutButton"
+						@click="handleLogout"
+						text="Cerrar Sesión" 
+						class="button" />
+				</transition>
 			</div>
 		</div>
 	</header>
@@ -99,6 +110,9 @@ function handleLogout(): void {
 		display: flex;
 		justify-content: flex-end;
 		gap: 12px;
+		@media (min-width: $tablet-upper-breakpoint) {
+			display: none;
+		}
 	}
 	&-icon {
 		&-logout {
@@ -167,13 +181,40 @@ function handleLogout(): void {
 			font-weight: 700;
 			font-size: $body-font-size;
 		}
-		&-logout .button {
-			display: none;  
-			position: absolute;
-			top: 100%;  
-			left: 50%;  
-			transform: translateX(-50%); 
-			margin-top: 8px; 
+		&-logout {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			.user {
+				cursor: pointer;
+			}
+			.button {
+				opacity: 0;  
+				visibility: hidden; 
+				position: absolute;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				top: 100%;
+				left: 50%;
+				transform: translateX(-50%);
+				transition: opacity 1s, visibility 1s;
+				background-color: $purple;
+				color: white;
+				border: none;
+				font-weight: 400;
+				font-family: $font;
+				margin-top: 16px;
+				z-index: 0;
+				&:hover {
+					opacity: 1;
+				}
+			}
+			&:hover .button {
+				opacity: 1;
+				visibility: visible;
+			}
 		}
 	}
 }
