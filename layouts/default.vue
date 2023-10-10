@@ -20,7 +20,8 @@ const toggleShowMenu = () => {
 <template>
   <div class="app-container">
     <TheHeaderUser 
-      v-if="isUserLoggedIn" />
+      v-if="isUserLoggedIn" 
+      @toggle-menu="toggleShowMenu"/>
     <TheHeader 
       v-else
       @toggle-menu="toggleShowMenu"/>
