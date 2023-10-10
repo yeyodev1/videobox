@@ -244,6 +244,7 @@ async function handleRegister(): Promise<void> {
     }
     :deep(.crush-primary) {
       background-color: $purple;
+      z-index: 0;
     }
   }
   &-span {
