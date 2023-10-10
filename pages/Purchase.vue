@@ -24,8 +24,8 @@
   &-image {
     width: 100%;
     border-radius: 8px;
-    @media (min-width: $tablet-lower-breakpoint) {
-      max-width: $mobile-upper-breakpoint;
+    @media (min-width: $mobile-lower-breakpoint) {
+      max-width: $mobile-lower-breakpoint;
     }
   }
 }
