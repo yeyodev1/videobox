@@ -23,7 +23,7 @@ const clubStore = useClubStore();
 
 const isLoggedIn = computed(() => userStore.user !== null);
 
-const linkDestination = computed(() => isLoggedIn.value ? `${route.params.fieldSelected}/purchase` : '/userRegister')
+const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister')
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 
 function handleTimeUpdate(event: Event) {
@@ -51,8 +51,6 @@ onMounted(() => {
   clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
   sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
   fieldSelected.value = sportSelected.value?.fields.find((field: Fields) => field.id === fieldId);
-
-
 });
 
 const allFieldsSelected = computed(() => {
