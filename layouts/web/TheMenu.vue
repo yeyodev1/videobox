@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { webMenuItems } from '@/utils/MenuItems';
 import { computed } from 'vue';
+import useUserStore from '~/store/userStore';
 
+const userStore = useUserStore();
 const emit = defineEmits(['toggle-menu']);
 
 const closeMenu = () => {
@@ -13,7 +15,9 @@ const props = defineProps({
 });
 
 
-const menu = computed(() => webMenuItems )
+const menu = computed(() => {
+  return userStore.user ? userRegisterItems : webMenuItems
+});
 
 </script>
 
