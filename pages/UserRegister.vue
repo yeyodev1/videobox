@@ -127,11 +127,11 @@ async function handleRegister(): Promise<void> {
     <p class="register-wrapper-title">
       ¿Primera vez en VideoBox? 🌟 <br> Únete ya
     </p>
-    <!-- <span 
+    <span 
       v-if="userStore.errorMessage"
       class="register-wrapper-warning">
       *{{ userStore.errorMessage }}*
-    </span> -->
+    </span>
     <div class="register-wrapper-card">
       <CrushTextField
         :key="textKey"
@@ -202,6 +202,9 @@ async function handleRegister(): Promise<void> {
   min-height: 100vh;
   padding: 24px;
   max-width: $desktop-lower-breakpoint;
+  &-warning {
+    color: $red;
+  }
   .date-message {
     color: $red;
   }
@@ -235,9 +238,6 @@ async function handleRegister(): Promise<void> {
       background-color: transparent;
       color: $white;
       border: none;
-    }
-    .crush-button {
-      margin-top: 12px;
     }
     :deep(.crush-text-field .input-container.active) {
       border-color: $purple;
