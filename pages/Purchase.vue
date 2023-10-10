@@ -7,6 +7,9 @@
       src="@/assets/qr-code.jpg" 
       alt="Código de pago" 
       class="section-image">
+    <p class="section-title">
+      Después envía la captura al siguiente WhatsApp: <a href="/" class="number">+593 349494949></a>
+    </p>
   </div>
 </template>
 
@@ -20,6 +23,9 @@
   gap: 24px;
   &-title {
     font-size: $body-font-size;
+    .number {
+      text-decoration: underline;
+    }
   }
   &-image {
     width: 100%;
