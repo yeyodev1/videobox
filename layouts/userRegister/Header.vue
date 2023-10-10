@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
-import { userRegisterItems } from '@/utils/MenuItems';
 import { computed } from "vue";
+import CrushButton from '@nabux-crush/crush-button';
+
+
+import { userRegisterItems } from '@/utils/MenuItems';
 import { useUserStore } from '@/store/userStore';
 
 const userStore = useUserStore();
 
 const emit = defineEmits();
+
+const showLogoutButton = ref(false);
 
 const toggleMenu = () => {
 	emit("toggle-menu");
@@ -26,11 +31,26 @@ function handleLogout(): void {
 	<header class="header">
 		<RouterLink to="/">
       <figure>
-			  <img src="@/assets/videobox.png" alt="VideoBox" />
+			  <img src="@/assets/videobox-small.png" alt="VideoBox" />
 		  </figure>
     </RouterLink>
-		<div class="header-icon" @click="toggleMenu">
-			<i class="fa-solid fa-bars" />
+		<div class="header-section">
+			<div
+				@mouseover="showLogoutButton = true"
+				@mouseleave="showLogoutButton = false" 
+				class="header-icon-logout">
+				<p>{{ username || 'Invitado' }} <i class="fa-solid fa-chevron-down"></i> </p>
+				<transition name="fade">
+					<CrushButton 
+						v-if="showLogoutButton"
+						@click="handleLogout"
+						text="Cerrar Sesión" 
+						class="button" />
+				</transition>
+			</div>
+			<div class="header-icon" @click="toggleMenu">
+					<i class="fa-solid fa-bars" />
+			</div>
 		</div>
 		<div class="header-buttons">
 			<RouterLink
@@ -52,6 +72,12 @@ function handleLogout(): void {
 </template>
 
 <style lang="scss" scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
 .header {
 	display: flex;
 	justify-content: space-between;
@@ -64,12 +90,53 @@ function handleLogout(): void {
 	&-icon {
 		display: flex;
 		color: $white;
-
+		gap: 12px;
 		@media (min-width: $tablet-upper-breakpoint) {
 			display: none;
 		}
 	}
-
+	&-section {
+		display: flex;
+		justify-content: flex-end;
+		gap: 12px;
+	}
+	&-icon {
+		&-logout {
+				position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+				.user {
+					cursor: pointer;
+				}
+				.button {
+					opacity: 0;  
+					visibility: hidden; 
+					position: absolute;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					top: 100%;
+					left: 50%;
+					transform: translateX(-50%);
+					transition: opacity 1s, visibility 1s;
+					background-color: $purple;
+					color: white;
+					border: none;
+					font-weight: 400;
+					font-family: $font;
+					margin-top: 16px;
+					z-index: 0;
+					&:hover {
+						opacity: 1;
+					}
+				}
+				&:hover .button {
+					opacity: 1;
+					visibility: visible;
+				}
+		}
+	}
 	&-buttons {
 		display: none;
 
@@ -78,22 +145,17 @@ function handleLogout(): void {
 			gap: 16px;
 			justify-content: space-around;
 			align-items: center;
-
 			& :first-child {
 				color: $white;
 			}
-
 			& :nth-child(2) {
 				border: 1px solid $purple;
-
 			}
-
 			& :nth-child(3) {
 				background-color: $purple;
 				color: $white;
 			}
 		}
-
 		&-button {
 			border-radius: 8px;
 			text-decoration: none;
@@ -107,11 +169,11 @@ function handleLogout(): void {
 		}
 		&-logout .button {
 			display: none;  
-		position: absolute;
-		top: 100%;  
-		left: 50%;  
-		transform: translateX(-50%); 
-		margin-top: 8px; 
+			position: absolute;
+			top: 100%;  
+			left: 50%;  
+			transform: translateX(-50%); 
+			margin-top: 8px; 
 		}
 	}
 }
