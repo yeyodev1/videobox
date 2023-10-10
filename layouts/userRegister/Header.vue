@@ -39,7 +39,7 @@ function handleLogout(): void {
 				@mouseover="showLogoutButton = true"
 				@mouseleave="showLogoutButton = false" 
 				class="header-icon-logout">
-				<p>
+				<p class="header-icon-logout-email">
 					{{ username || 'Invitado' }} <i class="fa-solid fa-chevron-down" /> 
 				</p>
 				<transition name="fade">
@@ -67,7 +67,9 @@ function handleLogout(): void {
 				@mouseover="showLogoutButton = true"
 				@mouseleave="showLogoutButton = false" 
 				class="header-buttons-logout">
-				<p @click="handleLogout">
+				<p 
+					@click="handleLogout"
+					class="header-buttons-logout-email">
 					{{ username || 'Invitado' }} <i class="fa-solid fa-chevron-down" />
 				</p>
 				<transition name="fade">
@@ -120,6 +122,9 @@ function handleLogout(): void {
         display: flex;
         flex-direction: column;
         align-items: center;
+				&-email {
+					font-family: $font;
+				}
 				.user {
 					cursor: pointer;
 				}
@@ -214,6 +219,10 @@ function handleLogout(): void {
 			&:hover .button {
 				opacity: 1;
 				visibility: visible;
+			}
+			&-email {
+				font-family: $font;
+				font-size: $body-font-size;
 			}
 		}
 	}
