@@ -132,7 +132,7 @@ export const useUserStore = defineStore('UserStore', {
       }
     }
     
-  },
+  }
 });
 
 export default useUserStore;
