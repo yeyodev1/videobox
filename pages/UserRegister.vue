@@ -98,8 +98,9 @@ function resetValue(): void {
   textKey.value ++
 }
 
+const runtimeConfig = useRuntimeConfig();
 onMounted(() => {
-  console.log('api de produccion, estamos en registro:', import.meta.env.JWT_SECRET)
+  console.log('api de backapp, estamo en registro', runtimeConfig.public.NUXT_VIDEOBOX_API)
 })
 
 async function handleRegister(): Promise<void> {
