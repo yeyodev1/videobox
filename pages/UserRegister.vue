@@ -98,6 +98,9 @@ function resetValue(): void {
   textKey.value ++
 }
 
+onMounted(() => {
+  console.log('api de produccion, estamos en registro:', import.meta.env.JWT_SECRET)
+})
 
 async function handleRegister(): Promise<void> {
   try {
