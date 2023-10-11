@@ -1,10 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 
+// const config = useRuntimeConfig();
+
 class APIBase {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.NUXT_VIDEOBOX_API || 'http://localhost:8000/api';
+    this.baseUrl = 'https://videobox-backapp.vercel.app/api' || 'http://localhost:8000/api';
     console.log('API Base URL:', this.baseUrl);
   }
 
