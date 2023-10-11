@@ -57,16 +57,15 @@ const textType = computed(() => {
 
 
 async function handleLogin(): Promise<void> {
-  console.log('nos estamos logeando');
+  console.log('Intentando loguear...');
   try {
     await userStore.login(userData.email.trim().toLocaleLowerCase(), userData.password.trim());
     resetValue();
     if(userStore.user) {
-      router.push('/');
-    } 
+        router.push('/');
+      } 
   } catch (error) {
-    console.error("Error during login:", error)
-    await router.push('/')
+    console.error("Error during login:", error);
   }
 }
 
