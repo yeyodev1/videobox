@@ -14,7 +14,8 @@ const config = defineNuxtConfig({
   alias: {
     '@': fileURLToPath(new URL('./', import.meta.url)),
     '@nabux-crush/crush-button': require.resolve('@nabux-crush/crush-button'),
-    '@nabux-crush/crush-text-field': require.resolve('@nabux-crush/crush-text-field')
+    '@nabux-crush/crush-text-field': require.resolve('@nabux-crush/crush-text-field'),
+    '@nabux-crush/crush-text-area': require.resolve('@nabux-crush/crush-text-area')
   },
   vite: {
     css: {
