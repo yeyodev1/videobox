@@ -16,13 +16,12 @@ const sportSelected = ref<Sport | null>(null);
 const clubSelected = ref<Club | null>(null);
 const fieldSelected = ref<Fields | null>(null);
 const selectedDay = ref<string | null>(null);
-const selectedMonth = ref<string | null>(null);
 const selectedTime = ref<string | null>(null);
 const videoVisible = ref(false);
 const showMessage = ref(false);
 
 const allFieldsSelected = computed(() => {
-  return selectedDay.value !== null && selectedMonth.value !== null && selectedTime.value !== null;
+  return selectedDay.value !== null && selectedTime.value !== null;
 });
 const isAdmin = computed(() => userStore.user?.role === 'admin');
 
