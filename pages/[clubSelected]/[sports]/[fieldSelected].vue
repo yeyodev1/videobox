@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CrushTextField from '@nabux-crush/crush-text-field';
 import CrushButton from '@nabux-crush/crush-button';
 
 import type { Club, Fields, Sport } from '@/typings/Field&Sport';
@@ -6,6 +7,10 @@ import type { Club, Fields, Sport } from '@/typings/Field&Sport';
 import useClubStore from '@/store/clubStore';
 import useUserStore from '@/store/userStore';
 
+const route = useRoute();
+
+const userStore = useUserStore();
+const clubStore = useClubStore();
 
 const sportSelected = ref<Sport | null>(null);
 const clubSelected = ref<Club | null>(null);
@@ -16,10 +21,11 @@ const selectedTime = ref<string | null>(null);
 const videoVisible = ref(false);
 const showMessage = ref(false);
 
-const route = useRoute();
+const allFieldsSelected = computed(() => {
+  return selectedDay.value !== null && selectedMonth.value !== null && selectedTime.value !== null;
+});
+const isAdmin = computed(() => userStore.user?.role === 'admin');
 
-const userStore = useUserStore();
-const clubStore = useClubStore();
 
 const isLoggedIn = computed(() => userStore.user !== null);
 
@@ -53,9 +59,6 @@ onMounted(() => {
   fieldSelected.value = sportSelected.value?.fields.find((field: Fields) => field.id === fieldId);
 });
 
-const allFieldsSelected = computed(() => {
-  return selectedDay.value !== null && selectedMonth.value !== null && selectedTime.value !== null;
-});
 
 
 </script>
@@ -99,19 +102,6 @@ const allFieldsSelected = computed(() => {
           {{ scheduleItem.day }}
         </option>
       </select>
-      <p class="schedule-container-question">Elige el mes</p>
-      <select 
-        name="days" 
-        class="schedule-select"
-        v-model="selectedMonth">
-        <option value="" disabled selected>Seleccionar</option>
-        <option 
-          v-for="(scheduleItem, index) in fieldSelected?.schedule || []" 
-          :key="index" 
-          :value="`day${index}`">
-          {{ scheduleItem.month }}
-        </option>
-      </select>
       <p class="schedule-container-question">Elige el horario</p>
       <select 
         name="days" 
@@ -125,6 +115,10 @@ const allFieldsSelected = computed(() => {
           desde {{ scheduleItem.startHour }} hasta {{ scheduleItem.endHour }}
         </option>
       </select>
+      <CrushTextField
+        v-if="isAdmin"
+        label="Ingresa el correo electronico"
+        class="schedule-email"/>
     </div>
     <CrushButton
       varian="primary"
@@ -209,10 +203,17 @@ const allFieldsSelected = computed(() => {
     background-color: $grey;
     border: none;
     color: $white;
-  &:hover {
-    background-color: $purple;
-    border: none;
+    &:hover {
+      background-color: $purple;
+      border: none;
+    }
   }
+  :deep(.crush-text-field .input-container) {
+    border-color: $purple;
+    border-radius: 4px;
+  }
+  :deep(.crush-text-field .input-container.active) {
+    border-color: $purple;
   }
 }
 </style>
