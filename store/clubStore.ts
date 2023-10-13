@@ -1,8 +1,13 @@
 import { defineStore } from "pinia";
-import { Club, Fields } from "~/typings/Field&Sport";
 
+import VideoService from "~/services/Videos/Videos";
+import type { Club, Fields } from "~/typings/Field&Sport";
+import type { VideoType } from "~/typings/VideoTypes";
+
+const videoService = new VideoService();
 interface RootState {
-	clubs: Club[];
+	clubs: Club[],
+	videos: null | VideoType[]
 }
 
 const useClubStore = defineStore("useClubStore", {
@@ -609,7 +614,19 @@ const useClubStore = defineStore("useClubStore", {
 				],
 			},
 		],
+		videos: null
 	}),
+	actions: {
+		async getVideos(): Promise<void> {
+			try {
+				const response = await videoService.getVideos();
+				this.videos = response.data;
+				console.log(this.videos);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	}
 });
 
 export default useClubStore;
