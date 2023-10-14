@@ -2,6 +2,8 @@
 import CrushTextField from '@nabux-crush/crush-text-field';
 import CrushButton from '@nabux-crush/crush-button';
 
+import SelectInput from '@/components/SelectInput.vue'
+
 import type { Club, Fields, Sport } from '@/typings/Field&Sport';
 
 import useClubStore from '@/store/clubStore';
@@ -15,28 +17,15 @@ const clubStore = useClubStore();
 const sportSelected = ref<Sport | null>(null);
 const clubSelected = ref<Club | null>(null);
 const fieldSelected = ref<Fields | null>(null);
-const selectedDay = ref<string | null>(null);
-const selectedTime = ref<string | null>(null);
+const selectedDate = ref('');
+const selectedTime = ref('');
 const videoVisible = ref(false);
 const showMessage = ref(false);
 
-
-
-const filteredVideos = computed(() => {
-  if (clubStore && clubStore.clubs && clubStore.clubs[0]) {
-    return clubStore.clubs[0].sports[0].videos.filter(video => 
-      video && video.field && video.field === route.params.fieldSelected
-    );
-  }
-  return [];
-});
 const filteredSchedule = computed(() => {
-  // Obtener el fieldSelected desde route.params
   const fieldFromRoute = route.params.fieldSelected;
 
-  // Verificar que hay videos para filtrar
   if (clubStore.clubs[0].sports[0].videos && clubStore.clubs[0].sports[0].videos.length > 0) {
-    // Filtrar los videos basándose en el field y el día seleccionados
     return clubStore.clubs[0].sports[0].videos.filter(video => 
       video && video.time && video.field &&
       video.field === fieldFromRoute 
@@ -46,8 +35,21 @@ const filteredSchedule = computed(() => {
 });
 
 const allFieldsSelected = computed(() => {
-  return selectedDay.value !== null && selectedTime.value !== null;
+  return selectedDate.value !== '' && selectedTime.value !== '';
 });
+
+const optionDays = computed(() => {
+  const fieldFromRoute = route.params.fieldSelected;
+  
+  return clubStore.clubs[0].sports[0].videos
+    ?.filter(video => video.field === fieldFromRoute)
+    .map(video => video.date);
+});
+
+const optionsSchedule = computed(() => {
+  return filteredSchedule.value?.map(video => video.time) || [];
+});
+
 
 const isAdmin = computed(() => userStore.user?.role === 'admin');
 
@@ -66,8 +68,17 @@ function handleTimeUpdate(event: Event) {
 };
 function showVideo() {
   videoVisible.value = true;
+  console.log('dia',selectedDate.value)
+  console.log('time',  selectedTime.value)
 };
-
+function handleInput(event: string, type: string): void {
+  if(type === 'day') {
+    selectedDate.value = event
+  }
+  if(type === 'time') {
+    selectedTime.value = event
+  }
+}
 
 onMounted(() => {
   console.log(route.params);
@@ -80,7 +91,6 @@ onMounted(() => {
   console.log('clubId', clubId)
 
 });
-
 
 
 </script>
@@ -111,32 +121,19 @@ onMounted(() => {
         </NuxtLink>
       </div>
     <div class="schedule-container">
-      <p class="schedule-container-question">Elige el día</p>
-      <select 
-        name="days" 
-        class="schedule-select"
-        v-model="selectedDay">
-        <option value="" disabled selected>Seleccionar</option>
-        <option 
-          v-for="(scheduleItem, index) in filteredVideos || []" 
-          :key="index" 
-          :value="`day${index}`">
-          {{ scheduleItem.date }}
-        </option>
-      </select>
-      <p class="schedule-container-question">Elige el horario</p>
-      <select 
-        name="days" 
-        class="schedule-select"
-        v-model="selectedTime">
-        <option value="" disabled selected>Seleccionar</option>
-        <option 
-          v-for="(scheduleItem, index) in filteredSchedule || []" 
-          :key="index" 
-          :value="`day${index}`">
-          {{ scheduleItem.time }}
-        </option>
-      </select>
+      <SelectInput
+        :options="optionDays"
+        :value="selectedDate"
+        label="Escoge el día"
+        @update:value="handleInput($event, 'day')"
+        >
+      </SelectInput>
+      <SelectInput
+        :options="optionsSchedule"
+        :value="selectedTime"
+        label="Escoge el día"
+        @update:value="handleInput($event, 'time')">
+      </SelectInput>
       <CrushTextField
         v-if="isAdmin"
         label="Ingresa el correo electronico"
@@ -208,34 +205,6 @@ onMounted(() => {
     &-question {
       font-size: $body-font-size;
     }
-  }
-  &-select {
-    padding: 12px;
-    background-color: $dark-purple;
-    border: 1px solid $purple;
-    color: $white; 
-    border-radius: 4px; 
-    font-size: $body-font-size; 
-    appearance: none; 
-    -webkit-appearance: none;
-    -moz-appearance: none; 
-    cursor: pointer;
-  }
-  :deep(.crush-primary) {
-    background-color: $grey;
-    border: none;
-    color: $white;
-    &:hover {
-      background-color: $purple;
-      border: none;
-    }
-  }
-  :deep(.crush-text-field .input-container) {
-    border-color: $purple;
-    border-radius: 4px;
-  }
-  :deep(.crush-text-field .input-container.active) {
-    border-color: $purple;
   }
 }
 </style>
