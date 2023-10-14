@@ -4,6 +4,8 @@ import { ref, onMounted } from 'vue';
 
 import type { Club, Sport } from '@/typings/Field&Sport';
 import useClubStore from '@/store/clubStore';
+import { ParsedVideo } from '~/typings/VideoTypes';
+import useUserStore from '~/store/userStore';
 
 const route = useRoute();
 
@@ -13,6 +15,8 @@ const clubSelected = ref<Club | null>(null);
 const sportSelected = ref<Sport | null>(null);
 
 const sportId = route.params.sport;
+const fieldId = route.params.field
+
 
 onMounted(() => {
   const clubId = route.params.clubSelected;
@@ -21,6 +25,8 @@ onMounted(() => {
 
   clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
   sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
+
+  console.log('sport selected', sportSelected.value)
 
 });
 </script>
@@ -33,12 +39,12 @@ onMounted(() => {
     <div class="container-cards">
       <div v-if="sportSelected" class="container-cards-card">
         <NuxtLink
-          v-for="(field, index) in sportSelected.fields"
-          :to="`${sportId}/${field.id}`"
+          v-for="(field, index) in clubStore.clubs[0].sports[0].videos"
+          :to="`${sportId}/${field.field}`"
           :key="index"
           class="container-cards-card-flag"
         >
-          {{field.name}}
+          {{field.field}}
         </NuxtLink>
       </div>
     </div>
