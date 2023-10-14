@@ -34,13 +34,6 @@ const filteredSchedule = computed(() => {
   }
   return [];
 });
-const filteredVideos = computed(() => {
-  const fieldFromRoute = route.params.fieldSelected;
-  
-  
-});
-
-
 
 const allFieldsSelected = computed(() => {
   return selectedDate.value !== '' && selectedTime.value !== '';
@@ -59,13 +52,14 @@ const optionsSchedule = computed(() => {
 });
 
 const videoLink = computed(() => {
-  const matchedVideo = clubStore.clubs[0].sports[0].videos.find(video => video.field === route.params.fieldSelected)
+  // const matchedVideo = clubStore.clubs[0].sports[0].videos.find(video => video.field === route.params.fieldSelected)
 
-  return matchedVideo ? matchedVideo.link : null
+  // return matchedVideo ? matchedVideo.link : ''
+  return 'https://v3.cdnpk.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4'
 })
 
 
-const isAdmin = computed(() => userStore.user?.role === 'admin');
+const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 
 
 const isLoggedIn = computed(() => userStore.user !== null);
@@ -75,9 +69,11 @@ const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 
 
 function handleTimeUpdate(event: Event) {
   const video = event.target as HTMLVideoElement;
-  if (video.currentTime >= 10) {
-    video.pause();
-    showMessage.value = true;
+  if(!isAdmin.value) {
+    if(video.currentTime>=10) {
+      video.pause();
+      showMessage.value = true;
+    }
   }
 };
 function showVideo() {
@@ -145,7 +141,7 @@ onMounted(() => {
       <SelectInput
         :options="optionsSchedule"
         :value="selectedTime"
-        label="Escoge el día"
+        label="Escoge la hora"
         @update:value="handleInput($event, 'time')">
       </SelectInput>
       <CrushTextField
