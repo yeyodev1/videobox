@@ -5,7 +5,7 @@ interface Sport {
   image: string,
   name: string,
   id: string,
-  videos: [],
+  videos: ParsedVideo[],
 }
 interface Club {
   image: string,
