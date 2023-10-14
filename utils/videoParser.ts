@@ -17,3 +17,8 @@ export function parseVideoName({name, directLink}: VideoInput) : ParsedVideo | n
     return null
   }
 }
+
+
+export function filterVideosByField(videos: ParsedVideo[], selectedField: string): ParsedVideo[] {
+  return videos.filter(video => video.field === selectedField);
+}
