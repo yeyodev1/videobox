@@ -20,9 +20,35 @@ const selectedTime = ref<string | null>(null);
 const videoVisible = ref(false);
 const showMessage = ref(false);
 
+
+
+const filteredVideos = computed(() => {
+  if (clubStore && clubStore.clubs && clubStore.clubs[0]) {
+    return clubStore.clubs[0].sports[0].videos.filter(video => 
+      video && video.field && video.field === route.params.fieldSelected
+    );
+  }
+  return [];
+});
+const filteredSchedule = computed(() => {
+  // Obtener el fieldSelected desde route.params
+  const fieldFromRoute = route.params.fieldSelected;
+
+  // Verificar que hay videos para filtrar
+  if (clubStore.clubs[0].sports[0].videos && clubStore.clubs[0].sports[0].videos.length > 0) {
+    // Filtrar los videos basándose en el field y el día seleccionados
+    return clubStore.clubs[0].sports[0].videos.filter(video => 
+      video && video.time && video.field &&
+      video.field === fieldFromRoute 
+    );
+  }
+  return [];
+});
+
 const allFieldsSelected = computed(() => {
   return selectedDay.value !== null && selectedTime.value !== null;
 });
+
 const isAdmin = computed(() => userStore.user?.role === 'admin');
 
 
@@ -53,9 +79,6 @@ onMounted(() => {
   console.log('sportId', sportId)
   console.log('clubId', clubId)
 
-  clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
-  sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
-  fieldSelected.value = sportSelected.value?.fields.find((field: Fields) => field.id === fieldId);
 });
 
 
@@ -95,10 +118,10 @@ onMounted(() => {
         v-model="selectedDay">
         <option value="" disabled selected>Seleccionar</option>
         <option 
-          v-for="(scheduleItem, index) in fieldSelected?.schedule || []" 
+          v-for="(scheduleItem, index) in filteredVideos || []" 
           :key="index" 
           :value="`day${index}`">
-          {{ scheduleItem.day }}
+          {{ scheduleItem.date }}
         </option>
       </select>
       <p class="schedule-container-question">Elige el horario</p>
@@ -108,10 +131,10 @@ onMounted(() => {
         v-model="selectedTime">
         <option value="" disabled selected>Seleccionar</option>
         <option 
-          v-for="(scheduleItem, index) in fieldSelected?.schedule || []" 
+          v-for="(scheduleItem, index) in filteredSchedule || []" 
           :key="index" 
           :value="`day${index}`">
-          desde {{ scheduleItem.startHour }} hasta {{ scheduleItem.endHour }}
+          {{ scheduleItem.time }}
         </option>
       </select>
       <CrushTextField
