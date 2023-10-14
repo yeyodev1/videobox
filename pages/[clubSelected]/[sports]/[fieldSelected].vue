@@ -22,6 +22,7 @@ const selectedTime = ref('');
 const videoVisible = ref(false);
 const showMessage = ref(false);
 
+
 const filteredSchedule = computed(() => {
   const fieldFromRoute = route.params.fieldSelected;
 
@@ -33,6 +34,13 @@ const filteredSchedule = computed(() => {
   }
   return [];
 });
+const filteredVideos = computed(() => {
+  const fieldFromRoute = route.params.fieldSelected;
+  
+  
+});
+
+
 
 const allFieldsSelected = computed(() => {
   return selectedDate.value !== '' && selectedTime.value !== '';
@@ -49,6 +57,12 @@ const optionDays = computed(() => {
 const optionsSchedule = computed(() => {
   return filteredSchedule.value?.map(video => video.time) || [];
 });
+
+const videoLink = computed(() => {
+  const matchedVideo = clubStore.clubs[0].sports[0].videos.find(video => video.field === route.params.fieldSelected)
+
+  return matchedVideo ? matchedVideo.link : null
+})
 
 
 const isAdmin = computed(() => userStore.user?.role === 'admin');
@@ -109,7 +123,7 @@ onMounted(() => {
         :class="{ blurred: showMessage }">
         <video controls @timeupdate="handleTimeUpdate">
           <source 
-            src="https://v3.cdnpk.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4" 
+            :src="videoLink" 
             type="video/mp4">
             Tu navegador no soporta la etiqueta de video de HTML5.
         </video>
@@ -143,7 +157,8 @@ onMounted(() => {
       varian="primary"
       text="Buscar video" 
       :disabled="!allFieldsSelected"
-      @click="showVideo"/>
+      @click="showVideo"
+      class="button"/>
   </div>
 </template>
 
@@ -205,6 +220,12 @@ onMounted(() => {
     &-question {
       font-size: $body-font-size;
     }
+  }
+  .button {
+    background-color: $purple;
+    color: $white;
+    font-family: $font;
+    border: none;
   }
 }
 </style>
