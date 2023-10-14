@@ -216,6 +216,9 @@ onMounted(() => {
     &-question {
       font-size: $body-font-size;
     }
+    :deep(.crush-text-field .input-container) {
+      border: 1px solid $purple;
+    }  
   }
   .button {
     background-color: $purple;
@@ -223,5 +226,6 @@ onMounted(() => {
     font-family: $font;
     border: none;
   }
+  
 }
 </style>
