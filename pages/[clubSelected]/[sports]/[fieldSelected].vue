@@ -64,9 +64,11 @@ function handleTimeUpdate(event: Event) {
     }
   }
 };
+
 function showVideo() {
   videoVisible.value = true;
 };
+
 function handleInput(event: string, type: string): void {
   if(type === 'day') {
     selectedDate.value = event
@@ -89,12 +91,13 @@ function handleInput(event: string, type: string): void {
       v-if="videoVisible" 
       class="schedule-container-video"
       :class="{ blurred: showMessage }">
-      <video controls @timeupdate="handleTimeUpdate">
+      <!-- <video controls @timeupdate="handleTimeUpdate">
         <source 
           :src="videoLink" 
           type="video/mp4">
           Tu navegador no soporta la etiqueta de video de HTML5.
-      </video>
+      </video> -->
+      <VideoPlayer :videoURL="videoLink" />
       <NuxtLink
         :to="linkDestination"
         v-if="showMessage" 

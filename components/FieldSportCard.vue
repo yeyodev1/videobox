@@ -13,15 +13,6 @@ const props = defineProps({
     required: true
   }
 });
-
-// const route = useRoute();
-// const isWatchField = computed(() => {
-//   return route.path === `${props.id}`;
-// });
-// const routeDirection = computed(() => {
-//   return isWatchField.value ? '' : `${props.id}`; 
-// });
-
 </script>
 
 <template>
