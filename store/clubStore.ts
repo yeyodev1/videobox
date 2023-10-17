@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 
 import VideoService from '~/services/Videos/Videos';
 import type { Club } from '~/typings/Field&Sport';
-import type { VideoType } from '~/typings/VideoTypes';
 
 const videoService = new VideoService();
 interface RootState {
@@ -14,8 +13,8 @@ const useClubStore = defineStore("useClubStore", {
     clubs: [
       {  
       image: 'https://i.pinimg.com/236x/c5/3d/53/c53d537f7e8698a52ead8b02bfaba095.jpg',
-      name: 'el club Diego',
-      id: 'club-diego',
+      name: 'Complejo 1',
+      id: 'complejo-1',
       sports: [
           {
             name: 'padel',
