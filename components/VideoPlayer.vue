@@ -10,24 +10,28 @@ const props = defineProps({
 
 const videoPlayer = ref(null)
 const chunkSize = 15 * 1024 * 1024;
+const videoKey = ref(0)
 
 async function loadVideoInChunks() {
   if (!videoPlayer.value) {
     return;
   }
   const video = videoPlayer?.value as HTMLVideoElement;
-  let start = 0;
 
-  console.log(video)
+  console.log(video);
 
-  while (start < props.videoURL.length) {
-    const end = Math.min(start + chunkSize, props.videoURL.length);
-    const chunkURL = props.videoURL.slice(start, end);
+  const videoURL = props.videoURL;
+  const totalSize = videoURL.length;
+
+  for (let start = 0; start < totalSize; start += chunkSize) {
+    const end = Math.min(start + chunkSize, totalSize);
+    const chunkURL = videoURL.slice(start, end);
     const response = await axios.get(chunkURL);
-    const blob = await response.blob();
+    console.log(response);
+    const blob = await response.data; // Usar response.data para obtener el blob
     const objectURL = URL.createObjectURL(blob);
     video.src = objectURL;
-    start = end;
+    video.load(); // Asegurarse de cargar el nuevo fragmento en el reproductor
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 }
