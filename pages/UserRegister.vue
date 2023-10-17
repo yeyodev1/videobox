@@ -98,10 +98,7 @@ function resetValue(): void {
   textKey.value ++
 }
 
-const runtimeConfig = useRuntimeConfig();
-onMounted(() => {
-  console.log('api de backapp, estamo en registro', runtimeConfig.public.NUXT_VIDEOBOX_API)
-})
+// const runtimeConfig = useRuntimeConfig();
 
 async function handleRegister(): Promise<void> {
   try {
@@ -110,7 +107,6 @@ async function handleRegister(): Promise<void> {
       userData.password.trim(), 
       userData.birthdate.trim()
     );
-    console.log('Registro completado');
     resetValue();
 
     await router.push('/userlogin');

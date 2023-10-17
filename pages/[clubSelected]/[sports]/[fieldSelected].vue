@@ -3,20 +3,16 @@ import CrushTextField from '@nabux-crush/crush-text-field';
 import CrushButton from '@nabux-crush/crush-button';
 
 import SelectInput from '@/components/SelectInput.vue'
-
-import type { Club, Fields, Sport } from '@/typings/Field&Sport';
-
 import useClubStore from '@/store/clubStore';
 import useUserStore from '@/store/userStore';
+
+const useRunTimeConfig = useRuntimeConfig();
 
 const route = useRoute();
 
 const userStore = useUserStore();
 const clubStore = useClubStore();
 
-const sportSelected = ref<Sport | null>(null);
-const clubSelected = ref<Club | null>(null);
-const fieldSelected = ref<Fields | null>(null);
 const selectedDate = ref('');
 const selectedTime = ref('');
 const videoVisible = ref(false);
@@ -34,11 +30,9 @@ const filteredSchedule = computed(() => {
   }
   return [];
 });
-
 const allFieldsSelected = computed(() => {
   return selectedDate.value !== '' && selectedTime.value !== '';
 });
-
 const optionDays = computed(() => {
   const fieldFromRoute = route.params.fieldSelected;
   
@@ -46,24 +40,18 @@ const optionDays = computed(() => {
     ?.filter(video => video.field === fieldFromRoute)
     .map(video => video.date);
 });
-
 const optionsSchedule = computed(() => {
   return filteredSchedule.value?.map(video => video.time) || [];
 });
-
 const videoLink = computed(() => {
-  // const matchedVideo = clubStore.clubs[0].sports[0].videos.find(video => video.field === route.params.fieldSelected)
+  const matchedVideo = clubStore.clubs[0].sports[0].videos.find(video => video.field === route.params.fieldSelected)
 
-  // return matchedVideo ? matchedVideo.link : ''
-  return 'https://v3.cdnpk.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4'
+  const fileId = matchedVideo ? matchedVideo.directLink : '';
+
+  return `https://www.googleapis.com/drive/v3/files/${fileId}?key=${useRunTimeConfig.public.NUXT_API_KEY}&alt=media`;
 })
-
-
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
-
-
 const isLoggedIn = computed(() => userStore.user !== null);
-
 const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister')
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 
@@ -78,8 +66,6 @@ function handleTimeUpdate(event: Event) {
 };
 function showVideo() {
   videoVisible.value = true;
-  console.log('dia',selectedDate.value)
-  console.log('time',  selectedTime.value)
 };
 function handleInput(event: string, type: string): void {
   if(type === 'day') {
@@ -89,20 +75,6 @@ function handleInput(event: string, type: string): void {
     selectedTime.value = event
   }
 }
-
-onMounted(() => {
-  console.log(route.params);
-  const clubId = route.params.clubSelected;
-  const sportId = route.params.sports ;
-  const fieldId = route.params.fieldSelected;
-
-  console.log('field selected', fieldId)
-  console.log('sportId', sportId)
-  console.log('clubId', clubId)
-
-});
-
-
 </script>
 
 <template>

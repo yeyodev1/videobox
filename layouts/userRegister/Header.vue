@@ -19,7 +19,6 @@ const toggleMenu = () => {
 
 const menu = computed(() => userRegisterItems);
 const username = computed(() => userStore.user?.email)
-console.log(userStore.user)
 
 function handleLogout(): void {
   userStore.logout();

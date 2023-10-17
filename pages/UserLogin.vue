@@ -4,15 +4,11 @@ import { computed, reactive, ref } from 'vue';
 import CrushTextField from '@nabux-crush/crush-text-field';
 import CrushButton from '@nabux-crush/crush-button';
 
+import { validateEmail } from '@/utils/AuthValidations';
+
 const router = useRouter();
 import useUserStore from '@/store/userStore';
 
-import { validateEmail } from '@/utils/AuthValidations';
-
-const runtimeConfig = useRuntimeConfig();
-onMounted(() => {
-  console.log('api de backapp', runtimeConfig.public.NUXT_VIDEOBOX_API)
-})
 
 const userStore = useUserStore();
 
@@ -57,7 +53,6 @@ const textType = computed(() => {
 
 
 async function handleLogin(): Promise<void> {
-  console.log('Intentando loguear...');
   try {
     await userStore.login(userData.email.trim().toLocaleLowerCase(), userData.password.trim());
     resetValue();

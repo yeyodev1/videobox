@@ -1,8 +1,8 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
 
-import VideoService from "~/services/Videos/Videos";
-import type { Club, Fields } from "~/typings/Field&Sport";
-import type { VideoType } from "~/typings/VideoTypes";
+import VideoService from '~/services/Videos/Videos';
+import type { Club } from '~/typings/Field&Sport';
+import type { VideoType } from '~/typings/VideoTypes';
 
 const videoService = new VideoService();
 interface RootState {
@@ -33,7 +33,7 @@ const useClubStore = defineStore("useClubStore", {
       try {
         const response = await videoService.getVideos();
         this.clubs[0].sports[0].videos = response.data?.map(video => parseVideoName(video)).filter(Boolean) as VideoType;
-        console.log(this.clubs[0].sports[0].videos);
+        console.log('videos', this.clubs[0].sports[0].videos);
       } catch (error) {
         console.log(error);
       }

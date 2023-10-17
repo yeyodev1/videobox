@@ -16,4 +16,5 @@ interface Club {
 
 export type {
   Club,
+  Sport
 }

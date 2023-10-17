@@ -7,7 +7,8 @@ const config = defineNuxtConfig({
       MONGODB_URI: process.env.MONGODB_URI,
       NODE_ENV: process.env.NODE_ENV,
       JWT_SECRET: process.env.JWT_SECRET,
-      PORT: process.env.PORT
+      PORT: process.env.PORT,
+      NUXT_API_KEY: process.env.NUXT_API_KEY
     }
   },
   devtools: { enabled: true },
