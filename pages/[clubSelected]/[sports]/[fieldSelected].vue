@@ -54,6 +54,7 @@ const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false)
 const isLoggedIn = computed(() => userStore.user !== null);
 const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister')
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
+const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 
 function handleTimeUpdate(event: Event) {
   const video = event.target as HTMLVideoElement;
@@ -85,7 +86,7 @@ function handleInput(event: string, type: string): void {
       Disfruta de tus mejores jugadas en HD
     </p>
     <p class="schedule-flag">
-      Selecciona el horario de tu jugada
+      Selecciona la fecha y hora de tu partido
     </p>
     <div 
         v-if="videoVisible" 
@@ -125,7 +126,7 @@ function handleInput(event: string, type: string): void {
     </div>
     <CrushButton
       varian="primary"
-      text="Buscar video" 
+      :text="buttonTextForButton" 
       :disabled="!allFieldsSelected"
       @click="showVideo"
       class="button"/>
