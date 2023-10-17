@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+import club from '@/assets/logo-club.jpeg'
+
 import VideoService from '~/services/Videos/Videos';
 import type { Club } from '~/typings/Field&Sport';
 
@@ -12,9 +14,9 @@ const useClubStore = defineStore("useClubStore", {
   state: (): RootState => ({
     clubs: [
       {  
-      image: 'https://i.pinimg.com/236x/c5/3d/53/c53d537f7e8698a52ead8b02bfaba095.jpg',
-      name: 'Complejo 1',
-      id: 'complejo-1',
+      image: club,
+      name: 'One Padel',
+      id: 'one-padel',
       sports: [
           {
             name: 'padel',
