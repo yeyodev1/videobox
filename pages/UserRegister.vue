@@ -18,6 +18,7 @@ const isRepeatedPasswordVisible = ref(false);
 const isMinor = ref(false);
 const userData = reactive({
   email: '',
+  phone: '',
   password: '',
   birthdate: '',
   passwordRepeated: '',
@@ -33,14 +34,16 @@ const userRules = {
       message: 'Ingresa un correo'
     }
   ],
+  phoneValidation: [
+    {
+      validate: (value: string) => /^\d{9,}$/.test(value),
+      message: 'El número de celular debe tener al menos 9 dígitos y solo contener números'
+    }
+  ],
   passwordValidation: [
     {
-      validate: (value: string) => value.length > 7,
-      message: 'El password debe tener al menos 10 caracteres' 
-    },
-    {
-      validate: (value: string) => validateSymbol(value),
-      message: 'El password debe tener al menos un caracter especial $%&|<>#^ caracteres' 
+      validate: (value: string) => value.length > 5,
+      message: 'El password debe tener al menos 6 caracteres' 
     }
   ],
   passwordRepeatedValidation: [
@@ -138,6 +141,11 @@ async function handleRegister(): Promise<void> {
         v-model="userData.email"
         label="Correo"
         :validRules="userRules.emailValidation" />
+      <CrushTextField
+        :key="textKey"
+        v-model="userData.phone"
+        label="Teléfono"
+        :validRules="userRules.phoneValidation" />
       <CrushTextField
         :key="textKey"
         v-model.trim="userData.password"
