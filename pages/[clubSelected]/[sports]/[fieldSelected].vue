@@ -86,22 +86,22 @@ function handleInput(event: string, type: string): void {
       Selecciona el horario de tu jugada
     </p>
     <div 
-        v-if="videoVisible" 
-        class="schedule-container-video"
-        :class="{ blurred: showMessage }">
-        <video controls @timeupdate="handleTimeUpdate">
-          <source 
-            :src="videoLink" 
-            type="video/mp4">
-            Tu navegador no soporta la etiqueta de video de HTML5.
-        </video>
-        <NuxtLink
-          :to="linkDestination"
-          v-if="showMessage" 
-          class="overlay-message">
-          <span class="overlay-message-span">{{ buttonText }}</span> para ver lo demás
-        </NuxtLink>
-      </div>
+      v-if="videoVisible" 
+      class="schedule-container-video"
+      :class="{ blurred: showMessage }">
+      <video controls @timeupdate="handleTimeUpdate">
+        <source 
+          :src="videoLink" 
+          type="video/mp4">
+          Tu navegador no soporta la etiqueta de video de HTML5.
+      </video>
+      <NuxtLink
+        :to="linkDestination"
+        v-if="showMessage" 
+        class="overlay-message">
+        <span class="overlay-message-span">{{ buttonText }}</span> para ver lo demás
+      </NuxtLink>
+    </div>
     <div class="schedule-container">
       <SelectInput
         :options="optionDays"
