@@ -1,15 +1,15 @@
 <template>
   <div class="section">
     <p class="section-title">
-      Envía tu pago mediante el siguiente código QR
+      ¡Gracias por enviarnos tus datos!
+    </p>
+    <p class="section-title">
+      Por favor, YAPEAR S/ 10 al 906894857 ¡Envíanos la captura de pantalla del pago por WhatsApp al mismo número, y te enviaremos tu video! <a href="/" class="number">+593 349494949</a>
     </p>
     <img 
       src="@/assets/qr-code.jpg" 
       alt="Código de pago" 
       class="section-image">
-    <p class="section-title">
-      Después envía la captura al siguiente WhatsApp: <a href="/" class="number">+593 349494949></a>
-    </p>
   </div>
 </template>
 
@@ -23,6 +23,7 @@
   gap: 24px;
   &-title {
     font-size: $body-font-size;
+    text-align: center;
     .number {
       text-decoration: underline;
     }
