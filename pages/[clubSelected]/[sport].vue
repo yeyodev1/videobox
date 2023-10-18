@@ -5,7 +5,6 @@ import { ref, onMounted } from 'vue';
 import type { Club, Sport } from '@/typings/Field&Sport';
 import useClubStore from '@/store/clubStore';
 import { ParsedVideo } from '~/typings/VideoTypes';
-import useUserStore from '~/store/userStore';
 
 const route = useRoute();
 
@@ -15,8 +14,14 @@ const clubSelected = ref<Club | null>(null);
 const sportSelected = ref<Sport | null>(null);
 
 const sportId = route.params.sport;
-const fieldId = route.params.field
 
+const sortedVideos = computed(() => {
+  return clubStore.clubs[0].sports[0].videos.slice().sort((a: ParsedVideo, b: ParsedVideo) => {
+    if (a.field < b.field) return -1;
+    if (a.field > b.field) return 1;
+    return 0;
+  });
+});
 
 onMounted(() => {
   const clubId = route.params.clubSelected;
@@ -35,7 +40,7 @@ onMounted(() => {
     <div class="container-cards">
       <div v-if="sportSelected" class="container-cards-card">
         <NuxtLink
-          v-for="(field, index) in clubStore.clubs[0].sports[0].videos"
+          v-for="(field, index) in sortedVideos"
           :to="`${sportId}/${field.field}`"
           :key="index"
           class="container-cards-card-flag"
