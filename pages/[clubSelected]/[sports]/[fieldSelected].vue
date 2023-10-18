@@ -5,6 +5,7 @@ import CrushButton from '@nabux-crush/crush-button';
 import SelectInput from '@/components/SelectInput.vue'
 import useClubStore from '@/store/clubStore';
 import useUserStore from '@/store/userStore';
+import VideoCrazy from '@/components/Video.vue';
 
 const useRunTimeConfig = useRuntimeConfig();
 
@@ -100,12 +101,13 @@ function handleInput(event: string, type: string): void {
         v-if="videoVisible" 
         class="schedule-container-video"
         :class="{ blurred: showMessage }">
-        <video controls @timeupdate="handleTimeUpdate">
+        <!-- <video controls @timeupdate="handleTimeUpdate">
           <source 
             :src="videoLink" 
             type="video/mp4">
             Tu navegador no soporta la etiqueta de video de HTML5.
-        </video>
+        </video> -->
+        <VideoCrazy/>
         <NuxtLink
           :to="linkDestination"
           v-if="showMessage" 
