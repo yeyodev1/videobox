@@ -49,7 +49,8 @@ const videoLink = computed(() => {
   const fileId = matchedVideo ? matchedVideo.directLink : '';
 
   return `https://www.googleapis.com/drive/v3/files/${fileId}?key=${useRunTimeConfig.public.NUXT_API_KEY}&alt=media`;
-})
+});
+const removeText = computed(() => !videoVisible.value )
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 const isLoggedIn = computed(() => userStore.user !== null);
 const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister')
@@ -85,7 +86,9 @@ function handleInput(event: string, type: string): void {
     <p class="schedule-title">
       Disfruta de tus mejores jugadas en HD
     </p>
-    <p class="schedule-flag">
+    <p
+      v-if="removeText" 
+      class="schedule-flag">
       Selecciona la fecha y hora de tu partido
     </p>
     <div 
