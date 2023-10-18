@@ -39,7 +39,7 @@ const menu = computed(() => webMenuItems)
 <style lang="scss" scoped>
 .header {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 	gap: 8px;
 	padding: 24px 12px;
@@ -49,6 +49,9 @@ const menu = computed(() => webMenuItems)
 	&-icon {
 		display: flex;
 		color: $white;
+		position: absolute;
+		right: 0;
+		padding: 8px;
 
 		@media (min-width: $tablet-upper-breakpoint) {
 			display: none;
