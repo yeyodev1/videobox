@@ -41,7 +41,12 @@ const optionDays = computed(() => {
     .map(video => video.date);
 });
 const optionsSchedule = computed(() => {
-  return filteredSchedule.value?.map(video => video.time) || [];
+  return filteredSchedule.value?.map(video => {
+    if(video.time) {
+      let [hour, minute] = video.time.split(':');
+      return `${hour}:${minute}`
+    }
+  }) || [];
 });
 const videoLink = computed(() => {
   const matchedVideo = clubStore.clubs[0].sports[0].videos.find(video => video.field === route.params.fieldSelected)
