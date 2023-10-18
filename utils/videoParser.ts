@@ -10,7 +10,7 @@ export function parseVideoName({name, directLink, downloadLink, webLink}: VideoI
     return {
       date: date,
       time: formattedTime,
-      field: `CAM ${cam}`,
+      field: `Cancha ${cam}`,
       directLink: directLink,
       downloadLink: downloadLink,
       webLink: webLink
