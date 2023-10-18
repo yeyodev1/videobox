@@ -23,7 +23,8 @@
     "@nabux-crush/crush-text-field": "^0.5.1",
     "@pinia/nuxt": "^0.4.11",
     "mkcert": "^1.5.1",
-    "pinia": "^2.1.4"
+    "pinia": "^2.1.4",
+    "video.js": "^8.6.0"
   },
   "overrides": {
     "vue": "latest"
