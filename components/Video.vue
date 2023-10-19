@@ -2,8 +2,57 @@
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css'
 
-
 const videoEl = ref(null);
+const mediaRecorder = ref(null);
+const recordedChunks = ref([]);
+const recordedBlob = ref(null);
+const isRecording = ref(false);
+
+function startRecording() {
+  recordedChunks.value = [];
+  recordedBlob.value = null;
+  mediaRecorder.value = new MediaRecorder(videoEl.value.captureStream());
+  mediaRecorder.value.ondataavailable = event => {
+    if (event.data.size > 0) {
+      recordedChunks.value.push(event.data);
+    }
+  };
+  mediaRecorder.value.onstop = () => {
+    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/webm' });
+  };
+  mediaRecorder.value.onerror = (event) => {
+    console.error('MediaRecorder error:', event.error);
+  };
+  mediaRecorder.value.start();
+  isRecording.value = true;
+  console.log('Recording started');
+};
+
+function stopRecording() {
+  mediaRecorder.value.stop();
+  isRecording.value = false;
+  console.log('Recording stopped');
+};
+
+function toggleRecording() {
+  if (isRecording.value) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+};
+
+function downloadRecording() {
+  const url = URL.createObjectURL(recordedBlob.value);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = 'recording.webm';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 function increaseBrightness() {
   if (videoEl.value) {
@@ -25,6 +74,8 @@ function decreaseContrast() {
     adjustContrast(videoEl.value, -0.1); 
   }
 }
+
+const buttonLabel = computed(() => (isRecording.value ? 'Detener' : 'Grabar'));
 
 onMounted(() => {
   const options = {
@@ -52,16 +103,30 @@ onBeforeMount(() => {
 
 <template>
   <div class="container">
-    <video ref="videoEl" class="video-js" />
-    <div class="container-button">
-      <span>Brillo: </span>
-      <button @click="increaseBrightness">+</button>
-      <button @click="decreaseBrightness">-</button>
-    </div>
-    <div class="container-button">
-      <span>Contraste: </span>
-      <button @click="increaseContrast">+</button>
-      <button @click="decreaseContrast">-</button>
+    <div class="container-video">
+      <video ref="videoEl" crossorigin="anonymous" class="video-js video" />
+      <div class="buttons-container">
+        <div class="container-button-group">
+          <div class="container-button">
+            <span>Brillo: </span>
+            <i @click="increaseBrightness" class="fa-solid fa-plus" />
+            <i @click="decreaseBrightness" class="fa-solid fa-minus" />
+          </div>
+          <div class="container-button">
+            <span>Contraste: </span>
+            <i @click="increaseContrast" class="fa-solid fa-plus" />
+            <i @click="decreaseContrast" class="fa-solid fa-minus" />
+          </div>
+        </div>
+        <div class="container-recording-buttons">
+          <button v-if="!recordedBlob" @click="toggleRecording">
+            {{buttonLabel}}
+          </button>
+          <button v-if="recordedBlob" @click="downloadRecording" class="download">
+            Descargar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -72,27 +137,52 @@ button {
   border: none;
   padding: 0;
   margin: 0;
-  font-size: inherit;
-  color: inherit;
   cursor: pointer;
   outline: none;
+  color: $white;
+  font-size: $body-font-size;
 }
 
 .container {
+  width: 100%;
+  max-width: $desktop-lower-breakpoint;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  &-button {
-    width: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: red;
-    span {
-      color: $white;
+  padding: 24px;
+}
+
+.container-video {
+  position: relative;
+  width: 100%;
+  .video {
+    width: 100%;
+  }
+  .buttons-container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    bottom: 48px;
+    & .container-button-group .container-button {
+      span {
+        color: $white;
+      }
+      i {
+        color: $purple;
+      }
     }
   }
 }
+
+.container-button-group,
+.container-recording-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 </style>
