@@ -63,13 +63,10 @@ const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRe
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 
-function handleTimeUpdate(event: Event) {
-  const video = event.target as HTMLVideoElement;
-  if(!isAdmin.value) {
-    if(video.currentTime>=10) {
-      video.pause();
-      showMessage.value = true;
-    }
+function handleTimeUpdate(currentTime: number) {
+  if(!isAdmin.value && currentTime >= 10) {
+    videoVisible.value = false;
+    showMessage.value = true;
   }
 };
 
@@ -101,13 +98,9 @@ function handleInput(event: string, type: string): void {
         v-if="videoVisible" 
         class="schedule-container-video"
         :class="{ blurred: showMessage }">
-        <!-- <video controls @timeupdate="handleTimeUpdate">
-          <source 
-            :src="videoLink" 
-            type="video/mp4">
-            Tu navegador no soporta la etiqueta de video de HTML5.
-        </video> -->
-        <VideoCrazy/>
+        <VideoCrazy
+        :video-url="'https://storage.googleapis.com/videbox-bucket/videofile-1697663687202-VIDEO-2023-04-24-22-03-13_(online-video-cutter.mp4'"
+          @update:time="handleTimeUpdate"/>
         <NuxtLink
           :to="linkDestination"
           v-if="showMessage" 
