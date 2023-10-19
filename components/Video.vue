@@ -167,11 +167,16 @@ button {
     left: 10px;
     bottom: 48px;
     & .container-button-group .container-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
       span {
         color: $white;
       }
       i {
         color: $purple;
+        font-size: $body-font-size * 2;
       }
     }
   }
