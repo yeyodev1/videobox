@@ -23,11 +23,15 @@ import VideoCrazy from '@/components/Video.vue';
   width: 100%;
   padding: 24px;
   &-title {
+    text-align: center;
     color: $white;
     font-size: $body-font-size;
   }
   &-video {
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .videocrazy {
         width: 100%;
         max-width: $tablet-lower-breakpoint;
