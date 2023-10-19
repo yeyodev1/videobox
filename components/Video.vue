@@ -184,7 +184,7 @@ onBeforeMount(() => {
   .buttons-container {
     position: absolute;
     bottom: 10px;
-    left: 10px;
+    right: 10px;
     bottom: 48px;
     & .container-button-group .container-button {
       display: flex;
