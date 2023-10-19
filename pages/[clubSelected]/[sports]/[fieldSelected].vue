@@ -82,6 +82,8 @@ function handleInput(event: string, type: string): void {
     selectedTime.value = event
   }
 }
+
+// https://storage.googleapis.com/videbox-bucket/videofile-1697663687202-VIDEO-2023-04-24-22-03-13_(online-video-cutter.mp4
 </script>
 
 <template>
@@ -99,7 +101,7 @@ function handleInput(event: string, type: string): void {
         class="schedule-container-video"
         :class="{ blurred: showMessage }">
         <VideoCrazy
-        :video-url="'https://storage.googleapis.com/videbox-bucket/videofile-1697663687202-VIDEO-2023-04-24-22-03-13_(online-video-cutter.mp4'"
+          :video-url="'https://v3.cdnpk.net/videvo_files/video/free/video0485/large_watermarked/_import_624e701eba64a0.34411893_preview.mp4'"
           @update:time="handleTimeUpdate"/>
         <NuxtLink
           :to="linkDestination"
