@@ -185,7 +185,7 @@ onBeforeMount(() => {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    bottom: 48px;
+    bottom: 20%;
     & .container-button-group .container-button {
       display: flex;
       justify-content: center;
@@ -215,6 +215,7 @@ onBeforeMount(() => {
     font-size: $body-font-size;
     margin: 0;
     padding: 0;
+    position: absolute;
   }
 }
 .pointer-events-none {
