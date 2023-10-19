@@ -1,5 +1,20 @@
 <script setup>
 import VideoCrazy from '@/components/Video.vue';
+import useUserStore from '@/store/userStore';
+
+
+const userStore = useUserStore();
+
+const route = useRouter();
+
+
+const isLogged  = computed(() => userStore.user !== null);
+
+onMounted(() => {
+  if(!isLogged.value) {
+    route.push('/userRegister')
+  }
+})
 
 </script>
 
