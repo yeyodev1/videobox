@@ -42,7 +42,7 @@ class APIBase {
     }
   }
 
-  protected async post<T>(endpoint: string, data: any): Promise<T> {
+  protected async post<T>(endpoint: string, data?: any): Promise<T> {
     const url = this.buildUrl(endpoint);
     try {
       const response: AxiosResponse<T> = await axios.post(url, data, {

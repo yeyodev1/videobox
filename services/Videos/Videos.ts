@@ -5,5 +5,15 @@ class VideoService extends APIBase {
   async getVideos(): Promise<AxiosResponse<VideoType[] | null>> {
     return this.get('videos')
   }
+
+  async uploadVideo(file: File): Promise<AxiosResponse> {
+    const formData = new FormData();
+    formData.append('video', file);
+    return this.postWithFormData<AxiosResponse>(`upload-video`, formData);
+  }
+
+  async releaseVideo(email: string, videoId: string): Promise<AxiosResponse> {
+    return this.post(`realease-video/${email}/${videoId}`);
+  }
 }
 export default VideoService;
