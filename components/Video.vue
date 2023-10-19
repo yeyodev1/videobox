@@ -2,7 +2,7 @@
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css'
 
-const { videoUrl, showControls, options } = defineProps(['videoUrl', 'showControls', 'options']);
+const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
 const emit = defineEmits(['update:time'])
 
@@ -88,7 +88,7 @@ const buttonLabel = computed(() => (isRecording.value ? 'Detener' : 'Grabar'));
 
 onMounted(() => {
   const options = {
-    controls: showControls,
+    controls: noShowControls,
     autoplay: true,
     loop: true,
     preload: 'auto',

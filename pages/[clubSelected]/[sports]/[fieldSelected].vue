@@ -102,7 +102,7 @@ function handleInput(event: string, type: string): void {
         :class="{ blurred: showMessage }">
         <VideoCrazy
           :video-url="'https://v3.cdnpk.net/videvo_files/video/free/video0485/large_watermarked/_import_624e701eba64a0.34411893_preview.mp4'"
-          :show-controls="isAdmin"
+          :no-show-controls="isAdmin"
           :options="!isLoggedIn"
           @update:time="handleTimeUpdate"
           class="videocrazy"/>
