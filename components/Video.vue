@@ -2,7 +2,7 @@
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css'
 
-const { videoUrl, showControls } = defineProps(['videoUrl', 'showControls']);
+const { videoUrl, showControls, options } = defineProps(['videoUrl', 'showControls', 'options']);
 
 const emit = defineEmits(['update:time'])
 
@@ -90,6 +90,7 @@ onMounted(() => {
   const options = {
     controls: showControls,
     autoplay: true,
+    loop: true,
     preload: 'auto',
     muted: false,
     width: 640,
@@ -114,24 +115,32 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container" :class="{ 'pointer-events-none': options }">
     <div class="container-video">
       <video ref="videoEl" crossorigin="anonymous" class="video-js video" />
       <div class="buttons-container">
         <div class="container-button-group">
           <div class="container-button">
             <span>Brillo: </span>
-            <i @click="increaseBrightness" class="fa-solid fa-plus" />
-            <i @click="decreaseBrightness" class="fa-solid fa-minus" />
+            <button @click="increaseBrightness" class="option">
+              <i class="fa-solid fa-plus"/>
+            </button>
+            <button @click="decreaseBrightness" class="option">
+              <i class="fa-solid fa-minus"/>
+            </button>
           </div>
           <div class="container-button">
             <span>Contraste: </span>
-            <i @click="increaseContrast" class="fa-solid fa-plus" />
-            <i @click="decreaseContrast" class="fa-solid fa-minus" />
+            <button @click="increaseContrast" class="option">
+              <i class="fa-solid fa-plus"/>
+            </button>
+            <button @click="decreaseContrast" class="option">
+              <i class="fa-solid fa-minus"/>
+            </button>
           </div>
         </div>
         <div class="container-recording-buttons">
-          <button v-if="!recordedBlob" @click="toggleRecording">
+          <button v-if="!recordedBlob" @click="toggleRecording" class="download">
             {{buttonLabel}}
           </button>
           <button v-if="recordedBlob" @click="downloadRecording" class="download">
@@ -144,17 +153,16 @@ onBeforeMount(() => {
 </template>
 
 <style lang="scss" scoped>
-button {
-  background: none;
+.option {
+  background-color: rgba($grey, 0.6);
+  border-radius: 8px;
   border: none;
   padding: 0;
   margin: 0;
   cursor: pointer;
-  outline: none;
   color: $white;
   font-size: $body-font-size;
 }
-
 .container {
   width: 100%;
   max-width: $desktop-lower-breakpoint;
@@ -200,6 +208,17 @@ button {
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
+  .download {
+    background: none;
+    color: $white;
+    border: none;
+    font-size: $body-font-size;
+    margin: 0;
+    padding: 0;
+  }
+}
+.pointer-events-none {
+  pointer-events: none;
 }
 
 </style>
