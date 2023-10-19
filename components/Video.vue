@@ -122,7 +122,7 @@ onBeforeMount(() => {
         <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
           {{buttonLabel}}
         </button>
-        <button v-if="recordedBlob" @click="downloadRecording" class="download">
+        <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" class="download">
           Descargar
         </button>
       </div>
