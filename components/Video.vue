@@ -2,6 +2,9 @@
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css'
 
+const {videoUrl} = defineProps(['videoUrl']);
+const emit = defineEmits(['update:time'])
+
 const videoEl = ref(null);
 const mediaRecorder = ref(null);
 const recordedChunks = ref([]);
@@ -52,28 +55,31 @@ function downloadRecording() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
+};
 function increaseBrightness() {
   if (videoEl.value) {
     adjustBrightness(videoEl.value, 0.1);  
   }
-}
+};
 function decreaseBrightness() {
   if (videoEl.value) {
     adjustBrightness(videoEl.value, -0.1); 
   }
-}
+};
 function increaseContrast() {
   if (videoEl.value) {
     adjustContrast(videoEl.value, 0.1);  
   }
-}
+};
 function decreaseContrast() {
   if (videoEl.value) {
     adjustContrast(videoEl.value, -0.1); 
   }
-}
+};
+function handleTimeUpdate(event) {
+  const video = event.target;
+  emit('update:time', video.currentTime);
+};
 
 const buttonLabel = computed(() => (isRecording.value ? 'Detener' : 'Grabar'));
 
@@ -86,7 +92,7 @@ onMounted(() => {
     width: 640,
     height: 360,
     sources: [{
-      src: 'https://v3.cdnpk.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4',
+      src: videoUrl,
       type: 'video/mp4'
     }]
   }
