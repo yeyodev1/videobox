@@ -64,8 +64,7 @@ const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 
 function handleTimeUpdate(currentTime: number) {
-  console.log('current time:', currentTime)
-  if(!isAdmin.value && currentTime >= 2) {
+  if(!isAdmin.value && currentTime >= 3) {
     videoVisible.value = true;
     showMessage.value = true;
   }
@@ -104,6 +103,7 @@ function handleInput(event: string, type: string): void {
         <VideoCrazy
           :video-url="'https://v3.cdnpk.net/videvo_files/video/free/video0485/large_watermarked/_import_624e701eba64a0.34411893_preview.mp4'"
           :show-controls="isAdmin"
+          :options="isLoggedIn"
           @update:time="handleTimeUpdate"
           class="videocrazy"/>
         <NuxtLink
