@@ -64,8 +64,9 @@ const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 
 function handleTimeUpdate(currentTime: number) {
-  if(!isAdmin.value && currentTime >= 10) {
-    videoVisible.value = false;
+  console.log('current time:', currentTime)
+  if(!isAdmin.value && currentTime >= 2) {
+    videoVisible.value = true;
     showMessage.value = true;
   }
 };
@@ -102,7 +103,9 @@ function handleInput(event: string, type: string): void {
         :class="{ blurred: showMessage }">
         <VideoCrazy
           :video-url="'https://v3.cdnpk.net/videvo_files/video/free/video0485/large_watermarked/_import_624e701eba64a0.34411893_preview.mp4'"
-          @update:time="handleTimeUpdate"/>
+          :show-controls="isAdmin"
+          @update:time="handleTimeUpdate"
+          class="videocrazy"/>
         <NuxtLink
           :to="linkDestination"
           v-if="showMessage" 
@@ -170,11 +173,11 @@ function handleInput(event: string, type: string): void {
       display: flex;
       justify-content: center;
       align-items: center;
-      video {
+      .videocrazy {
         width: 100%;
         max-width: $tablet-lower-breakpoint;
       }
-      &.blurred video {
+      &.blurred .videocrazy {
         filter: blur(5px);
       }
       .overlay-message {

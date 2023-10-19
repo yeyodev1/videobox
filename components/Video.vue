@@ -2,7 +2,8 @@
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css'
 
-const {videoUrl} = defineProps(['videoUrl']);
+const { videoUrl, showControls } = defineProps(['videoUrl', 'showControls']);
+
 const emit = defineEmits(['update:time'])
 
 const videoEl = ref(null);
@@ -10,6 +11,7 @@ const mediaRecorder = ref(null);
 const recordedChunks = ref([]);
 const recordedBlob = ref(null);
 const isRecording = ref(false);
+const isDownloaded = ref(false);
 
 function startRecording() {
   recordedChunks.value = [];
@@ -55,6 +57,7 @@ function downloadRecording() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  isDownloaded.value = true;
 };
 function increaseBrightness() {
   if (videoEl.value) {
@@ -85,8 +88,8 @@ const buttonLabel = computed(() => (isRecording.value ? 'Detener' : 'Grabar'));
 
 onMounted(() => {
   const options = {
-    controls: true,
-    autoplay: false,
+    controls: showControls,
+    autoplay: true,
     preload: 'auto',
     muted: false,
     width: 640,
@@ -98,11 +101,14 @@ onMounted(() => {
   }
   const player = videojs(videoEl.value, options)
   videoEl.value.player = player;
+
+  videoEl.value.addEventListener('timeupdate', handleTimeUpdate);
 })
 
 onBeforeMount(() => {
   if (videoEl.value && videoEl.value.player) {
     videoEl.value.player.dispose();
+    videoEl.value.removeEventListener('timeupdate', handleTimeUpdate);
   }
 })
 </script>
