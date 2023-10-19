@@ -118,6 +118,14 @@ onBeforeMount(() => {
   <div class="container" :class="{ 'pointer-events-none': options }">
     <div class="container-video">
       <video ref="videoEl" crossorigin="anonymous" class="video-js video" />
+      <div class="buttons-center-bottom">
+        <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
+          {{buttonLabel}}
+        </button>
+        <button v-if="recordedBlob" @click="downloadRecording" class="download">
+          Descargar
+        </button>
+      </div>
       <div class="buttons-container">
         <div class="container-button-group">
           <div class="container-button">
@@ -138,14 +146,6 @@ onBeforeMount(() => {
               <i class="fa-solid fa-minus"/>
             </button>
           </div>
-        </div>
-        <div class="container-recording-buttons">
-          <button v-if="!recordedBlob" @click="toggleRecording" class="download">
-            {{buttonLabel}}
-          </button>
-          <button v-if="recordedBlob" @click="downloadRecording" class="download">
-            Descargar
-          </button>
         </div>
       </div>
     </div>
@@ -181,45 +181,48 @@ onBeforeMount(() => {
   .video {
     width: 100%;
   }
+  .buttons-center-bottom {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .recording, .download {
+      background: none;
+      color: $white;
+      border: none;
+      font-size: $body-font-size;
+    }
+  }
   .buttons-container {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    bottom: 20%;
-    & .container-button-group .container-button {
+    .container-button-group {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
-      span {
-        color: $white;
-      }
-      i {
-        color: $purple;
-        font-size: $body-font-size * 2;
+      gap: 6px;
+      margin-bottom: 25px;
+      .container-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        span {
+          color: $white;
+        }
+        i {
+          color: $purple;
+          font-size: $body-font-size * 2;
+        }
       }
     }
-  }
-}
-
-.container-button-group,
-.container-recording-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  .download {
-    background: none;
-    color: $white;
-    border: none;
-    font-size: $body-font-size;
-    margin: 0;
-    padding: 0;
-    position: absolute;
   }
 }
 .pointer-events-none {
   pointer-events: none;
 }
-
 </style>
