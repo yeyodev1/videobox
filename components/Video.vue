@@ -95,6 +95,7 @@ onMounted(() => {
     muted: false,
     width: 1000,
     height: 500,
+    preferFullWindow: false,
     controlBar:{
       fullscreenToggle: false,
       pictureInPictureToggle: false,
