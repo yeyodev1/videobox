@@ -206,7 +206,7 @@ onBeforeMount(() => {
     }
   }
   .buttons-container {
-    position: absolute;
+    position: relative;
     top: 10px;
     right: 10px;
     .container-button-group {
