@@ -208,11 +208,9 @@ onBeforeMount(() => {
       cursor: pointer;
     }
     .recording {
-      font-size: 24px;
-      border: 3px solid $white;
+      font-size: 48px;
       width: 50px;
       height: 50px;
-      border-radius: 100%;
     }
   }
   .buttons-container {
