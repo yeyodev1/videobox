@@ -194,6 +194,7 @@ onBeforeMount(() => {
       color: $white;
       border: none;
       font-size: $body-font-size;
+      margin-bottom: 30px;
     }
   }
   .buttons-container {
