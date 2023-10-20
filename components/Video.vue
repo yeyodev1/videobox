@@ -124,10 +124,10 @@ onBeforeMount(() => {
     <div class="container-video">
       <video playsinline ref="videoEl" crossorigin="anonymous" class="video-js video" />
       <div class="buttons-center-bottom">
-        <button v-if="!recordedBlob" @click="toggleRecording" v-on:touchend="toggleRecording"  class="recording">
+        <button v-if="!recordedBlob" @click="toggleRecording"  class="recording">
           🔴
         </button>
-        <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" v-on:touchend="toggleRecording" class="download">
+        <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" v-on:touchend="downloadRecording" class="download">
           Descargar
         </button>
       </div>
