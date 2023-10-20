@@ -122,7 +122,7 @@ onBeforeMount(() => {
 <template>
   <div class="container" :class="{ 'pointer-events-none': options }">
     <div class="container-video">
-      <video ref="videoEl" crossorigin="anonymous" class="video-js video" />
+      <video playsinline ref="videoEl" crossorigin="anonymous" class="video-js video" />
       <div class="buttons-center-bottom">
         <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
           🔴
