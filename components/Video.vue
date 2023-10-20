@@ -95,6 +95,10 @@ onMounted(() => {
     muted: false,
     width: 1000,
     height: 500,
+    controlBar:{
+      fullscreenToggle: false,
+      pictureInPictureToggle: false,
+    },
     sources: [{
       src: videoUrl,
       type: 'video/mp4'
