@@ -124,10 +124,10 @@ onBeforeMount(() => {
     <div class="container-video">
       <video playsinline ref="videoEl" crossorigin="anonymous" class="video-js video" />
       <div class="buttons-center-bottom">
-        <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
+        <button v-if="!recordedBlob" @click="toggleRecording" v-on:touchend="toggleRecording"  class="recording">
           🔴
         </button>
-        <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" class="download">
+        <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" v-on:touchend="toggleRecording" class="download">
           Descargar
         </button>
       </div>
@@ -216,6 +216,9 @@ onBeforeMount(() => {
       font-size: 48px;
       width: 50px;
       height: 50px;
+    }
+    .recording, .option, .download {
+      cursor: pointer;
     }
   }
   .buttons-container {
