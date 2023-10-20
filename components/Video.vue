@@ -195,6 +195,7 @@ onBeforeMount(() => {
       border: none;
       font-size: $body-font-size;
       margin-bottom: 12px;
+      cursor: pointer;
     }
     .recording {
       font-size: 24px;
