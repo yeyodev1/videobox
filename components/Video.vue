@@ -93,8 +93,8 @@ onMounted(() => {
     loop: true,
     preload: 'auto',
     muted: false,
-    width: 640,
-    height: 360,
+    width: 1000,
+    height: 500,
     sources: [{
       src: videoUrl,
       type: 'video/mp4'
