@@ -58,16 +58,8 @@ const videoLink = computed(() => {
 const removeText = computed(() => !videoVisible.value )
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 const isLoggedIn = computed(() => userStore.user !== null);
-const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister')
-const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 
-function handleTimeUpdate(currentTime: number) {
-  if(!isAdmin.value && currentTime >= 3) {
-    videoVisible.value = true;
-    showMessage.value = true;
-  }
-};
 
 function showVideo() {
   videoVisible.value = true;
@@ -115,9 +107,8 @@ function handleInput(event: string, type: string): void {
         class="schedule-email"/>
     </div>
     <NuxtLink
+      v-if="allFieldsSelected"
       :to="`${route.params.fieldSelected}/${selectedDate}-${selectedTime}`"
-      varian="primary"
-      :disabled="!allFieldsSelected"
       @click="showVideo"
       class="button">
       {{ buttonTextForButton }}

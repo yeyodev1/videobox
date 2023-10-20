@@ -2,6 +2,11 @@
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css'
 
+import useUserStore from '@/store/userStore';
+
+const userStore = useUserStore();
+
+
 const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
 const emit = defineEmits(['update:time'])
@@ -12,6 +17,25 @@ const recordedChunks = ref([]);
 const recordedBlob = ref(null);
 const isRecording = ref(false);
 const isDownloaded = ref(false);
+
+const isLoggedIn = computed(() => userStore.user !== null);
+const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
+const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister');
+const isBlurred = computed(() => {
+  if (isAdmin.value) {
+    return false;
+  }
+  if (!isLoggedIn.value) {
+    return true;
+  }
+  return true;
+});
+const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
+
+
+
+
+
 
 function startRecording() {
   recordedChunks.value = [];
@@ -82,9 +106,14 @@ function decreaseContrast() {
 function handleTimeUpdate(event) {
   const video = event.target;
   emit('update:time', video.currentTime);
+  if(video.currentTime >= 4) {
+    isBlurred.value = true;
+  }
 };
+function toggleBlur() {
+  isBlurred.value = !isBlurred.value;
+}
 
-const buttonLabel = computed(() => (isRecording.value ? 'Detener' : 'Grabar'));
 
 onMounted(() => {
   const options = {
@@ -122,12 +151,23 @@ onBeforeMount(() => {
 <template>
   <div class="container" :class="{ 'pointer-events-none': options }">
     <div class="container-video">
-      <video playsinline ref="videoEl" crossorigin="anonymous" class="video-js video" />
+      <video 
+        playsinline 
+        ref="videoEl" 
+        crossorigin="anonymous" 
+        :class="{ blurred: isBlurred }"
+        class="video-js video" 
+        />
+        <div v-if="isBlurred" class="overlay">
+          <button class="overlay-button">
+            Para ver lo demás, <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
+          </button>
+        </div>
       <div class="buttons-center-bottom">
-        <button v-if="!recordedBlob" @click="toggleRecording"  class="recording">
+        <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
           🔴
         </button>
-        <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" v-on:touchend="downloadRecording" class="download">
+        <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecording" class="download">
           Descargar
         </button>
       </div>
@@ -178,6 +218,28 @@ onBeforeMount(() => {
   z-index: 10000;
 }
 
+.blurred {
+  filter: blur(10px);
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.overlay-button {
+  background-color: #444;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 .container-video {
   position: absolute;
   top: 0;
