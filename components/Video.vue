@@ -164,22 +164,32 @@ onBeforeMount(() => {
   font-size: $body-font-size;
 }
 .container {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: $desktop-lower-breakpoint;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 24px;
+  height: 100%;
+  overflow: hidden;
+  z-index: 10000;
 }
 
 .container-video {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
   .video {
-    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;  
+    object-position: center; 
   }
   .buttons-center-bottom {
     position: absolute;

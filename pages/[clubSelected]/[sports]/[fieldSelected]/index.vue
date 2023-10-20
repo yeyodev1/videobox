@@ -5,7 +5,6 @@ import CrushButton from '@nabux-crush/crush-button';
 import SelectInput from '@/components/SelectInput.vue'
 import useClubStore from '@/store/clubStore';
 import useUserStore from '@/store/userStore';
-import VideoCrazy from '@/components/Video.vue';
 
 const useRunTimeConfig = useRuntimeConfig();
 
@@ -115,12 +114,14 @@ function handleInput(event: string, type: string): void {
         label="Ingresa el correo electronico"
         class="schedule-email"/>
     </div>
-    <CrushButton
+    <NuxtLink
+      :to="`${route.params.fieldSelected}/${selectedDate}-${selectedTime}`"
       varian="primary"
-      :text="buttonTextForButton" 
       :disabled="!allFieldsSelected"
       @click="showVideo"
-      class="button"/>
+      class="button">
+      {{ buttonTextForButton }}
+    </NuxtLink>
   </div>
 </template>
 
@@ -191,6 +192,9 @@ function handleInput(event: string, type: string): void {
     color: $white;
     font-family: $font;
     border: none;
+    padding: 12px;
+    text-decoration: none;
+    border-radius: 8px;
   }
   
 }
