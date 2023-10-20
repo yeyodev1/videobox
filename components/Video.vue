@@ -120,7 +120,7 @@ onBeforeMount(() => {
       <video ref="videoEl" crossorigin="anonymous" class="video-js video" />
       <div class="buttons-center-bottom">
         <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
-          {{buttonLabel}}
+          🔴
         </button>
         <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" class="download">
           Descargar
@@ -194,12 +194,18 @@ onBeforeMount(() => {
       color: $white;
       border: none;
       font-size: $body-font-size;
-      margin-bottom: 30px;
+      margin-bottom: 12px;
+    }
+    .recording {
+      font-size: 24px;
+      border: 3px solid $white;
+      width: 50px;
+      height: 50px;
     }
   }
   .buttons-container {
     position: absolute;
-    bottom: 10px;
+    top: 10px;
     right: 10px;
     .container-button-group {
       display: flex;
