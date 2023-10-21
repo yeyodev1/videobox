@@ -207,6 +207,9 @@ onBeforeMount(() => {
   cursor: pointer;
   color: $white;
   font-size: $body-font-size;
+  &:active { 
+    background-color: rgba($grey, 0.8); 
+  }
 }
 .container {
   position: fixed;
