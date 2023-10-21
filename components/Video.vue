@@ -47,7 +47,7 @@ function startRecording() {
     }
   };
   mediaRecorder.value.onstop = () => {
-    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/webm' });
+    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
   };
   mediaRecorder.value.onerror = (event) => {
     console.error('MediaRecorder error:', event.error);
@@ -76,7 +76,7 @@ function downloadRecording() {
   const a = document.createElement('a');
   a.style.display = 'none';
   a.href = url;
-  a.download = 'recording.webm';
+  a.download = 'recording.mp4';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -175,10 +175,10 @@ onBeforeMount(() => {
         <div class="container-button-group">
           <div class="container-button">
             <span>Brillo: </span>
-            <button @click="increaseBrightness" class="option">
+            <button @touchend="increaseBrightness" class="option">
               <i class="fa-solid fa-plus"/>
             </button>
-            <button @click="decreaseBrightness" class="option">
+            <button @touchend="decreaseBrightness" class="option">
               <i class="fa-solid fa-minus"/>
             </button>
           </div>
