@@ -175,10 +175,10 @@ onBeforeMount(() => {
         <div class="container-button-group">
           <div class="container-button">
             <span>Brillo: </span>
-            <button @touchend="increaseBrightness" class="option">
+            <button @click="increaseBrightness" class="option">
               <i class="fa-solid fa-plus"/>
             </button>
-            <button @touchend="decreaseBrightness" class="option">
+            <button @click="decreaseBrightness" class="option">
               <i class="fa-solid fa-minus"/>
             </button>
           </div>
