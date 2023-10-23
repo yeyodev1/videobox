@@ -17,6 +17,7 @@ const recordedBlob = ref(null);
 const isRecording = ref(false);
 const isDownloaded = ref(false);
 const timeBlur = ref(false);
+const isRecordingActive = ref(false);
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -64,6 +65,7 @@ function stopRecording() {
 };
 
 function toggleRecording() {
+  isRecordingActive.value = !isRecordingActive.value;
   if (isRecording.value) {
     stopRecording();
   } else {
@@ -182,8 +184,8 @@ onBeforeMount(() => {
           </button>
         </div>
       <div class="buttons-center-bottom">
-        <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
-          🔴
+        <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
+          <span class="circle" :class="{ 'active': isRecordingActive }"></span>
         </button>
         <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecording" class="download">
           Descargar
@@ -297,8 +299,29 @@ onBeforeMount(() => {
     }
     .recording {
       font-size: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       width: 50px;
       height: 50px;
+      border: 4px solid rgb(255, 255, 255);
+      border-radius: 100%;
+      padding: 0;
+      .circle {
+        background-color: red;
+        border-radius: 100%;
+        width: 100%;
+        height: 100%;
+        display:  flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.5S ease-in-out;
+        &.active {
+          width: 50%;
+          height: 50%;
+          border-radius: 0; 
+        }
+      }
     }
     .recording, .option, .download {
       cursor: pointer;
