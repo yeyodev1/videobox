@@ -38,13 +38,23 @@ const menu = computed(() => webMenuItems)
 
 <style lang="scss" scoped>
 .header {
+	width: 100%;
+	max-width: $desktop-upper-breakpoint;
+	margin: 0 auto;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 8px;
 	padding: 24px 12px;
-	@media (min-width: $tablet-lower-breakpoint) {
+	@media (min-width: $tablet-upper-breakpoint) {
 		padding: 24px;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+	}
+	figure img {
+		@media (min-width: $tablet-lower-breakpoint) {
+			width: 400px;
+		}
 	}
 	&-icon {
 		display: flex;
@@ -65,6 +75,7 @@ const menu = computed(() => webMenuItems)
 			display: flex;
 			gap: 16px;
 			justify-content: space-around;
+			flex-direction: row-reverse;
 			align-items: center;
 
 			& :first-child {
