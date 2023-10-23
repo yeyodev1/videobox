@@ -10,12 +10,12 @@ function getYear(): number {
   <footer class="footer">
     <div class="footer-container">
       <span>
-        <a href="https://github.com/yeyodev1" target="_blank">
-          <i class="fa-brands fa-github"></i>
+        <a href="https://api.whatsapp.com/send/?phone=51906894857&text=Estoy+interesado+en+adquirir+un+video&type=phone_number&app_absent=0" target="_blank">
+          <i class="fa-brands fa-whatsapp"></i>
         </a>
       </span>
       <span>
-        <a href="https://www.instagram.com/yeyo.dev/" target="_blank">
+        <a href="https://www.instagram.com/videobox.pe?igshid=MjEwN2IyYWYwYw%3D%3D" target="_blank">
           <i class="fa-brands fa-instagram"></i>
         </a>
       </span>
