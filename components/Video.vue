@@ -16,6 +16,7 @@ const recordedChunks = ref([]);
 const recordedBlob = ref(null);
 const isRecording = ref(false);
 const isDownloaded = ref(false);
+const timeBlur = ref(false);
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -25,16 +26,10 @@ const videoPurchased = computed(() => {
   return video ? true : false;
 });
 const isBlurred = computed(() => {
-  if (isAdmin.value) {
-    return false;
-  }
-  if (!isLoggedIn.value) {
-    return true;
-  }
-  if (videoPurchased.value && isLoggedIn.value) {
-    return false;
-  }
-  return true;
+  return timeBlur.value || (
+    !isAdmin.value && 
+    (!isLoggedIn.value || (videoPurchased.value && isLoggedIn.value))
+  );
 });
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 
@@ -106,7 +101,7 @@ function handleTimeUpdate(event) {
   const video = event.target;
   emit('update:time', video.currentTime);
   if(video.currentTime >= 4) {
-    isBlurred.value = true;
+    timeBlur.value = true;
   }
 };
 function toggleBlur() {
@@ -120,7 +115,7 @@ onMounted(() => {
     autoplay: true,
     loop: true,
     preload: 'auto',
-    muted: false,
+    muted: true,
     width: 1000,
     height: 500,
     preferFullWindow: false,
@@ -154,7 +149,7 @@ onBeforeMount(() => {
         playsinline 
         ref="videoEl" 
         crossorigin="anonymous" 
-        :class="{ blurred: isBlurred }"
+        :class="{ blurred: isBlurred || timeBlur }"
         class="video-js video" 
         />
         <div v-if="isBlurred" class="overlay">
