@@ -1,6 +1,6 @@
 import { ParsedVideo, VideoInput } from "~/typings/VideoTypes";
 
-export function parseVideoName({name, directLink, downloadLink, webLink}: VideoInput) : ParsedVideo | null {
+export function parseVideoName({name, fileId, _id, url}: VideoInput) : ParsedVideo | null {
   const match = name.match(/(\d{4}-\d{2}-\d{2}) (\d{2}-\d{2}-\d{2}) CAM (\d+).mp4/);
 
   if (match) {
@@ -11,9 +11,9 @@ export function parseVideoName({name, directLink, downloadLink, webLink}: VideoI
       date: date,
       time: formattedTime,
       field: `Cancha ${cam}`,
-      directLink: directLink,
-      downloadLink: downloadLink,
-      webLink: webLink
+      fileId: fileId,
+      id: _id,
+      url: url
     };
   } else {
     return null

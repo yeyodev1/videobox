@@ -1,38 +1,44 @@
-<script setup>
-import axios from 'axios';
-
+<script setup lang="ts">
 import VideoCrazy from '@/components/Video.vue';
 
-const videoUrl = ref(null);
+import useClubStore from '~/store/clubStore';
 
-const fetchVideo = async () => {
-  try {
-    const response = await axios.get('https://storage.googleapis.com/videbox-bucket/video2023-08-28%2016-30-06%20CAM%201.mp4');
+const route = useRoute();
 
-    if(!response.ok) {
-      throw new Error (`Network response was not ok: ${response.statusText}`)
-    };
-    console.log(response)
-    const blob = await response.blob();
-    videoUrl.value = URL.createObjectURL(blob);
-  } catch (error){
-    console.log('hubo un problema con el fetcheo', error)
+const clubStore = useClubStore();
+
+// const url = ref<string | null>('');
+
+const url = computed(() => {
+  const routeParams = route.params;
+  const videos = clubStore.clubs[0].sports[0].videos;
+
+  if (typeof routeParams.video === 'string') {
+    const videoSelected = routeParams.video.split('-');
+    const date = videoSelected.slice(0, 3).join('-');
+    const time = videoSelected[3];
+  
+    const video = videos.find(v => {
+      console.log(v.field, routeParams.fieldSelected, v.date, date, v.time, time);
+      return v.field === routeParams.fieldSelected &&
+            v.date === date &&
+            v.time.substring(0, 5) === time;
+    });
+  
+    return video ? video.url : null;
   }
-}
-
-onMounted(() => {
-  fetchVideo();
+  return null;
 })
 </script>
 
-<!-- video-url='https://storage.googleapis.com/videbox-bucket/video2023-08-28%2016-30-06%20CAM%201.mp4' -->
 <template>
   <div>
     <p>
       aqui ira el video
     </p>
     <VideoCrazy
-      :video-url="'https://v3.cdnpk.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4'"
+      v-if="url?.length"
+      :video-url="url"
       :no-show-controls="true"
       :options="false" />
   </div>

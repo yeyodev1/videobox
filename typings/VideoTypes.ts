@@ -2,14 +2,14 @@ export interface ParsedVideo {
   date: string;
   time: string;
   field: string;
-  directLink: string;
-  downloadLink: string;
-  webLink: string;
+  fileId: string;
+  id: string;
+  url: string
 }
 
 export interface VideoInput {
   name: string;
-  directLink: string;
-  downloadLink: string;
-  webLink: string;
+  _id: string;
+  url: string;
+  fileId: string;
 }
