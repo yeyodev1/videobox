@@ -9,6 +9,7 @@ import useUserStore from '@/store/userStore';
 const useRunTimeConfig = useRuntimeConfig();
 
 const route = useRoute();
+const router = useRouter();
 
 const userStore = useUserStore();
 const clubStore = useClubStore();
@@ -48,12 +49,18 @@ const optionsSchedule = computed(() => {
     }
   }) || [];
 });
-const videoLink = computed(() => {
-  const matchedVideo = clubStore.clubs[0].sports[0].videos.find(video => video.field === route.params.fieldSelected)
+const url = computed(() => {
+  const videos = clubStore.clubs[0].sports[0].videos;
 
-  const fileId = matchedVideo ? matchedVideo.directLink : '';
+  const video = videos.find(v => {
+    return v.field === route.params.fieldSelected &&
+      v.date === selectedDate.value &&
+      v.time.substring(0, 5) === selectedTime.value;
+  });
+  console.log(video)
 
-  return `https://www.googleapis.com/drive/v3/files/${fileId}?key=${useRunTimeConfig.public.NUXT_API_KEY}&alt=media`;
+  return video ? video.url : null;
+
 });
 const removeText = computed(() => !videoVisible.value )
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -62,7 +69,12 @@ const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Bu
 
 
 function showVideo() {
-  videoVisible.value = true;
+  const redirectLink = `${route.params.fieldSelected}/${selectedDate.value}-${selectedTime.value}`
+  if (isAdmin.value) {
+    videoVisible.value = true;
+  } else {
+    router.push(redirectLink);
+  }
 };
 
 function handleInput(event: string, type: string): void {
@@ -85,6 +97,12 @@ function handleInput(event: string, type: string): void {
       class="schedule-flag">
       Selecciona la fecha y hora de tu partido
     </p>
+    <video
+      v-if="url && isAdmin"
+      :src="url"
+      controls
+      class="video">
+    </video>
     <div class="schedule-container">
       <SelectInput
         :options="optionDays"
@@ -104,13 +122,12 @@ function handleInput(event: string, type: string): void {
         label="Ingresa el correo electronico"
         class="schedule-email"/>
     </div>
-    <NuxtLink
+    <CrushButton
       v-if="allFieldsSelected"
-      :to="`${route.params.fieldSelected}/${selectedDate}-${selectedTime}`"
+      :text="buttonTextForButton"
       @click="showVideo"
       class="button">
-      {{ buttonTextForButton }}
-    </NuxtLink>
+    </CrushButton>
   </div>
 </template>
 
@@ -123,6 +140,12 @@ function handleInput(event: string, type: string): void {
   justify-content: center;
   align-items: center;
   gap: 40px;
+  .video {
+    width: 50%;
+    @media (max-width: $tablet-lower-breakpoint) {
+      width: 100%;
+    }
+  }
   &-title {
     font-size: $h1-font-size;
     text-align: center;

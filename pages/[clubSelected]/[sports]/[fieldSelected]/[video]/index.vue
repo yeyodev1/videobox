@@ -19,7 +19,6 @@ const url = computed(() => {
     const time = videoSelected[3];
   
     const video = videos.find(v => {
-      console.log(v.field, routeParams.fieldSelected, v.date, date, v.time, time);
       return v.field === routeParams.fieldSelected &&
             v.date === date &&
             v.time.substring(0, 5) === time;
