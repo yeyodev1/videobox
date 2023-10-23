@@ -18,7 +18,7 @@ const props = defineProps({
 <template>
   <div class="card">
     <NuxtLink :to="link" class="card-link">
-      <video :src="videoUrl" class="video"></video>
+      <video :src="videoUrl" poster="@/assets/padel.jpg" class="video"></video>
       <p class="card-link-date">
         {{ date }}
       </p>
@@ -44,6 +44,7 @@ const props = defineProps({
     }
     .video {
       width: 100%;
+      border-radius: 8px;
     }
     &-date {
       font-size: $body-font-size;
