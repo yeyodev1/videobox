@@ -7,8 +7,6 @@ const route = useRoute();
 
 const clubStore = useClubStore();
 
-// const url = ref<string | null>('');
-
 const url = computed(() => {
   const routeParams = route.params;
   const videos = clubStore.clubs[0].sports[0].videos;

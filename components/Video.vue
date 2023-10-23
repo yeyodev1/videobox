@@ -6,7 +6,6 @@ import useUserStore from '@/store/userStore';
 
 const userStore = useUserStore();
 
-
 const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
 const emit = defineEmits(['update:time'])
@@ -21,6 +20,10 @@ const isDownloaded = ref(false);
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister');
+const videoPurchased = computed(() => {
+  const video = userStore.user.videos.find(video => video.url === videoUrl);
+  return video ? true : false;
+});
 const isBlurred = computed(() => {
   if (isAdmin.value) {
     return false;
@@ -28,14 +31,12 @@ const isBlurred = computed(() => {
   if (!isLoggedIn.value) {
     return true;
   }
+  if (videoPurchased.value && isLoggedIn.value) {
+    return false;
+  }
   return true;
 });
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
-
-
-
-
-
 
 function startRecording() {
   recordedChunks.value = [];
