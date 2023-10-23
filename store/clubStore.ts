@@ -33,7 +33,6 @@ const useClubStore = defineStore("useClubStore", {
     async getVideos(): Promise<void> {
       try {
         const response = await videoService.getVideos();
-        console.log(response);
         this.clubs[0].sports[0].videos = response.data?.map(video => parseVideoName(video)).filter(Boolean) as VideoType;
       } catch (error) {
         console.log(error);

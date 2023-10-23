@@ -73,8 +73,6 @@ function handleInput(event: string, type: string): void {
     selectedTime.value = event
   }
 }
-
-// https://storage.googleapis.com/videbox-bucket/videofile-1697663687202-VIDEO-2023-04-24-22-03-13_(online-video-cutter.mp4
 </script>
 
 <template>

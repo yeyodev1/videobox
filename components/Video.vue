@@ -54,13 +54,11 @@ function startRecording() {
   };
   mediaRecorder.value.start();
   isRecording.value = true;
-  console.log('Recording started');
 };
 
 function stopRecording() {
   mediaRecorder.value.stop();
   isRecording.value = false;
-  console.log('Recording stopped');
 };
 
 function toggleRecording() {
