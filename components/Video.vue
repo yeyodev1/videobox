@@ -82,6 +82,9 @@ function downloadRecording() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   isDownloaded.value = true;
+
+  recordedBlob.value = null;
+  isDownloaded.value = false;
 };
 function increaseBrightness() {
   if (videoEl.value) {
