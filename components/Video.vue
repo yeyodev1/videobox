@@ -100,8 +100,9 @@ function decreaseContrast() {
 function handleTimeUpdate(event) {
   const video = event.target;
   emit('update:time', video.currentTime);
-  if(video.currentTime >= 4) {
+  if(video.currentTime >= 15) {
     timeBlur.value = true;
+    videoEl.value.pause();
   }
 };
 function toggleBlur() {
