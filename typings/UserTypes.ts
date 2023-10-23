@@ -1,3 +1,5 @@
+import { VideoInput } from '@/typings/VideoTypes';
+
 export type User = {
   name?: string,
   lastname?: string,
@@ -11,5 +13,6 @@ export type User = {
   password?: string,
   isPaid?: boolean,
   _id?: string,  
-  token?: string, 
+  token?: string,
+  videos: VideoInput[]
 }

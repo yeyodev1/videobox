@@ -6,8 +6,6 @@ import SelectInput from '@/components/SelectInput.vue'
 import useClubStore from '@/store/clubStore';
 import useUserStore from '@/store/userStore';
 
-const useRunTimeConfig = useRuntimeConfig();
-
 const route = useRoute();
 const router = useRouter();
 
@@ -18,6 +16,8 @@ const selectedDate = ref('');
 const selectedTime = ref('');
 const videoVisible = ref(false);
 const showMessage = ref(false);
+const email = ref('');
+const videoId = ref('');
 
 
 const filteredSchedule = computed(() => {
@@ -57,10 +57,9 @@ const url = computed(() => {
       v.date === selectedDate.value &&
       v.time.substring(0, 5) === selectedTime.value;
   });
-  console.log(video)
-
+  
+  videoId.value = video?.id!;
   return video ? video.url : null;
-
 });
 const removeText = computed(() => !videoVisible.value )
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -68,12 +67,16 @@ const isLoggedIn = computed(() => userStore.user !== null);
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 
 
-function showVideo() {
+async function showVideo() {
   const redirectLink = `${route.params.fieldSelected}/${selectedDate.value}-${selectedTime.value}`
-  if (isAdmin.value) {
-    videoVisible.value = true;
-  } else {
-    router.push(redirectLink);
+  try {
+    if (isAdmin.value) {
+      clubStore.releaseVideo(email.value, videoId.value);
+    } else {
+      router.push(redirectLink);
+    }
+  } catch (error) {
+    console.log(error)
   }
 };
 
@@ -119,8 +122,9 @@ function handleInput(event: string, type: string): void {
       </SelectInput>
       <CrushTextField
         v-if="isAdmin"
+        v-model="email"
         label="Ingresa el correo electronico"
-        class="schedule-email"/>
+        class="schedule-email" />
     </div>
     <CrushButton
       v-if="allFieldsSelected"

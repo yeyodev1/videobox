@@ -38,15 +38,13 @@ const useClubStore = defineStore("useClubStore", {
         console.log(error);
       }
     },
-    // async releaseVideo(id: string): Promise<void> {
-    //   try {
-    //     const 
-    //     const video = await videoService.uploadVideo()
-    //     console.log(video)
-    //   } catch(error) {
-    //     console.log(error)
-    //   }
-    // }
+    async releaseVideo(email: string, videoId: string): Promise<void> {
+      try {
+        await videoService.releaseVideo(email, videoId);
+      } catch(error) {
+        console.log(error)
+      }
+    }
   }
 });
 

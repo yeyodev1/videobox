@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
-import { computed } from "vue";
+import { RouterLink } from 'vue-router';
+import { computed } from 'vue';
 import CrushButton from '@nabux-crush/crush-button';
 
 

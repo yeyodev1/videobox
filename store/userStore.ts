@@ -43,6 +43,7 @@ export const useUserStore = defineStore('UserStore', {
       this.isLoading = true
       try {
         const response = await userService.login(email, password)
+        console.log(response.data)
         this.user = response.data
     
         localStorage.setItem('access_token', this.user?.token!)
