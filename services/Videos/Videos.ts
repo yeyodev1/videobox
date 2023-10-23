@@ -13,7 +13,6 @@ class VideoService extends APIBase {
   }
 
   async releaseVideo(email: string, videoId: string): Promise<AxiosResponse> {
-    console.log(email, videoId)
     return this.post(`release-video/${email}/${videoId}`);
   }
 }
