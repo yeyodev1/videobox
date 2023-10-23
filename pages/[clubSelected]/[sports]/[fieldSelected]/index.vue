@@ -15,10 +15,10 @@ const clubStore = useClubStore();
 const selectedDate = ref('');
 const selectedTime = ref('');
 const videoVisible = ref(false);
-const showMessage = ref(false);
 const email = ref('');
 const videoId = ref('');
-
+const apiKey = ref(0);
+const success = ref(false);
 
 const filteredSchedule = computed(() => {
   const fieldFromRoute = route.params.fieldSelected;
@@ -63,18 +63,24 @@ const url = computed(() => {
 });
 const removeText = computed(() => !videoVisible.value )
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
-const isLoggedIn = computed(() => userStore.user !== null);
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
-
+const showMessage = computed(() => success.value && !clubStore.errorMessage);
 
 async function showVideo() {
   const redirectLink = `${route.params.fieldSelected}/${selectedDate.value}-${selectedTime.value}`
   try {
     if (isAdmin.value) {
       clubStore.releaseVideo(email.value, videoId.value);
+      success.value = true;
     } else {
       router.push(redirectLink);
     }
+    email.value = '';
+    videoId.value = '';
+    selectedDate.value = ''
+    selectedTime.value = ''
+    apiKey.value++;
+    setTimeout(() => success.value = false, 4000);
   } catch (error) {
     console.log(error)
   }
@@ -100,6 +106,11 @@ function handleInput(event: string, type: string): void {
       class="schedule-flag">
       Selecciona la fecha y hora de tu partido
     </p>
+    <span 
+        v-if="showMessage"
+        class="success">
+        *Video liberado*
+      </span>
     <video
       v-if="url && isAdmin"
       :src="url"
@@ -108,6 +119,7 @@ function handleInput(event: string, type: string): void {
     </video>
     <div class="schedule-container">
       <SelectInput
+        :key="apiKey"
         :options="optionDays"
         :value="selectedDate"
         label="Escoge el día"
@@ -115,6 +127,7 @@ function handleInput(event: string, type: string): void {
         >
       </SelectInput>
       <SelectInput
+        :key="apiKey"
         :options="optionsSchedule"
         :value="selectedTime"
         label="Escoge la hora"
@@ -123,8 +136,14 @@ function handleInput(event: string, type: string): void {
       <CrushTextField
         v-if="isAdmin"
         v-model="email"
+        :key="apiKey"
         label="Ingresa el correo electronico"
         class="schedule-email" />
+      <span 
+        v-if="clubStore.errorMessage"
+        class="warning">
+        *{{ clubStore.errorMessage }}*
+      </span>
     </div>
     <CrushButton
       v-if="allFieldsSelected"
@@ -158,6 +177,9 @@ function handleInput(event: string, type: string): void {
     font-size: $h3-font-size;
     font-weight: 700;
   }
+  .success {
+    color: $green;
+  }
   &-container {
     width: 100%;
     max-width: $tablet-upper-breakpoint;
@@ -167,6 +189,9 @@ function handleInput(event: string, type: string): void {
     padding: 24px;
     border-radius: 8px;
     gap: 12px;
+    .warning {
+      color: $red;
+    }
     &-video {
       position: relative;
       width: 100%;

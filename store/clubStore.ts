@@ -8,10 +8,14 @@ import type { Club } from '~/typings/Field&Sport';
 const videoService = new VideoService();
 interface RootState {
   clubs: Club[];
+  errorMessage: string | null,
+  isLoading: boolean,
 }
 
 const useClubStore = defineStore("useClubStore", {
   state: (): RootState => ({
+    errorMessage: null,
+    isLoading: false,
     clubs: [
       {  
       image: club,
@@ -39,10 +43,14 @@ const useClubStore = defineStore("useClubStore", {
       }
     },
     async releaseVideo(email: string, videoId: string): Promise<void> {
+      this.isLoading = true;
       try {
         await videoService.releaseVideo(email, videoId);
-      } catch(error) {
-        console.log(error)
+      } catch(error: any) {
+        this.errorMessage = error.message;
+        console.log(this.errorMessage)
+      } finally {
+        this.isLoading = false;
       }
     }
   }
