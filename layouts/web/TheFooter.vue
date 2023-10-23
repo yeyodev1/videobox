@@ -10,10 +10,14 @@ function getYear(): number {
   <footer class="footer">
     <div class="footer-container">
       <span>
-        <i class="fa-brands fa-facebook"></i>
+        <a href="https://github.com/yeyodev1" target="_blank">
+          <i class="fa-brands fa-github"></i>
+        </a>
       </span>
       <span>
-        <i class="fa-brands fa-instagram"></i>
+        <a href="https://www.instagram.com/yeyo.dev/" target="_blank">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
       </span>
     </div>
     <div class="yeyodev">
