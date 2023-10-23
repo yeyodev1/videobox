@@ -26,10 +26,16 @@ const videoPurchased = computed(() => {
   return video ? true : false;
 });
 const isBlurred = computed(() => {
-  return timeBlur.value || (
-    !isAdmin.value && 
-    (!isLoggedIn.value || (videoPurchased.value && isLoggedIn.value))
-  );
+  if (isAdmin.value) {
+    return false;
+  }
+  if (!isLoggedIn.value) {
+    return true;
+  }
+  if (videoPurchased.value && isLoggedIn.value) {
+    return false;
+  }
+  return true;
 });
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 
@@ -97,17 +103,31 @@ function decreaseContrast() {
     adjustContrast(videoEl.value, -0.1); 
   }
 };
+
+function shouldPauseVideo() {
+  if (isAdmin.value) {
+    return false;
+  }
+  if (!isLoggedIn.value) {
+    return true;
+  }
+  if (videoPurchased.value && isLoggedIn.value) {
+    return false;
+  }
+  if (videoEl.value.currentTime >= 15) {
+    timeBlur.value = true;
+    return true;
+  }
+  return false;
+}
+
 function handleTimeUpdate(event) {
   const video = event.target;
   emit('update:time', video.currentTime);
-  if(video.currentTime >= 15) {
-    timeBlur.value = true;
+  if (shouldPauseVideo()) {
     videoEl.value.pause();
   }
 };
-function toggleBlur() {
-  isBlurred.value = !isBlurred.value;
-}
 
 
 onMounted(() => {
@@ -150,7 +170,7 @@ onBeforeMount(() => {
         playsinline 
         ref="videoEl" 
         crossorigin="anonymous" 
-        :class="{ blurred: isBlurred || timeBlur }"
+        :class="{ blurred: isBlurred && timeBlur }"
         class="video-js video" 
         />
         <div v-if="isBlurred" class="overlay">
