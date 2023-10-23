@@ -1,19 +1,30 @@
-<script setup>
+<script setup lang="ts">
 import useUserStore from '@/store/userStore';
+import { parseVideoName } from '@/utils/videoParser';
+import { VideoInput } from '@/typings/VideoTypes';
 
 const userStore = useUserStore();
 
-const route = useRoute();
-
-const mygames = route.path;
+const router = useRouter();
 
 const isLogged  = computed(() => userStore.user !== null);
 
 onMounted(() => {
-  if(!isLogged.value) {
-    route.push('/userRegister')
+  if (!isLogged.value) {
+    router.push('/userRegister')
   }
-})
+});
+
+function setLink(name: VideoInput): string {
+  const video = parseVideoName(name);
+  const formattedTime = video?.time.substring(0, 5);
+  return `/one-padel/padel-1/${video?.field}/${video?.date}-${formattedTime}`
+}
+
+function setDate(name: VideoInput): string {
+  const video = parseVideoName(name);
+  return video?.date!;
+}
 </script>
 
 <template>
@@ -22,18 +33,12 @@ onMounted(() => {
       Estos son tus juegos 
     </p>
     <div class="container-games">
-      <GameCard 
-        :link="`${mygames}/soybello`"
-        date="1 de enero"/>
-      <GameCard 
-        :link="`${mygames}/soybello`"
-        date="1 de enero"/>
-      <GameCard 
-        :link="`${mygames}/soybello`"
-        date="1 de enero"/>
-      <GameCard 
-        :link="`${mygames}/soybello`"
-        date="1 de enero"/>
+      <GameCard
+        v-for="(video, index) in userStore.user?.videos"
+        :key="index"
+        :link="setLink(video)"
+        :date="setDate(video)"
+        :video-url="video.url" />
     </div>
   </div>
 </template>
