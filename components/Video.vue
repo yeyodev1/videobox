@@ -1,6 +1,7 @@
 <script setup>
 import 'video.js/dist/video-js.css'
 import videojs from 'video.js';
+import saveAs from 'file-saver';
 
 import useUserStore from '@/store/userStore';
 
@@ -100,18 +101,21 @@ function toggleRecording() {
   }
 };
 
+// function downloadRecording() {
+//   const url = URL.createObjectURL(recordedBlob.value);
+//   const a = document.createElement('a');
+//   a.style.display = 'none';
+//   a.href = url;
+//   a.download = 'recording.mp4';
+//   document.body.appendChild(a);
+//   a.click();
+//   document.body.removeChild(a);
+//   URL.revokeObjectURL(url);
+// };
 function downloadRecording() {
-  const url = URL.createObjectURL(recordedBlob.value);
-  const a = document.createElement('a');
-  a.style.display = 'none';
-  a.href = url;
-  a.download = 'recording.mp4';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  saveAs(recordedBlob.value, 'recording.mp4');
   isDownloaded.value = true;
-
+  
   recordedBlob.value = null;
   isDownloaded.value = false;
 };
