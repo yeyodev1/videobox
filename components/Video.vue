@@ -18,6 +18,7 @@ const isRecording = ref(false);
 const isDownloaded = ref(false);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
+const player = ref(null);
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -70,6 +71,7 @@ function toggleRecording() {
     stopRecording();
   } else {
     startRecording();
+    player.value.muted(false);
   }
 };
 
@@ -141,7 +143,7 @@ onMounted(() => {
     autoplay: true,
     loop: true,
     preload: 'auto',
-    muted: false,
+    muted: true,
     width: 1000,
     height: 500,
     preferFullWindow: false,
@@ -154,8 +156,8 @@ onMounted(() => {
       type: 'video/mp4'
     }]
   }
-  const player = videojs(videoEl.value, options)
-  videoEl.value.player = player;
+  player.value = videojs(videoEl.value, options)
+  videoEl.value.player = player.value;
 
   videoEl.value.addEventListener('timeupdate', handleTimeUpdate);
 })
