@@ -48,7 +48,6 @@ const menu = computed(() => webMenuItems)
 	padding: 24px 12px;
 	@media (min-width: $tablet-upper-breakpoint) {
 		padding: 24px;
-		flex-direction: row-reverse;
 		justify-content: space-between;
 	}
 	figure img {
