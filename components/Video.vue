@@ -160,6 +160,8 @@ onMounted(() => {
   videoEl.value.player = player.value;
 
   videoEl.value.addEventListener('timeupdate', handleTimeUpdate);
+
+  localStorage.setItem('lastVideoUrl', window.location.pathname + window.location.search);
 })
 
 onBeforeMount(() => {

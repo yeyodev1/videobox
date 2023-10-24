@@ -62,6 +62,14 @@ async function handleLogin(): Promise<void> {
   } catch (error) {
     console.error("Error during login:", error);
   }
+
+  const lastVideoUrl = localStorage.getItem('lastVideoUrl');
+  if (lastVideoUrl) {
+    await router.push(lastVideoUrl);
+    localStorage.removeItem('lastVideoUrl');  
+  } else {
+    await router.push('/');
+  }
 }
 
 
