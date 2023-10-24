@@ -77,7 +77,7 @@ function startRecording() {
         }
     };
     mediaRecorder.value.onstop = () => {
-        recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
+        recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/webm' });
     };
     mediaRecorder.value.onerror = (event) => {
         console.error('MediaRecorder error:', event.error);
@@ -113,7 +113,7 @@ function toggleRecording() {
 //   URL.revokeObjectURL(url);
 // };
 function downloadRecording() {
-  saveAs(recordedBlob.value, 'recording.mp4');
+  saveAs(recordedBlob.value, 'recording.webm');
   isDownloaded.value = true;
   
   recordedBlob.value = null;
