@@ -16,7 +16,7 @@ const copyToClipboard = (event) => {
       ¡Gracias por enviarnos tus datos!
     </p>
     <p class="section-title">
-      Por favor, YAPEAR S/ 10 al <span class="number" @click="copyToClipboard"> 906894857</span> ¡Envíanos la captura de pantalla del pago por WhatsApp al mismo número, y te enviaremos tu video! <a href="https://api.whatsapp.com/send/?phone=51906894857&text=Estoy+interesado+en+adquirir+un+video&type=phone_number&app_absent=0" class="number">+51 906 894 857</a>
+      Por favor, YAPEAR S/ 10 al <span class="number" @click="copyToClipboard"> 906894857</span> ¡Envíanos la captura de pantalla del pago por WhatsApp al mismo número, y te enviaremos tu video! 
     </p>
     <img 
       src="@/assets/qr-code.jpg" 
