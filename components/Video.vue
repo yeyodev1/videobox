@@ -81,18 +81,15 @@
     a.style.display = 'none';
     a.href = url;
     a.download = 'recording.mp4';
-    if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-        window.open(url);
-    } else {
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    isDownloaded.value = true;
+
     recordedBlob.value = null;
     isDownloaded.value = false;
-}
+  };
   function increaseBrightness() {
     if (videoEl.value) {
       adjustBrightness(videoEl.value, 0.1);  
