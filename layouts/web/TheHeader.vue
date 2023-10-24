@@ -74,7 +74,6 @@ const menu = computed(() => webMenuItems)
 			display: flex;
 			gap: 16px;
 			justify-content: space-around;
-			flex-direction: row-reverse;
 			align-items: center;
 
 			& :first-child {
