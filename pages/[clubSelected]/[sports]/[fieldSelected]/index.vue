@@ -99,7 +99,7 @@ function handleInput(event: string, type: string): void {
 <template>
   <div class="schedule"> 
     <p class="schedule-title">
-      Disfruta de tus mejores jugadas en HD
+      Tus partidos en HD
     </p>
     <p
       v-if="removeText" 
