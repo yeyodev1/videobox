@@ -8,7 +8,7 @@ const clubStore = useClubStore();
 <template>
   <div class="container">
     <h2 class="container-title">
-      Disfruta de tus mejores jugadas en HD
+      Tus partidos en HD
     </h2>
     <p class="container-question">
       ¿En dónde jugaste?
