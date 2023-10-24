@@ -1,178 +1,203 @@
-  <script setup>
-  import 'video.js/dist/video-js.css'
-  import videojs from 'video.js';
+<script setup>
+import 'video.js/dist/video-js.css'
+import videojs from 'video.js';
 
-  import useUserStore from '@/store/userStore';
+import useUserStore from '@/store/userStore';
 
-  const userStore = useUserStore();
+const userStore = useUserStore();
 
-  const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
+const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
-  const emit = defineEmits(['update:time'])
+const emit = defineEmits(['update:time'])
 
-  const videoEl = ref(null);
-  const mediaRecorder = ref(null);
-  const recordedChunks = ref([]);
-  const recordedBlob = ref(null);
-  const isRecording = ref(false);
-  const isDownloaded = ref(false);
-  const timeBlur = ref(false);
-  const isRecordingActive = ref(false);
-  const player = ref(null);
+const videoEl = ref(null);
+const mediaRecorder = ref(null);
+const recordedChunks = ref([]);
+const recordedBlob = ref(null);
+const isRecording = ref(false);
+const isDownloaded = ref(false);
+const timeBlur = ref(false);
+const isRecordingActive = ref(false);
+const player = ref(null);
 
-  const isLoggedIn = computed(() => userStore.user !== null);
-  const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
-  const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister');
-  const videoPurchased = computed(() => {
-    const video = userStore.user.videos.find(video => video.url === videoUrl);
-    return video ? true : false;
-  });
-  const isBlurred = computed(() => {
-    if (isAdmin.value) {
-      return false;
-    }
-    if (!isLoggedIn.value) {
-      return true;
-    }
-    if (videoPurchased.value && isLoggedIn.value) {
-      return false;
-    }
+const isLoggedIn = computed(() => userStore.user !== null);
+const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
+const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister');
+const videoPurchased = computed(() => {
+  const video = userStore.user.videos.find(video => video.url === videoUrl);
+  return video ? true : false;
+});
+const isBlurred = computed(() => {
+  if (isAdmin.value) {
+    return false;
+  }
+  if (!isLoggedIn.value) {
     return true;
-  });
-  const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Regístrate o inicia sesión para ver el video')
+  }
+  if (videoPurchased.value && isLoggedIn.value) {
+    return false;
+  }
+  return true;
+});
+const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Regístrate o inicia sesión para ver el video')
 
-  function startRecording() {
+
+function isSafari() {
+return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+}
+
+function startRecording() {
     recordedChunks.value = [];
     recordedBlob.value = null;
-    mediaRecorder.value = new MediaRecorder(videoEl.value.captureStream());
+    
+    if (isSafari()) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const video = videoEl.value;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const stream = canvas.captureStream();
+        let intervalId = setInterval(function () {
+            context.drawImage(video, 0, 0);
+        }, 1000 / 30); 
+
+        mediaRecorder.value = new MediaRecorder(stream);
+        mediaRecorder.value.onstop = () => {
+            clearInterval(intervalId);  
+        };
+    } else {
+        mediaRecorder.value = new MediaRecorder(videoEl.value.captureStream());
+    }
+
     mediaRecorder.value.ondataavailable = event => {
-      if (event.data.size > 0) {
-        recordedChunks.value.push(event.data);
-      }
+        if (event.data.size > 0) {
+            recordedChunks.value.push(event.data);
+        }
     };
     mediaRecorder.value.onstop = () => {
-      recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
+        recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
     };
     mediaRecorder.value.onerror = (event) => {
-      console.error('MediaRecorder error:', event.error);
+        console.error('MediaRecorder error:', event.error);
     };
     mediaRecorder.value.start();
     isRecording.value = true;
-  };
+}
 
-  function stopRecording() {
-    mediaRecorder.value.stop();
-    isRecording.value = false;
-  };
+function stopRecording() {
+  mediaRecorder.value.stop();
+  isRecording.value = false;
+};
 
-  function toggleRecording() {
-    isRecordingActive.value = !isRecordingActive.value;
-    if (isRecording.value) {
-      stopRecording();
-    } else {
-      startRecording();
-      player.value.muted(false);
-    }
-  };
+function toggleRecording() {
+  isRecordingActive.value = !isRecordingActive.value;
+  if (isRecording.value) {
+    stopRecording();
+  } else {
+    startRecording();
+    player.value.muted(false);
+  }
+};
 
-  function downloadRecording() {
-    const url = URL.createObjectURL(recordedBlob.value);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'recording.mp4';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    isDownloaded.value = true;
+function downloadRecording() {
+  const url = URL.createObjectURL(recordedBlob.value);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = 'recording.mp4';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  isDownloaded.value = true;
 
-    recordedBlob.value = null;
-    isDownloaded.value = false;
-  };
-  function increaseBrightness() {
-    if (videoEl.value) {
-      adjustBrightness(videoEl.value, 0.1);  
-    }
-  };
-  function decreaseBrightness() {
-    if (videoEl.value) {
-      adjustBrightness(videoEl.value, -0.1); 
-    }
-  };
-  function increaseContrast() {
-    if (videoEl.value) {
-      adjustContrast(videoEl.value, 0.1);  
-    }
-  };
-  function decreaseContrast() {
-    if (videoEl.value) {
-      adjustContrast(videoEl.value, -0.1); 
-    }
-  };
+  recordedBlob.value = null;
+  isDownloaded.value = false;
+};
+function increaseBrightness() {
+  if (videoEl.value) {
+    adjustBrightness(videoEl.value, 0.1);  
+  }
+};
+function decreaseBrightness() {
+  if (videoEl.value) {
+    adjustBrightness(videoEl.value, -0.1); 
+  }
+};
+function increaseContrast() {
+  if (videoEl.value) {
+    adjustContrast(videoEl.value, 0.1);  
+  }
+};
+function decreaseContrast() {
+  if (videoEl.value) {
+    adjustContrast(videoEl.value, -0.1); 
+  }
+};
 
-  function shouldPauseVideo() {
-    if (isAdmin.value || videoEl.value.currentTime < 15) {
-      return false;
-    }
-    if (!isLoggedIn.value) {
-      return true;
-    }
-    if (videoPurchased.value && isLoggedIn.value) {
-      return false;
-    }
-    if (videoEl.value.currentTime >= 15) {
-      timeBlur.value = true;
-      return true;
-    }
+function shouldPauseVideo() {
+  if (isAdmin.value || videoEl.value.currentTime < 15) {
     return false;
   }
+  if (!isLoggedIn.value) {
+    return true;
+  }
+  if (videoPurchased.value && isLoggedIn.value) {
+    return false;
+  }
+  if (videoEl.value.currentTime >= 15) {
+    timeBlur.value = true;
+    return true;
+  }
+  return false;
+}
 
-  function handleTimeUpdate(event) {
-    const video = event.target;
-    emit('update:time', video.currentTime);
-    if (shouldPauseVideo()) {
-      videoEl.value.pause();
-    }
-  };
+function handleTimeUpdate(event) {
+  const video = event.target;
+  emit('update:time', video.currentTime);
+  if (shouldPauseVideo()) {
+    videoEl.value.pause();
+  }
+};
 
 
-  onMounted(() => {
-    const options = {
-      controls: noShowControls,
-      autoplay: true,
-      loop: true,
-      preload: 'auto',
-      muted: true,
-      width: 1000,
-      height: 500,
-      preferFullWindow: false,
-      controlBar:{
-        fullscreenToggle: false,
-        pictureInPictureToggle: false,
-        playbackRateMenuButton: true,
-      },
-      playbackRates: [0.5, 1, 1.5, 2],
-      sources: [{
-        src: videoUrl,
-        type: 'video/mp4'
-      }]
-    }
-    player.value = videojs(videoEl.value, options)
-    videoEl.value.player = player.value;
+onMounted(() => {
+  const options = {
+    controls: noShowControls,
+    autoplay: true,
+    loop: true,
+    preload: 'auto',
+    muted: true,
+    width: 1000,
+    height: 500,
+    preferFullWindow: false,
+    controlBar:{
+      fullscreenToggle: false,
+      pictureInPictureToggle: false,
+      playbackRateMenuButton: true,
+    },
+    playbackRates: [0.5, 1, 1.5, 2],
+    sources: [{
+      src: videoUrl,
+      type: 'video/mp4'
+    }]
+  }
+  player.value = videojs(videoEl.value, options)
+  videoEl.value.player = player.value;
 
-    videoEl.value.addEventListener('timeupdate', handleTimeUpdate);
+  videoEl.value.addEventListener('timeupdate', handleTimeUpdate);
 
-    localStorage.setItem('lastVideoUrl', window.location.pathname + window.location.search);
-  })
+  localStorage.setItem('lastVideoUrl', window.location.pathname + window.location.search);
+})
 
-  onBeforeMount(() => {
-    if (videoEl.value && videoEl.value.player) {
-      videoEl.value.player.dispose();
-      videoEl.value.removeEventListener('timeupdate', handleTimeUpdate);
-    }
-  })
-  </script>
+onBeforeMount(() => {
+  if (videoEl.value && videoEl.value.player) {
+    videoEl.value.player.dispose();
+    videoEl.value.removeEventListener('timeupdate', handleTimeUpdate);
+  }
+})
+</script>
 
   <template>
     <div class="container" :class="{ 'pointer-events-none': options }">
