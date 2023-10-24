@@ -115,11 +115,17 @@ function toggleRecording() {
 //   URL.revokeObjectURL(url);
 // };
 function downloadRecording() {
-  saveAs(recordedBlob.value, `${router.path}`);
-  isDownloaded.value = true;
-  
-  recordedBlob.value = null;
-  isDownloaded.value = false;
+  if (recordedBlob.value && recordedBlob.value.size > 0) {
+    saveAs(recordedBlob.value, `${router.path}`);
+    isDownloaded.value = true;
+    recordedBlob.value = null;
+    isDownloaded.value = false;
+  } else {
+    console.error('No hay datos grabados disponibles o el tamaño del blob es 0.');
+    isDownloaded.value = true;
+    recordedBlob.value = null;
+    isDownloaded.value = false;
+  }
 };
 function increaseBrightness() {
   if (videoEl.value) {
