@@ -190,7 +190,7 @@
             </button>
           </div>
         <div class="buttons-center-bottom">
-          <button v-if="!recordedBlob" @click.native="toggleRecording" @touchend="toggleRecording" class="recording" >
+          <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
             <span class="circle" :class="{ 'active': isRecordingActive }"></span>
           </button>
           <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecording" class="download">
