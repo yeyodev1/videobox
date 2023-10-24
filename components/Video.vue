@@ -7,6 +7,8 @@ import useUserStore from '@/store/userStore';
 
 const userStore = useUserStore();
 
+const router = useRoute()
+
 const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
 const emit = defineEmits(['update:time'])
@@ -113,7 +115,7 @@ function toggleRecording() {
 //   URL.revokeObjectURL(url);
 // };
 function downloadRecording() {
-  saveAs(recordedBlob.value, 'recording.webm');
+  saveAs(recordedBlob.value, `${router.path}`);
   isDownloaded.value = true;
   
   recordedBlob.value = null;
