@@ -16,8 +16,6 @@ const recordedChunks = ref([]);
 const recordedBlob = ref(null);
 const isRecording = ref(false);
 const isDownloaded = ref(false);
-const timeBlur = ref(false);
-const isRecordingActive = ref(false);
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -38,7 +36,7 @@ const isBlurred = computed(() => {
   }
   return true;
 });
-const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Regístrate o inicia sesión para ver el video')
+const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta')
 
 function startRecording() {
   recordedChunks.value = [];
@@ -65,7 +63,6 @@ function stopRecording() {
 };
 
 function toggleRecording() {
-  isRecordingActive.value = !isRecordingActive.value;
   if (isRecording.value) {
     stopRecording();
   } else {
@@ -84,9 +81,6 @@ function downloadRecording() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   isDownloaded.value = true;
-
-  recordedBlob.value = null;
-  isDownloaded.value = false;
 };
 function increaseBrightness() {
   if (videoEl.value) {
@@ -108,31 +102,16 @@ function decreaseContrast() {
     adjustContrast(videoEl.value, -0.1); 
   }
 };
-
-function shouldPauseVideo() {
-  if (isAdmin.value) {
-    return false;
-  }
-  if (!isLoggedIn.value) {
-    return true;
-  }
-  if (videoPurchased.value && isLoggedIn.value) {
-    return false;
-  }
-  if (videoEl.value.currentTime >= 15) {
-    timeBlur.value = true;
-    return true;
-  }
-  return false;
-}
-
 function handleTimeUpdate(event) {
   const video = event.target;
   emit('update:time', video.currentTime);
-  if (shouldPauseVideo()) {
-    videoEl.value.pause();
+  if(video.currentTime >= 4) {
+    isBlurred.value = true;
   }
 };
+function toggleBlur() {
+  isBlurred.value = !isBlurred.value;
+}
 
 
 onMounted(() => {
@@ -141,7 +120,7 @@ onMounted(() => {
     autoplay: true,
     loop: true,
     preload: 'auto',
-    muted: true,
+    muted: false,
     width: 1000,
     height: 500,
     preferFullWindow: false,
@@ -175,7 +154,7 @@ onBeforeMount(() => {
         playsinline 
         ref="videoEl" 
         crossorigin="anonymous" 
-        :class="{ blurred: isBlurred && timeBlur }"
+        :class="{ blurred: isBlurred }"
         class="video-js video" 
         />
         <div v-if="isBlurred" class="overlay">
@@ -184,8 +163,8 @@ onBeforeMount(() => {
           </button>
         </div>
       <div class="buttons-center-bottom">
-        <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
-          <span class="circle" :class="{ 'active': isRecordingActive }"></span>
+        <button v-if="!recordedBlob" @click="toggleRecording" class="recording">
+          🔴
         </button>
         <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecording" class="download">
           Descargar
@@ -299,29 +278,8 @@ onBeforeMount(() => {
     }
     .recording {
       font-size: 48px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       width: 50px;
       height: 50px;
-      border: 4px solid rgb(255, 255, 255);
-      border-radius: 100%;
-      padding: 0;
-      .circle {
-        background-color: red;
-        border-radius: 100%;
-        width: 100%;
-        height: 100%;
-        display:  flex;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.5S ease-in-out;
-        &.active {
-          width: 50%;
-          height: 50%;
-          border-radius: 0; 
-        }
-      }
     }
     .recording, .option, .download {
       cursor: pointer;
