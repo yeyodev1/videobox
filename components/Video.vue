@@ -150,7 +150,9 @@
       controlBar:{
         fullscreenToggle: false,
         pictureInPictureToggle: false,
+        playbackRateMenuButton: true,
       },
+      playbackRates: [0.5, 1, 1.5, 2],
       sources: [{
         src: videoUrl,
         type: 'video/mp4'
