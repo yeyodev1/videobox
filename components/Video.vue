@@ -39,7 +39,7 @@ const isBlurred = computed(() => {
   }
   return true;
 });
-const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Crea una vuenta o inicia sesión')
+const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Regístrate o inicia sesión para ver el video')
 
 function startRecording() {
   recordedChunks.value = [];
