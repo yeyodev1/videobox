@@ -134,6 +134,10 @@ function startRecording() {
 function stopRecording() {
   mediaRecorder.value.stop();
   isRecording.value = false;
+  mediaRecorder.value.onstop = () => {
+    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
+    console.log('Captura completada, listo para descargar:', recordedBlob.value);  
+  };
 };
 
 function toggleRecording() {
@@ -167,7 +171,8 @@ function downloadRecording() {
   saveAs(file);
   isDownloaded.value = true;
 
-  // Restablecer los valores
+  console.log('archivo descargado:', file)
+
   recordedBlob.value = null;
   isDownloaded.value = false;
   
