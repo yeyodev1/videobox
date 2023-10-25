@@ -75,6 +75,19 @@ if (isIOS()) {
     }
   }
 }
+function splitBlob(blob, chunkSize) {
+  const chunks = [];
+  for (let start = 0; start < blob.size; start += chunkSize) {
+    const end = Math.min(start + chunkSize, blob.size);
+    const chunk = blob.slice(start, end);
+    chunks.push(chunk);
+  }
+  return chunks;
+}
+
+function joinChunks(chunks) {
+    return  new Blob(chunks, { type: 'video/mp4' });
+}
 
 function startRecording() {
   recordedChunks.value = [];
@@ -145,11 +158,22 @@ function toggleRecording() {
 //   URL.revokeObjectURL(url);
 // };
 function downloadRecording() {
-  saveAs(recordedBlob.value, `${router.path}`);
+
+  const chunkSize = 1024 * 1024 * 5; 
+  const chunks = splitBlob(recordedBlob.value, chunkSize);
+  const newBlob = joinChunks(chunks);
+  saveAs(newBlob, `${router.path}.mp4`);
   isDownloaded.value = true;
-  
+
+  // Restablecer los valores
   recordedBlob.value = null;
   isDownloaded.value = false;
+  
+  // saveAs(recordedBlob.value, `${router.path}`);
+  // isDownloaded.value = true;
+  
+  // recordedBlob.value = null;
+  // isDownloaded.value = false;
 };
 function increaseBrightness() {
   if (videoEl.value) {
