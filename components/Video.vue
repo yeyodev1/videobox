@@ -48,14 +48,40 @@ const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 
 function isSafari() {
 return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
 };
-function isMobileDevice() {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-};
+
+function isIOS() {
+  return [
+      'iPad Simulator',
+      'iPhone Simulator',
+      'iPod Simulator',
+      'iPad',
+      'iPhone',
+      'iPod'
+  ].includes(navigator.platform)
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+}
+
+if (isIOS()) {
+  const DefaultMediaRecorder = window.MediaRecorder;
+  const kb = 8 * 1024;
+  const preferredBitRatePerSecond = 100 * kb;
+  window.MediaRecorder = class extends DefaultMediaRecorder {
+    constructor(stream, options) {
+      super(stream, {
+        ...options,
+        audioBitsPerSecond: preferredBitRatePerSecond,
+        videoBitsPerSecond: preferredBitRatePerSecond,
+      });
+    }
+  }
+}
 
 function startRecording() {
   recordedChunks.value = [];
   recordedBlob.value = null;
+
+  let MediaRecorderClass = isIOS() ? window.MediaRecorder : MediaRecorder;
+
   
   if (isSafari()) {
       const canvas = document.createElement('canvas');
@@ -74,7 +100,7 @@ function startRecording() {
           clearInterval(intervalId);  
       };
   } else {
-      mediaRecorder.value = new MediaRecorder(videoEl.value.captureStream());
+      mediaRecorder.value = new MediaRecorderClass(videoEl.value.captureStream());
   }
 
   mediaRecorder.value.ondataavailable = event => {
