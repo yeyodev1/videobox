@@ -52,55 +52,40 @@ return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
 function startRecording() {
   recordedChunks.value = [];
   recordedBlob.value = null;
+  
+  if (isSafari()) {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      const video = videoEl.value;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-  let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-  let streamPromise;
+      const stream = canvas.captureStream();
+      let intervalId = setInterval(function () {
+          context.drawImage(video, 0, 0);
+      }, 1000 / 30); 
 
-  if(isMobile) {
-    streamPromise = navigator.mediaDevices.getDisplayMedia({video: true});
-  } else if (isSafari()) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const video = videoEl.value;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    const stream = canvas.captureStream();
-    let intervalId = setInterval(function () {
-        context.drawImage(video, 0, 0);
-    }, 1000 / 30); 
-
-    mediaRecorder.value = new MediaRecorder(stream);
-    mediaRecorder.value.onstop = () => {
-        clearInterval(intervalId);  
-    };
+      mediaRecorder.value = new MediaRecorder(stream);
+      mediaRecorder.value.onstop = () => {
+          clearInterval(intervalId);  
+      };
   } else {
-    streamPromise = Promise.resolve(videoEl.value.captureStream());
+      mediaRecorder.value = new MediaRecorder(videoEl.value.captureStream());
   }
 
-  if (streamPromise) {
-    streamPromise.then(stream => {
-        mediaRecorder.value = new MediaRecorder(stream);
-
-        mediaRecorder.value.ondataavailable = event => {
-            if (event.data.size > 0) {
-                recordedChunks.value.push(event.data);
-            }
-        };
-        mediaRecorder.value.onstop = () => {
-            recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/webm' });
-        };
-        mediaRecorder.value.onerror = (event) => {
-            console.error('MediaRecorder error:', event.error);
-        };
-        mediaRecorder.value.start();
-        isRecording.value = true;
-    })
-    .catch(error => {
-        console.error('Error with stream:', error);
-    });
-  }
+  mediaRecorder.value.ondataavailable = event => {
+      if (event.data.size > 0) {
+          recordedChunks.value.push(event.data);
+      }
+  };
+  mediaRecorder.value.onstop = () => {
+      recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
+  };
+  mediaRecorder.value.onerror = (event) => {
+      console.error('MediaRecorder error:', event.error);
+  };
+  mediaRecorder.value.start();
+  isRecording.value = true;
 }
 
 function stopRecording() {
