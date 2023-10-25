@@ -52,8 +52,18 @@ return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
 function startRecording() {
     recordedChunks.value = [];
     recordedBlob.value = null;
-    
-    if (isSafari()) {
+
+    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                handleStream(stream);
+            })
+            .catch(error => {
+                console.error('Error accessing media devices:', error);
+            });
+    } else if (isSafari()) {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         const video = videoEl.value;
@@ -63,30 +73,35 @@ function startRecording() {
         const stream = canvas.captureStream();
         let intervalId = setInterval(function () {
             context.drawImage(video, 0, 0);
-        }, 1000 / 30); 
+        }, 1000 / 30);
 
         mediaRecorder.value = new MediaRecorder(stream);
         mediaRecorder.value.onstop = () => {
-            clearInterval(intervalId);  
+            clearInterval(intervalId);
         };
     } else {
-        mediaRecorder.value = new MediaRecorder(videoEl.value.captureStream());
+        handleStream(videoEl.value.captureStream());
     }
 
-    mediaRecorder.value.ondataavailable = event => {
-        if (event.data.size > 0) {
-            recordedChunks.value.push(event.data);
-        }
-    };
-    mediaRecorder.value.onstop = () => {
-        recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/webm' });
-    };
-    mediaRecorder.value.onerror = (event) => {
-        console.error('MediaRecorder error:', event.error);
-    };
-    mediaRecorder.value.start();
-    isRecording.value = true;
+    function handleStream(stream) {
+        mediaRecorder.value = new MediaRecorder(stream);
+
+        mediaRecorder.value.ondataavailable = event => {
+            if (event.data.size > 0) {
+                recordedChunks.value.push(event.data);
+            }
+        };
+        mediaRecorder.value.onstop = () => {
+            recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/webm' });
+        };
+        mediaRecorder.value.onerror = (event) => {
+            console.error('MediaRecorder error:', event.error);
+        };
+        mediaRecorder.value.start();
+        isRecording.value = true;
+    }
 }
+
 
 function stopRecording() {
   mediaRecorder.value.stop();
