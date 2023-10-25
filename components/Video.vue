@@ -92,7 +92,7 @@ function startRecording() {
             }
         };
         mediaRecorder.value.onstop = () => {
-            recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/webm' });
+            recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
         };
         mediaRecorder.value.onerror = (event) => {
             console.error('MediaRecorder error:', event.error);
