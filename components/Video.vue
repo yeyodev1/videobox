@@ -42,7 +42,7 @@ const isBlurred = computed(() => {
   }
   return true;
 });
-const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu jugada' : 'Regístrate o inicia sesión para ver el video')
+const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu partido' : 'Regístrate o inicia sesión para ver el video')
 
 
 function isSafari() {
@@ -163,28 +163,18 @@ function toggleRecording() {
 // };
 function downloadRecording()  {
   const file = new File([recordedBlob.value], `${router.path}.mp4`, {type: 'video/mp4', lastModified: new Date()});
-  const url = URL.createObjectURL(file);
-  const a = document.createElement('a');
-  a.style.display = 'none',
-  a.href = url;
-  a.download = `${router.path}.mp4`;
-
-  document.body.appendChild(a);
-  a.click();
-
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  
+  saveAs(file);
   isDownloaded.value = true;
-  console.log('archivo descargado:', file);
+
+  console.log('archivo descargado:', file)
+
   recordedBlob.value = null;
   isDownloaded.value = false;
   
-  
-  // saveAs(file);
+  // saveAs(recordedBlob.value, `${router.path}`);
   // isDownloaded.value = true;
-
-  // console.log('archivo descargado:', file)
-
+  
   // recordedBlob.value = null;
   // isDownloaded.value = false;
 };
@@ -284,7 +274,7 @@ onBeforeMount(() => {
           />
           <div v-if="isBlurred" class="overlay">
             <button class="overlay-button">
-              Para ver lo demás, <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
+              <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
             </button>
           </div>
         <div class="buttons-center-bottom">
