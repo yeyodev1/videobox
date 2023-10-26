@@ -161,12 +161,7 @@ function toggleRecording() {
 //   document.body.removeChild(a);
 //   URL.revokeObjectURL(url);
 // };
-function downloadRecording() {
-
-  const chunkSize = 1024 * 1024 * 5; 
-  const chunks = splitBlob(recordedBlob.value, chunkSize);
-  const newBlob = joinChunks(chunks);
-
+function downloadRecording() 
   const file = new File([recordedBlob.value], `${router.path}.mp4`, {type: 'video/mp4', lastModified: new Date()});
   saveAs(file);
   isDownloaded.value = true;
