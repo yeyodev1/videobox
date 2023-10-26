@@ -184,21 +184,9 @@ async function downloadRecordingIOS() {
   }
 
   try {
-    const base64 = await blobToBase64(recordedBlob.value);
-    const dataUrl = `data:video/mp4;base64,${base64}`;
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = `${router.path}.mp4`;
-    a.target = "_blank";  
-    a.textContent = 'Descargar video';
-    document.body.appendChild(a);
-    a.click();  
-    console.log(a)
-
-  
-    document.body.removeChild(a);
+    saveAs(recordedBlob.value, `${router.path}.mp4`);
   } catch (error) {
-    console.error('error al convertir de blob a base 64:', error);
+    console.error('error al intentar descargar el archivo:', error);
   }
 
   isDownloaded.value = true;
