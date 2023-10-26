@@ -163,17 +163,28 @@ function toggleRecording() {
 // };
 function downloadRecording()  {
   const file = new File([recordedBlob.value], `${router.path}.mp4`, {type: 'video/mp4', lastModified: new Date()});
-  saveAs(file);
+  const url = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.style.display = 'none',
+  a.href = url;
+  a.download = `${router.path}.mp4`;
+
+  document.body.appendChild(a);
+  a.click();
+
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
   isDownloaded.value = true;
-
-  console.log('archivo descargado:', file)
-
+  console.log('archivo descargado:', file);
   recordedBlob.value = null;
   isDownloaded.value = false;
   
-  // saveAs(recordedBlob.value, `${router.path}`);
-  // isDownloaded.value = true;
   
+  // saveAs(file);
+  // isDownloaded.value = true;
+
+  // console.log('archivo descargado:', file)
+
   // recordedBlob.value = null;
   // isDownloaded.value = false;
 };
