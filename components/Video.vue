@@ -96,7 +96,7 @@ function startRecording() {
   let MediaRecorderClass = isIOS() ? window.MediaRecorder : MediaRecorder;
 
   
-  if (isSafari()) {
+  if (isSafari() || isIOS()) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       const video = videoEl.value;
