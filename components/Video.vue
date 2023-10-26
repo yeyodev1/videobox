@@ -161,7 +161,7 @@ function toggleRecording() {
 //   document.body.removeChild(a);
 //   URL.revokeObjectURL(url);
 // };
-function downloadRecording() 
+function downloadRecording()  {
   const file = new File([recordedBlob.value], `${router.path}.mp4`, {type: 'video/mp4', lastModified: new Date()});
   saveAs(file);
   isDownloaded.value = true;
