@@ -324,7 +324,7 @@ onBeforeMount(() => {
           <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
             <span class="circle" :class="{ 'active': isRecordingActive }"></span>
           </button>
-          <button v-if="recordedBlob && !isDownloaded" @click="handleDownloadRecording" @touchend="handleDownloadRecording" class="download">
+          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecordingDefault" @touchend="downloadRecordingDefault" class="download">
             Descargar
           </button>
         </div>
