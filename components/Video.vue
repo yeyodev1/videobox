@@ -89,46 +89,30 @@ function joinChunks(chunks) {
     return  new Blob(chunks, { type: 'video/mp4' });
 }
 
-function startRecording() {
+async function startRecording () {
   recordedChunks.value = [];
   recordedBlob.value = null;
 
-  let MediaRecorderClass = isIOS() ? window.MediaRecorder : MediaRecorder;
+  try {
+    const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
 
-  
-  if (isSafari() || isIOS()) {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      const video = videoEl.value;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const stream = canvas.captureStream();
-      let intervalId = setInterval(function () {
-          context.drawImage(video, 0, 0);
-      }, 1000 / 30); 
-
-      mediaRecorder.value = new MediaRecorder(stream);
-      mediaRecorder.value.onstop = () => {
-          clearInterval(intervalId);  
-      };
-  } else {
-      mediaRecorder.value = new MediaRecorderClass(videoEl.value.captureStream());
-  }
-
-  mediaRecorder.value.ondataavailable = event => {
+    mediaRecorder.value = new MediaRecorder(displayStream);
+    mediaRecorder.value.ondataavalaible = event => {
       if (event.data.size > 0) {
-          recordedChunks.value.push(event.data);
+        recordedChunks.value.push(event.data);
       }
-  };
-  mediaRecorder.value.onstop = () => {
-      recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
-  };
-  mediaRecorder.value.onerror = (event) => {
-      console.error('MediaRecorder error:', event.error);
-  };
-  mediaRecorder.value.start();
-  isRecording.value = true;
+    }
+
+    mediaRecorder.value.onstop = () => {
+      recordedBlob.value = new Blob(recordedChunks.value, {type: 'video/webm'});
+      console.log('Grabacion completada, listo para descargar:', recordedBlob.value);
+    };
+
+    mediaRecorder.value.start();
+    isRecording.value = true;
+  } catch (error) {
+    console.error('Error al iniciar la grabación:', error)
+  }
 }
 
 function stopRecording() {
@@ -194,26 +178,22 @@ async function downloadRecordingIOS() {
   isDownloaded.value = false;
 }
 
-function downloadRecordingDefault()  {
-  const file = new File([recordedBlob.value], `${router.path}.mp4`, {type: 'video/mp4', lastModified: new Date()});
-  
-  saveAs(file);
-  isDownloaded.value = true;
+function downloadRecordingDefault() {
+  if (!recordedBlob.value || recordedBlob.value.size === 0) {
+    console.error('No hay datos para descargar');
+    return;
+  }
 
-  console.log('archivo descargado:', file)
+  try {
+    saveAs(recordedBlob.value, `${router.path}.webm`);
+    isDownloaded.value = true;
+    recordedBlob.value = null;
+    isDownloaded.value = false;
+  } catch (error) {
+    console.error('Error al intentar descargar el archivo:', error);
+  }
+}
 
-  recordedBlob.value = null;
-  isDownloaded.value = false;
-
-
-
-  
-  // saveAs(recordedBlob.value, `${router.path}`);
-  // isDownloaded.value = true;
-  
-  // recordedBlob.value = null;
-  // isDownloaded.value = false;
-};
 function handleDownloadRecording() {
   if (isIOS()) {
     downloadRecordingIOS();
