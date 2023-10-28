@@ -179,10 +179,6 @@ async function downloadRecordingIOS() {
 }
 
 function downloadRecordingDefault() {
-  if (!recordedBlob.value || recordedBlob.value.size === 0) {
-    console.error('No hay datos para descargar');
-    return;
-  }
 
   try {
     saveAs(recordedBlob.value, `${router.path}.webm`);
