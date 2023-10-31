@@ -11,7 +11,7 @@ const router = useRoute()
 
 const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
-const emit = defineEmits(['update:time'])
+const emit = defineEmits(['update:time', 'captured-video'])
 
 const videoEl = ref(null);
 const mediaRecorder = ref(null);
@@ -22,6 +22,7 @@ const isDownloaded = ref(false);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
+const URL = window.URL;
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -46,19 +47,19 @@ const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu partido' :
 
 
 function isSafari() {
-return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+  return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
 };
 
 function isIOS() {
   return [
-      'iPad Simulator',
-      'iPhone Simulator',
-      'iPod Simulator',
-      'iPad',
-      'iPhone',
-      'iPod'
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
   ].includes(navigator.platform)
-  || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+    || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
 }
 
 if (isIOS()) {
@@ -75,19 +76,6 @@ if (isIOS()) {
     }
   }
 }
-function splitBlob(blob, chunkSize) {
-  const chunks = [];
-  for (let start = 0; start < blob.size; start += chunkSize) {
-    const end = Math.min(start + chunkSize, blob.size);
-    const chunk = blob.slice(start, end);
-    chunks.push(chunk);
-  }
-  return chunks;
-}
-
-function joinChunks(chunks) {
-    return  new Blob(chunks, { type: 'video/mp4' });
-}
 
 function startRecording() {
   recordedChunks.value = [];
@@ -95,49 +83,51 @@ function startRecording() {
 
   let MediaRecorderClass = isIOS() ? window.MediaRecorder : MediaRecorder;
 
-  
+
   if (isSafari() || isIOS()) {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      const video = videoEl.value;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const video = videoEl.value;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-      const stream = canvas.captureStream();
-      let intervalId = setInterval(function () {
-          context.drawImage(video, 0, 0);
-      }, 1000 / 30); 
+    const stream = canvas.captureStream();
+    let intervalId = setInterval(function () {
+      context.drawImage(video, 0, 0);
+    }, 1000 / 30);
 
-      mediaRecorder.value = new MediaRecorder(stream);
-      mediaRecorder.value.onstop = () => {
-          clearInterval(intervalId);  
-      };
+    mediaRecorder.value = new MediaRecorder(stream);
+    mediaRecorder.value.onstop = () => {
+      clearInterval(intervalId);
+    };
   } else {
-      mediaRecorder.value = new MediaRecorderClass(videoEl.value.captureStream());
+    mediaRecorder.value = new MediaRecorderClass(videoEl.value.captureStream());
   }
 
   mediaRecorder.value.ondataavailable = event => {
-      if (event.data.size > 0) {
-          recordedChunks.value.push(event.data);
-      }
+    if (event.data.size > 0) {
+      recordedChunks.value.push(event.data);
+    }
   };
   mediaRecorder.value.onstop = () => {
-      recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
+    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
   };
   mediaRecorder.value.onerror = (event) => {
-      console.error('MediaRecorder error:', event.error);
+    console.error('MediaRecorder error:', event.error);
   };
   mediaRecorder.value.start();
   isRecording.value = true;
 }
 
-function stopRecording() {
+async function stopRecording() {
   mediaRecorder.value.stop();
   isRecording.value = false;
   mediaRecorder.value.onstop = () => {
     recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
-    console.log('Captura completada, listo para descargar:', recordedBlob.value);  
+    console.log('Captura completada, listo para descargar:', recordedBlob.value);
+    emit('captured-video', recordedBlob.value)
   };
+  // console.log('emitiing event blob', recordedBlob.value)
 };
 
 function toggleRecording() {
@@ -150,95 +140,35 @@ function toggleRecording() {
   }
 };
 
-// function downloadRecording() {
-//   const url = URL.createObjectURL(recordedBlob.value);
-//   const a = document.createElement('a');
-//   a.style.display = 'none';
-//   a.href = url;
-//   a.download = 'recording.mp4';
-//   document.body.appendChild(a);
-//   a.click();
-//   document.body.removeChild(a);
-//   URL.revokeObjectURL(url);
-// };
 
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = function() {
-      const dataUrl = reader.result;
-      const base64 = dataUrl.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = function(error) {
-      reject(error);
-    }
-    reader.readAsDataURL(blob);
-  })
-}
-
-async function downloadRecordingIOS() {
-  if (!recordedBlob.value || recordedBlob.value.size === 0) {
-    console.error('No hay datos para descargar');
-    return;
-  }
-
-  try {
-    saveAs(recordedBlob.value, `${router.path}.mp4`);
-  } catch (error) {
-    console.error('error al intentar descargar el archivo:', error);
-  }
-
+function downloadRecording() {
+  saveAs(recordedBlob.value, `${router.path}`);
+  console.log('valor quee se descarga:', recordedBlob.value)
   isDownloaded.value = true;
-  recordedBlob.value = null;
-  isDownloaded.value = false;
-}
-
-function downloadRecordingDefault()  {
-  const file = new File([recordedBlob.value], `${router.path}.mp4`, {type: 'video/mp4', lastModified: new Date()});
-  
-  saveAs(file);
-  isDownloaded.value = true;
-
-  console.log('archivo descargado:', file)
 
   recordedBlob.value = null;
   isDownloaded.value = false;
 
-
-
-  
-  // saveAs(recordedBlob.value, `${router.path}`);
-  // isDownloaded.value = true;
-  
-  // recordedBlob.value = null;
-  // isDownloaded.value = false;
 };
-function handleDownloadRecording() {
-  if (isIOS()) {
-    downloadRecordingIOS();
-  } else {
-    downloadRecordingDefault();
-  }
-}
+
 function increaseBrightness() {
   if (videoEl.value) {
-    adjustBrightness(videoEl.value, 0.1);  
+    adjustBrightness(videoEl.value, 0.1);
   }
 };
 function decreaseBrightness() {
   if (videoEl.value) {
-    adjustBrightness(videoEl.value, -0.1); 
+    adjustBrightness(videoEl.value, -0.1);
   }
 };
 function increaseContrast() {
   if (videoEl.value) {
-    adjustContrast(videoEl.value, 0.1);  
+    adjustContrast(videoEl.value, 0.1);
   }
 };
 function decreaseContrast() {
   if (videoEl.value) {
-    adjustContrast(videoEl.value, -0.1); 
+    adjustContrast(videoEl.value, -0.1);
   }
 };
 
@@ -278,7 +208,7 @@ onMounted(() => {
     width: 1000,
     height: 500,
     preferFullWindow: false,
-    controlBar:{
+    controlBar: {
       fullscreenToggle: false,
       pictureInPictureToggle: false,
       playbackRateMenuButton: true,
@@ -305,7 +235,7 @@ onBeforeMount(() => {
 })
 </script>
 
-  <template>
+<template>
     <div class="container" :class="{ 'pointer-events-none': options }">
       <div class="container-video">
         <video 
@@ -313,8 +243,7 @@ onBeforeMount(() => {
           ref="videoEl" 
           crossorigin="anonymous" 
           :class="{ blurred: isBlurred && timeBlur }"
-          class="video-js video" 
-          />
+          class="video-js video"  />
           <div v-if="isBlurred" class="overlay">
             <button class="overlay-button">
               <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
@@ -324,9 +253,12 @@ onBeforeMount(() => {
           <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
             <span class="circle" :class="{ 'active': isRecordingActive }"></span>
           </button>
-          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecordingDefault" @touchend="downloadRecordingDefault" class="download">
+          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecording" class="download">
             Descargar
           </button>
+          <div class="captured-video-container" v-if="recordedBlob">
+            <video ref="capturedVideoEl" controls :src="recordedBlob ? URL.createObjectURL(recordedBlob) : ''" width="240" height="160"></video>
+          </div>
         </div>
         <div class="buttons-container">
           <div class="container-button-group">
@@ -354,143 +286,176 @@ onBeforeMount(() => {
     </div>
   </template>
 
-  <style lang="scss" scoped>
-  .option {
-    background-color: rgba($grey, 0.6);
-    border-radius: 8px;
-    border: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    color: $white;
-    font-size: $body-font-size;
-    &:active { 
-      background-color: rgba($grey, 0.8); 
-    }
+<style lang="scss" scoped>
+.option {
+  background-color: rgba($grey, 0.6);
+  border-radius: 8px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: $white;
+  font-size: $body-font-size;
+
+  &:active {
+    background-color: rgba($grey, 0.8);
   }
-  .container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 10000;
+}
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 10000;
+}
+
+.blurred {
+  filter: blur(10px);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-button {
+  background-color: #444;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.container-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  .video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    object-position: center;
   }
 
-  .blurred {
-    filter: blur(10px);
-  }
-  .overlay {
+  .buttons-center-bottom {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  .overlay-button {
-    background-color: #444;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .container-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    .video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: auto;
-      height: auto;
-      min-width: 100%;
-      min-height: 100%;
-      transform: translate(-50%, -50%);
-      object-fit: cover;  
-      object-position: center; 
-    }
-    .buttons-center-bottom {
+    flex-direction: column;
+    gap: 10px;
+
+    .captured-video-container {
       position: absolute;
       bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      .recording, .download {
-        background: none;
-        color: $white;
-        border: none;
-        font-size: $body-font-size;
-        margin-bottom: 12px;
-        cursor: pointer;
+      right: 30px;
+      z-index: 1000;
+
+      video {
+        border: 3px solid #fff;
       }
-      .recording {
-        font-size: 48px;
+    }
+
+    .recording,
+    .download {
+      background: none;
+      color: $white;
+      border: none;
+      font-size: $body-font-size;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .recording {
+      font-size: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgb(255, 255, 255);
+      border-radius: 100%;
+      padding: 0;
+
+      .circle {
+        background-color: red;
+        border-radius: 100%;
+        width: 100%;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgb(255, 255, 255);
-        border-radius: 100%;
-        padding: 0;
-        .circle {
-          background-color: red;
-          border-radius: 100%;
-          width: 100%;
-          height: 100%;
-          display:  flex;
-          justify-content: center;
-          align-items: center;
-          transition: all 0.5S ease-in-out;
-          &.active {
-            width: 50%;
-            height: 50%;
-            border-radius: 0; 
-          }
+        transition: all 0.5S ease-in-out;
+
+        &.active {
+          width: 50%;
+          height: 50%;
+          border-radius: 0;
         }
       }
-      .recording, .option, .download {
-        cursor: pointer;
-      }
     }
-    .buttons-container {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      .container-button-group {
+
+    .recording,
+    .option,
+    .download {
+      cursor: pointer;
+    }
+  }
+
+  .buttons-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    .container-button-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 25px;
+
+      .container-button {
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 6px;
-        margin-bottom: 25px;
-        .container-button {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 12px;
-          span {
-            color: $white;
-          }
-          i {
-            color: $purple;
-            font-size: $body-font-size * 2;
-          }
+        gap: 12px;
+
+        span {
+          color: $white;
+        }
+
+        i {
+          color: $purple;
+          font-size: $body-font-size * 2;
         }
       }
     }
   }
-  .pointer-events-none {
-    pointer-events: none;
-  }
-  </style>
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+</style>
+  
