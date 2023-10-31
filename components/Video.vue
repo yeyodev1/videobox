@@ -90,12 +90,13 @@ function startRecording() {
     const video = videoEl.value;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
+    const fps = 60; 
+    const stream = canvas.captureStream(fps);
 
-    const stream = canvas.captureStream();
     let intervalId = setInterval(function () {
       context.drawImage(video, 0, 0);
-    }, 1000 / 30);
-
+    }, 1000 / fps);
+    
     mediaRecorder.value = new MediaRecorder(stream);
     mediaRecorder.value.onstop = () => {
       clearInterval(intervalId);
