@@ -75,19 +75,6 @@ if (isIOS()) {
     }
   }
 }
-function splitBlob(blob, chunkSize) {
-  const chunks = [];
-  for (let start = 0; start < blob.size; start += chunkSize) {
-    const end = Math.min(start + chunkSize, blob.size);
-    const chunk = blob.slice(start, end);
-    chunks.push(chunk);
-  }
-  return chunks;
-}
-
-function joinChunks(chunks) {
-    return  new Blob(chunks, { type: 'video/mp4' });
-}
 
 function startRecording() {
   recordedChunks.value = [];
@@ -150,77 +137,17 @@ function toggleRecording() {
   }
 };
 
-// function downloadRecording() {
-//   const url = URL.createObjectURL(recordedBlob.value);
-//   const a = document.createElement('a');
-//   a.style.display = 'none';
-//   a.href = url;
-//   a.download = 'recording.mp4';
-//   document.body.appendChild(a);
-//   a.click();
-//   document.body.removeChild(a);
-//   URL.revokeObjectURL(url);
-// };
 
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = function() {
-      const dataUrl = reader.result;
-      const base64 = dataUrl.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = function(error) {
-      reject(error);
-    }
-    reader.readAsDataURL(blob);
-  })
-}
-
-async function downloadRecordingIOS() {
-  if (!recordedBlob.value || recordedBlob.value.size === 0) {
-    console.error('No hay datos para descargar');
-    return;
-  }
-
-  try {
-    saveAs(recordedBlob.value, `${router.path}.mp4`);
-  } catch (error) {
-    console.error('error al intentar descargar el archivo:', error);
-  }
-
+function downloadRecording()  {
+  saveAs(recordedBlob.value, `${router.path}`);
+  console.log('valor quee se descarga:', recordedBlob.value)
   isDownloaded.value = true;
+  
   recordedBlob.value = null;
   isDownloaded.value = false;
-}
-
-function downloadRecordingDefault()  {
-  const file = new File([recordedBlob.value], `${router.path}.mp4`, {type: 'video/mp4', lastModified: new Date()});
   
-  saveAs(file);
-  isDownloaded.value = true;
-
-  console.log('archivo descargado:', file)
-
-  recordedBlob.value = null;
-  isDownloaded.value = false;
-
-
-
-  
-  // saveAs(recordedBlob.value, `${router.path}`);
-  // isDownloaded.value = true;
-  
-  // recordedBlob.value = null;
-  // isDownloaded.value = false;
 };
-function handleDownloadRecording() {
-  if (isIOS()) {
-    downloadRecordingIOS();
-  } else {
-    downloadRecordingDefault();
-  }
-}
+
 function increaseBrightness() {
   if (videoEl.value) {
     adjustBrightness(videoEl.value, 0.1);  
@@ -324,7 +251,7 @@ onBeforeMount(() => {
           <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
             <span class="circle" :class="{ 'active': isRecordingActive }"></span>
           </button>
-          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecordingDefault" @touchend="downloadRecordingDefault" class="download">
+          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecordingDefault" class="download">
             Descargar
           </button>
         </div>
