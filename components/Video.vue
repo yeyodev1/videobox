@@ -22,7 +22,7 @@ const isDownloaded = ref(false);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
-const URL = window.URL;
+const URL = ref(window.URL);
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -90,12 +90,11 @@ function startRecording() {
     const video = videoEl.value;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const fps = 60; 
-    const stream = canvas.captureStream(fps);
 
+    const stream = canvas.captureStream();
     let intervalId = setInterval(function () {
       context.drawImage(video, 0, 0);
-    }, 1000 / fps);
+    }, 1000 / 30);
 
     mediaRecorder.value = new MediaRecorder(stream);
     mediaRecorder.value.onstop = () => {
@@ -111,7 +110,7 @@ function startRecording() {
     }
   };
   mediaRecorder.value.onstop = () => {
-    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/quicktime' });
+    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
   };
   mediaRecorder.value.onerror = (event) => {
     console.error('MediaRecorder error:', event.error);
@@ -244,7 +243,8 @@ onBeforeMount(() => {
           ref="videoEl" 
           crossorigin="anonymous" 
           :class="{ blurred: isBlurred && timeBlur }"
-          class="video-js video"  />
+          class="video-js video" 
+          />
           <div v-if="isBlurred" class="overlay">
             <button class="overlay-button">
               <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
@@ -258,7 +258,7 @@ onBeforeMount(() => {
             Descargar
           </button>
           <div class="captured-video-container" v-if="recordedBlob">
-            <video ref="capturedVideoEl" controls :src="recordedBlob ? URL.createObjectURL(recordedBlob) : ''" width="240" height="160"></video>
+            <video ref="capturedVideoEl" controls :src="URL.createObjectURL(recordedBlob)" width="240" height="160"></video>
           </div>
         </div>
         <div class="buttons-container">
@@ -459,4 +459,3 @@ onBeforeMount(() => {
   pointer-events: none;
 }
 </style>
-  
