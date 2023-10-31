@@ -96,7 +96,7 @@ function startRecording() {
     let intervalId = setInterval(function () {
       context.drawImage(video, 0, 0);
     }, 1000 / fps);
-    
+
     mediaRecorder.value = new MediaRecorder(stream);
     mediaRecorder.value.onstop = () => {
       clearInterval(intervalId);
@@ -111,7 +111,7 @@ function startRecording() {
     }
   };
   mediaRecorder.value.onstop = () => {
-    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
+    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/quicktime' });
   };
   mediaRecorder.value.onerror = (event) => {
     console.error('MediaRecorder error:', event.error);
