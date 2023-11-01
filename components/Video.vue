@@ -11,7 +11,7 @@ const router = useRoute()
 
 const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
-const emit = defineEmits(['update:time'])
+const emit = defineEmits(['update:time', 'captured-video'])
 
 const videoEl = ref(null);
 const mediaRecorder = ref(null);
@@ -22,6 +22,7 @@ const isDownloaded = ref(false);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
+const URL = ref(window.URL);
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -118,13 +119,15 @@ function startRecording() {
   isRecording.value = true;
 }
 
-function stopRecording() {
+async function stopRecording() {
   mediaRecorder.value.stop();
   isRecording.value = false;
   mediaRecorder.value.onstop = () => {
     recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
     console.log('Captura completada, listo para descargar:', recordedBlob.value);
+    emit('captured-video', recordedBlob.value)
   };
+  // console.log('emitiing event blob', recordedBlob.value)
 };
 
 function toggleRecording() {
@@ -251,11 +254,11 @@ onBeforeMount(() => {
           <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
             <span class="circle" :class="{ 'active': isRecordingActive }"></span>
           </button>
-          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecordingDefault" class="download">
+          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecording" class="download">
             Descargar
           </button>
           <div class="captured-video-container" v-if="recordedBlob">
-            <video ref="capturedVideoEl" controls :src="recordedBlob ? URL.createObjectURL(recordedBlob) : ''" width="240" height="160"></video>
+            <video ref="capturedVideoEl" controls :src="URL.createObjectURL(recordedBlob)" width="240" height="160"></video>
           </div>
         </div>
         <div class="buttons-container">
@@ -363,6 +366,7 @@ onBeforeMount(() => {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
     .captured-video-container {
       position: absolute;
       bottom: 30px;
