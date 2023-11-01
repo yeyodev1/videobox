@@ -23,6 +23,7 @@ const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
 const URL = ref(window.URL);
+const capturedVideoEl = ref(null);
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -107,6 +108,13 @@ function startRecording() {
   mediaRecorder.value.ondataavailable = event => {
     if (event.data.size > 0) {
       recordedChunks.value.push(event.data);
+      console.log("Media capturado en el ondataavailable:", event.data);
+
+      const newBlob = new Blob(recordedChunks.value, { type: 'video/mp4' });
+      const videoElement = capturedVideoEl.value;
+      if (videoElement) {
+          videoElement.src = URL.createObjectURL(newBlob);
+      }
     }
   };
   mediaRecorder.value.onstop = () => {
@@ -120,6 +128,7 @@ function startRecording() {
 }
 
 async function stopRecording() {
+  mediaRecorder.value.requestData();
   mediaRecorder.value.stop();
   isRecording.value = false;
   mediaRecorder.value.onstop = () => {
@@ -150,6 +159,9 @@ function downloadRecording() {
   isDownloaded.value = false;
 
 };
+function captureCurrentMedia() {
+  mediaRecorder.value.requestData();
+}
 
 function increaseBrightness() {
   if (videoEl.value) {
@@ -217,7 +229,7 @@ onMounted(() => {
     sources: [{
       src: videoUrl,
       type: 'video/mp4'
-    }]
+    }],
   }
   player.value = videojs(videoEl.value, options)
   videoEl.value.player = player.value;
@@ -258,7 +270,7 @@ onBeforeMount(() => {
             Descargar
           </button>
           <div class="captured-video-container" v-if="recordedBlob">
-            <video ref="capturedVideoEl" controls :src="URL.createObjectURL(recordedBlob)" width="240" height="160"></video>
+            <video :ref="capturedVideoEl" controls width="240" height="160"></video>
           </div>
         </div>
         <div class="buttons-container">
@@ -283,6 +295,9 @@ onBeforeMount(() => {
             </div>
           </div>
         </div>
+        <button @click="captureCurrentMedia" class="capture-media">
+          Capturar Media
+        </button>
       </div>
     </div>
   </template>
