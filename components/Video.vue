@@ -235,6 +235,11 @@ onBeforeMount(() => {
   <template>
     <div class="container" :class="{ 'pointer-events-none': options }">
       <div class="container-video">
+        <RouterLink 
+          to="/"
+          class="container-video-home">
+          Regresa al home
+        </RouterLink>
         <video 
           playsinline 
           ref="videoEl" 
@@ -333,6 +338,15 @@ onBeforeMount(() => {
     left: 0;
     width: 100%;
     height: 100%;
+    &-home {
+      padding: 12px;
+      margin-top: 12px;
+      position: relative;
+      top: 12px;
+      z-index: 10000000;
+      color: white;
+      text-decoration: none;
+    }
     .video {
       position: absolute;
       top: 50%;
