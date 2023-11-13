@@ -8,23 +8,11 @@ const route = useRoute();
 const clubStore = useClubStore();
 
 const url = computed(() => {
-  const routeParams = route.params;
-  const videos = clubStore.clubs[0].sports[0].videos;
+  const videoId = route.params.video;
+  const video = clubStore.clubs[0].sports[0].videos.find(v => v.id === videoId);
 
-  if (typeof routeParams.video === 'string') {
-    const videoSelected = routeParams.video.split('-');
-    const date = videoSelected.slice(0, 3).join('-');
-    const time = videoSelected[3];
-  
-    const video = videos.find(v => {
-      return v.field === routeParams.fieldSelected &&
-            v.date === date &&
-            v.time.substring(0, 5) === time;
-    });
-  
-    return video ? video.url : null;
-  }
-  return null;
+
+  return video ? video.url : null;
 })
 </script>
 

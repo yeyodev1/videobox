@@ -18,7 +18,7 @@ onMounted(() => {
 function setLink(name: VideoInput): string {
   const video = parseVideoName(name);
   const formattedTime = video?.time.substring(0, 5);
-  return `/one-padel/padel-1/${video?.field}/${video?.date}-${formattedTime}`
+  return `/one-padel/padel-1/${video?.field}/${video?.id}`
 }
 
 function setDate(name: VideoInput): string {

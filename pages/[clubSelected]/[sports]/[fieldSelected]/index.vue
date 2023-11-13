@@ -58,7 +58,7 @@ const url = computed(() => {
       v.time.substring(0, 5) === selectedTime.value;
   });
   
-  videoId.value = video?.id!;
+  videoId.value = video?.id || '';
   return video ? video.url : null;
 });
 const removeText = computed(() => !videoVisible.value )
@@ -67,22 +67,23 @@ const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Bu
 const showMessage = computed(() => success.value && !clubStore.errorMessage);
 
 async function showVideo() {
-  const redirectLink = `${route.params.fieldSelected}/${selectedDate.value}-${selectedTime.value}`
   try {
-    if (isAdmin.value) {
+    if (isAdmin.value && videoId.value) {
       clubStore.releaseVideo(email.value, videoId.value);
       success.value = true;
-    } else {
+    } else if (videoId.value) {
+      const redirectLink = `${route.params.fieldSelected}/${videoId.value}`;
       router.push(redirectLink);
+    } else {
+      console.error("No se ha seleccionado ningún video");
     }
     email.value = '';
-    videoId.value = '';
-    selectedDate.value = ''
-    selectedTime.value = ''
+    selectedDate.value = '';
+    selectedTime.value = '';
     apiKey.value++;
     setTimeout(() => success.value = false, 4000);
   } catch (error) {
-    console.log(error)
+    console.error(error);
   }
 };
 

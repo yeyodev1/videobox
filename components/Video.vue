@@ -2,8 +2,15 @@
 import 'video.js/dist/video-js.css'
 import videojs from 'video.js';
 import saveAs from 'file-saver';
+import axios from 'axios';
+
+import VideoService from '@/services/Videos/Videos'
 
 import useUserStore from '@/store/userStore';
+
+const videoService = new VideoService();
+
+const route = useRoute();
 
 const userStore = useUserStore();
 
@@ -23,6 +30,19 @@ const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
 const URL = ref(window.URL);
+const selectionStart = ref(null);
+const selectionEnd = ref(null);
+const selectionStarted = ref(false);
+const startTimeSelected = ref(null);
+const endTimeSelected = ref(null);
+const videoId = ref(extractVideoIdFromUrl(videoUrl.value));
+const videoProcessingTask = ref({
+  taskId: null,
+  status: '',
+  url: ''
+});
+
+console.log('params:', route.params)
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -46,110 +66,80 @@ const isBlurred = computed(() => {
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu partido' : 'Regístrate o inicia sesión para ver el video')
 
 
-function isSafari() {
-  return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-};
+function extractVideoIdFromUrl(videoUrl) {
+  const decodedUrl = decodeURIComponent(videoUrl);
+  const videoNameWithExtension = decodedUrl.split('/').pop();
+  const videoId = videoNameWithExtension.split('.').slice(0, -1).join('.');
 
-function isIOS() {
-  return [
-    'iPad Simulator',
-    'iPhone Simulator',
-    'iPod Simulator',
-    'iPad',
-    'iPhone',
-    'iPod'
-  ].includes(navigator.platform)
-    || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+  return videoId;
 }
 
-if (isIOS()) {
-  const DefaultMediaRecorder = window.MediaRecorder;
-  const kb = 8 * 1024;
-  const preferredBitRatePerSecond = 100 * kb;
-  window.MediaRecorder = class extends DefaultMediaRecorder {
-    constructor(stream, options) {
-      super(stream, {
-        ...options,
-        audioBitsPerSecond: preferredBitRatePerSecond,
-        videoBitsPerSecond: preferredBitRatePerSecond,
-      });
+function secondsToHms(d) {
+    d = Number(d);
+
+    const h = Math.floor(d / 3600);
+    const m = Math.floor(d % 3600 / 60);
+    const s = Math.floor(d % 3600 % 60);
+
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+async function cutAndUploadVideo(start, end, videoId) {
+  try {
+    const { taskId } = await videoService.cutVideo(secondsToHms(start), secondsToHms(end), videoId);
+    videoProcessingTask.value.taskId = taskId;
+    videoProcessingTask.value.status = 'pending';
+    console.log('Task id received:', taskId);
+
+    console.log('task id', videoProcessingTask.value.taskId)
+    await checkVideoStatus(videoProcessingTask.value.taskId);
+  } catch (error) {
+    console.error('error al cargar y subir el video', error)
+  }
+}
+
+async function checkVideoStatus(taskId) {
+  if (!taskId) {
+    console.error('Task ID no definido.');
+    return;
+  }
+  try {
+    const response = await videoService.checkVideoStatus(taskId);
+    console.log(response)
+    videoProcessingTask.value.status = response.status;
+    if (response.status === 'completed') {
+      // Aquí manejarías el enlace de descarga
+      videoProcessingTask.value.url = response.url;
+    } else {
+      // Si el video aún está procesándose, vuelve a comprobar después de un tiempo
+      setTimeout(() => checkVideoStatus(taskId), 5000); // Verificar cada 5 segundos
     }
+  } catch (error) {
+    console.error('Error al verificar el estado del video:', error);
   }
 }
 
-function startRecording() {
-  recordedChunks.value = [];
-  recordedBlob.value = null;
-
-  let MediaRecorderClass = isIOS() ? window.MediaRecorder : MediaRecorder;
 
 
-  if (isSafari() || isIOS()) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const video = videoEl.value;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    const stream = canvas.captureStream();
-    let intervalId = setInterval(function () {
-      context.drawImage(video, 0, 0);
-    }, 1000 / 30);
-
-    mediaRecorder.value = new MediaRecorder(stream);
-    mediaRecorder.value.onstop = () => {
-      clearInterval(intervalId);
-    };
+function handleSelection() {
+  if (selectionStart.value === null) {
+    selectionStart.value = player.value.currentTime();
+    console.log(`Tiempo de inicio seleccionado: ${selectionStart.value}`);
   } else {
-    mediaRecorder.value = new MediaRecorderClass(videoEl.value.captureStream());
+    selectionEnd.value = player.value.currentTime();
+    console.log(`Tiempo de fin seleccionado: ${selectionEnd.value}`);
+    console.log('videoid: ', route.params.video)
+    cutAndUploadVideo(selectionStart.value, selectionEnd.value, route.params.video);
+    selectionStart.value = null;
+    selectionEnd.value = null;
   }
-
-  mediaRecorder.value.ondataavailable = event => {
-    if (event.data.size > 0) {
-      recordedChunks.value.push(event.data);
-    }
-  };
-  mediaRecorder.value.onstop = () => {
-    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
-  };
-  mediaRecorder.value.onerror = (event) => {
-    console.error('MediaRecorder error:', event.error);
-  };
-  mediaRecorder.value.start();
-  isRecording.value = true;
 }
 
-async function stopRecording() {
-  mediaRecorder.value.stop();
-  isRecording.value = false;
-  mediaRecorder.value.onstop = () => {
-    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
-    console.log('Captura completada, listo para descargar:', recordedBlob.value);
-    emit('captured-video', recordedBlob.value)
-  };
-  // console.log('emitiing event blob', recordedBlob.value)
-};
-
-function toggleRecording() {
-  isRecordingActive.value = !isRecordingActive.value;
-  if (isRecording.value) {
-    stopRecording();
-  } else {
-    startRecording();
-    player.value.muted(false);
+function downloadVideo() {
+  if (videoProcessingTask.value.url) {
+    window.location.href = videoProcessingTask.value.url; 
   }
-};
-
-
-function downloadRecording() {
-  saveAs(recordedBlob.value, `${router.path}`);
-  console.log('valor quee se descarga:', recordedBlob.value)
-  isDownloaded.value = true;
-
-  recordedBlob.value = null;
-  isDownloaded.value = false;
-
-};
+}
 
 function increaseBrightness() {
   if (videoEl.value) {
@@ -251,10 +241,13 @@ onBeforeMount(() => {
             </button>
           </div>
         <div class="buttons-center-bottom">
-          <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
+          <button @click="handleSelection" class="recording" >
             <span class="circle" :class="{ 'active': isRecordingActive }"></span>
           </button>
-          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecording" class="download">
+          <button
+            v-if="videoProcessingTask.status" 
+            @click="downloadVideo"  
+            class="download">
             Descargar
           </button>
           <div class="captured-video-container" v-if="recordedBlob">
