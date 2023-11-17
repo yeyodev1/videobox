@@ -2,8 +2,15 @@
 import 'video.js/dist/video-js.css'
 import videojs from 'video.js';
 import saveAs from 'file-saver';
+import axios from 'axios';
+
+import VideoService from '@/services/Videos/Videos'
 
 import useUserStore from '@/store/userStore';
+
+const videoService = new VideoService();
+
+const route = useRoute();
 
 const userStore = useUserStore();
 
@@ -11,7 +18,7 @@ const router = useRoute()
 
 const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
-const emit = defineEmits(['update:time'])
+const emit = defineEmits(['update:time', 'captured-video'])
 
 const videoEl = ref(null);
 const mediaRecorder = ref(null);
@@ -22,6 +29,20 @@ const isDownloaded = ref(false);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
+const URL = ref(window.URL);
+const selectionStart = ref(null);
+const selectionEnd = ref(null);
+const selectionStarted = ref(false);
+const startTimeSelected = ref(null);
+const endTimeSelected = ref(null);
+const videoId = ref(extractVideoIdFromUrl(videoUrl.value));
+const videoProcessingTask = ref({
+  taskId: null,
+  status: '',
+  url: ''
+});
+
+console.log('params:', route.params)
 
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
@@ -45,127 +66,105 @@ const isBlurred = computed(() => {
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu partido' : 'Regístrate o inicia sesión para ver el video')
 
 
-function isSafari() {
-return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-};
+function extractVideoIdFromUrl(videoUrl) {
+  const decodedUrl = decodeURIComponent(videoUrl);
+  const videoNameWithExtension = decodedUrl.split('/').pop();
+  const videoId = videoNameWithExtension.split('.').slice(0, -1).join('.');
 
-function isIOS() {
-  return [
-      'iPad Simulator',
-      'iPhone Simulator',
-      'iPod Simulator',
-      'iPad',
-      'iPhone',
-      'iPod'
-  ].includes(navigator.platform)
-  || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+  return videoId;
 }
 
-if (isIOS()) {
-  const DefaultMediaRecorder = window.MediaRecorder;
-  const kb = 8 * 1024;
-  const preferredBitRatePerSecond = 100 * kb;
-  window.MediaRecorder = class extends DefaultMediaRecorder {
-    constructor(stream, options) {
-      super(stream, {
-        ...options,
-        audioBitsPerSecond: preferredBitRatePerSecond,
-        videoBitsPerSecond: preferredBitRatePerSecond,
-      });
+function secondsToHms(d) {
+    d = Number(d);
+
+    const h = Math.floor(d / 3600);
+    const m = Math.floor(d % 3600 / 60);
+    const s = Math.floor(d % 3600 % 60);
+
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+async function cutAndUploadVideo(start, end, videoId) {
+  console.log(`iniciando el corte del video con id ${videoId} desde ${start}, hasta ${end}` )
+
+  const formattedStart = secondsToHms(start);
+  const formattedEnd = secondsToHms(end);
+
+  console.log(`tiempo formateado para el corte: inicio: ${formattedStart}, fin ${formattedEnd}`)
+
+  try {
+    const response = await videoService.cutVideo(formattedStart, formattedEnd, videoId);
+    const taskId = response.taskId;
+    videoProcessingTask.value.taskId = taskId;
+    videoProcessingTask.value.status = 'pending';
+    console.log('id de tarea recibida: ', taskId);
+
+    checkVideoStatus(taskId);
+  } catch (error){ 
+    console.error('error al solicitar el corte del video: ', error);
+  }
+}
+
+async function checkVideoStatus(taskId) {
+  console.log(`sondeando el estado del video con id de tarea ${taskId}`);
+  try {
+    const response = await videoService.checkVideoStatus(taskId);
+    videoProcessingTask.value.status = response.status;
+    console.log('respuesta al verificar el estado: ', response);
+
+    if (response.status === 'completed') {
+      videoProcessingTask.value.url = response.url;
+      console.log(`video procesado, url disponible: ${response.url}`);
+    } else if (response.status === 'pending') {
+      console.log('el video aun esta en proceso, reintentando en 5 segundos...');
+      setTimeout(() => checkVideoStatus(taskId), 5000);
+    } else {
+      console.error(`estado desconocido o error en la tarea: ${response.status}`)
     }
+  } catch (error) {
+    console.error('error al verificar el estado del video: ', error)
   }
 }
 
-function startRecording() {
-  recordedChunks.value = [];
-  recordedBlob.value = null;
 
-  let MediaRecorderClass = isIOS() ? window.MediaRecorder : MediaRecorder;
-
-  
-  if (isSafari() || isIOS()) {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      const video = videoEl.value;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const stream = canvas.captureStream();
-      let intervalId = setInterval(function () {
-          context.drawImage(video, 0, 0);
-      }, 1000 / 30); 
-
-      mediaRecorder.value = new MediaRecorder(stream);
-      mediaRecorder.value.onstop = () => {
-          clearInterval(intervalId);  
-      };
+function handleSelection() {
+  if (selectionStart.value === null) {
+    selectionStart.value = player.value.currentTime();
+    console.log(`Tiempo de inicio seleccionado: ${selectionStart.value}`);
   } else {
-      mediaRecorder.value = new MediaRecorderClass(videoEl.value.captureStream());
+    selectionEnd.value = player.value.currentTime();
+    console.log(`Tiempo de fin seleccionado: ${selectionEnd.value}`);
+    console.log('videoid: ', route.params.video)
+    cutAndUploadVideo(selectionStart.value, selectionEnd.value, route.params.video);
+    selectionStart.value = null;
+    selectionEnd.value = null;
   }
-
-  mediaRecorder.value.ondataavailable = event => {
-      if (event.data.size > 0) {
-          recordedChunks.value.push(event.data);
-      }
-  };
-  mediaRecorder.value.onstop = () => {
-      recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
-  };
-  mediaRecorder.value.onerror = (event) => {
-      console.error('MediaRecorder error:', event.error);
-  };
-  mediaRecorder.value.start();
-  isRecording.value = true;
 }
 
-function stopRecording() {
-  mediaRecorder.value.stop();
-  isRecording.value = false;
-  mediaRecorder.value.onstop = () => {
-    recordedBlob.value = new Blob(recordedChunks.value, { type: 'video/mp4' });
-    console.log('Captura completada, listo para descargar:', recordedBlob.value);  
-  };
-};
-
-function toggleRecording() {
-  isRecordingActive.value = !isRecordingActive.value;
-  if (isRecording.value) {
-    stopRecording();
-  } else {
-    startRecording();
-    player.value.muted(false);
+function downloadVideo() {
+  if (videoProcessingTask.value.url) {
+    window.location.href = videoProcessingTask.value.url; 
   }
-};
-
-
-function downloadRecording()  {
-  saveAs(recordedBlob.value, `${router.path}`);
-  console.log('valor quee se descarga:', recordedBlob.value)
-  isDownloaded.value = true;
-  
-  recordedBlob.value = null;
-  isDownloaded.value = false;
-  
-};
+}
 
 function increaseBrightness() {
   if (videoEl.value) {
-    adjustBrightness(videoEl.value, 0.1);  
+    adjustBrightness(videoEl.value, 0.1);
   }
 };
 function decreaseBrightness() {
   if (videoEl.value) {
-    adjustBrightness(videoEl.value, -0.1); 
+    adjustBrightness(videoEl.value, -0.1);
   }
 };
 function increaseContrast() {
   if (videoEl.value) {
-    adjustContrast(videoEl.value, 0.1);  
+    adjustContrast(videoEl.value, 0.1);
   }
 };
 function decreaseContrast() {
   if (videoEl.value) {
-    adjustContrast(videoEl.value, -0.1); 
+    adjustContrast(videoEl.value, -0.1);
   }
 };
 
@@ -205,7 +204,7 @@ onMounted(() => {
     width: 1000,
     height: 500,
     preferFullWindow: false,
-    controlBar:{
+    controlBar: {
       fullscreenToggle: false,
       pictureInPictureToggle: false,
       playbackRateMenuButton: true,
@@ -232,7 +231,7 @@ onBeforeMount(() => {
 })
 </script>
 
-  <template>
+<template>
     <div class="container" :class="{ 'pointer-events-none': options }">
       <div class="container-video">
         <RouterLink 
@@ -253,12 +252,18 @@ onBeforeMount(() => {
             </button>
           </div>
         <div class="buttons-center-bottom">
-          <button v-if="!recordedBlob" @click="toggleRecording" class="recording" >
+          <button @click="handleSelection" class="recording" >
             <span class="circle" :class="{ 'active': isRecordingActive }"></span>
           </button>
-          <button v-if="recordedBlob && !isDownloaded" @click="downloadRecording" @touchend="downloadRecordingDefault" class="download">
+          <button
+            v-if="videoProcessingTask.status" 
+            @click="downloadVideo"  
+            class="download">
             Descargar
           </button>
+          <div class="captured-video-container" v-if="recordedBlob">
+            <video ref="capturedVideoEl" controls :src="URL.createObjectURL(recordedBlob)" width="240" height="160"></video>
+          </div>
         </div>
         <div class="buttons-container">
           <div class="container-button-group">
@@ -286,152 +291,175 @@ onBeforeMount(() => {
     </div>
   </template>
 
-  <style lang="scss" scoped>
-  .option {
-    background-color: rgba($grey, 0.6);
-    border-radius: 8px;
-    border: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    color: $white;
-    font-size: $body-font-size;
-    &:active { 
-      background-color: rgba($grey, 0.8); 
-    }
+<style lang="scss" scoped>
+.option {
+  background-color: rgba($grey, 0.6);
+  border-radius: 8px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: $white;
+  font-size: $body-font-size;
+
+  &:active {
+    background-color: rgba($grey, 0.8);
   }
-  .container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 10000;
+}
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 10000;
+}
+
+.blurred {
+  filter: blur(10px);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-button {
+  background-color: #444;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.container-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  .video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    object-position: center;
   }
 
-  .blurred {
-    filter: blur(10px);
-  }
-  .overlay {
+  .buttons-center-bottom {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  .overlay-button {
-    background-color: #444;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .container-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    &-home {
-      padding: 12px;
-      margin-top: 12px;
-      position: relative;
-      top: 12px;
-      z-index: 10000000;
-      color: white;
-      text-decoration: none;
-    }
-    .video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: auto;
-      height: auto;
-      min-width: 100%;
-      min-height: 100%;
-      transform: translate(-50%, -50%);
-      object-fit: cover;  
-      object-position: center; 
-    }
-    .buttons-center-bottom {
+    flex-direction: column;
+    gap: 10px;
+
+    .captured-video-container {
       position: absolute;
       bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      .recording, .download {
-        background: none;
-        color: $white;
-        border: none;
-        font-size: $body-font-size;
-        margin-bottom: 12px;
-        cursor: pointer;
+      right: 30px;
+      z-index: 1000;
+
+      video {
+        border: 3px solid #fff;
       }
-      .recording {
-        font-size: 48px;
+    }
+
+    .recording,
+    .download {
+      background: none;
+      color: $white;
+      border: none;
+      font-size: $body-font-size;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .recording {
+      font-size: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgb(255, 255, 255);
+      border-radius: 100%;
+      padding: 0;
+
+      .circle {
+        background-color: red;
+        border-radius: 100%;
+        width: 100%;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgb(255, 255, 255);
-        border-radius: 100%;
-        padding: 0;
-        .circle {
-          background-color: red;
-          border-radius: 100%;
-          width: 100%;
-          height: 100%;
-          display:  flex;
-          justify-content: center;
-          align-items: center;
-          transition: all 0.5S ease-in-out;
-          &.active {
-            width: 50%;
-            height: 50%;
-            border-radius: 0; 
-          }
+        transition: all 0.5S ease-in-out;
+
+        &.active {
+          width: 50%;
+          height: 50%;
+          border-radius: 0;
         }
       }
-      .recording, .option, .download {
-        cursor: pointer;
-      }
     }
-    .buttons-container {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      .container-button-group {
+
+    .recording,
+    .option,
+    .download {
+      cursor: pointer;
+    }
+  }
+
+  .buttons-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    .container-button-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 25px;
+
+      .container-button {
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 6px;
-        margin-bottom: 25px;
-        .container-button {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 12px;
-          span {
-            color: $white;
-          }
-          i {
-            color: $purple;
-            font-size: $body-font-size * 2;
-          }
+        gap: 12px;
+
+        span {
+          color: $white;
+        }
+
+        i {
+          color: $purple;
+          font-size: $body-font-size * 2;
         }
       }
     }
   }
-  .pointer-events-none {
-    pointer-events: none;
-  }
-  </style>
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+</style>

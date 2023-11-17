@@ -16,6 +16,7 @@ const sportSelected = ref<Sport | null>(null);
 const sportId = route.params.sport;
 
 const sortedVideos = computed(() => {
+  console.log(clubStore.clubs[0].sports[0].videos)
   return clubStore.clubs[0].sports[0].videos.slice().sort((a: ParsedVideo, b: ParsedVideo) => {
     if (a.field < b.field) return -1;
     if (a.field > b.field) return 1;
