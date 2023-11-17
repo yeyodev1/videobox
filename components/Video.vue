@@ -21,21 +21,13 @@ const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowCo
 const emit = defineEmits(['update:time', 'captured-video'])
 
 const videoEl = ref(null);
-const mediaRecorder = ref(null);
-const recordedChunks = ref([]);
 const recordedBlob = ref(null);
-const isRecording = ref(false);
-const isDownloaded = ref(false);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
 const URL = ref(window.URL);
 const selectionStart = ref(null);
 const selectionEnd = ref(null);
-const selectionStarted = ref(false);
-const startTimeSelected = ref(null);
-const endTimeSelected = ref(null);
-const videoId = ref(extractVideoIdFromUrl(videoUrl.value));
 const videoProcessingTask = ref({
   taskId: null,
   status: '',
@@ -64,15 +56,6 @@ const isBlurred = computed(() => {
   return true;
 });
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu partido' : 'Regístrate o inicia sesión para ver el video')
-
-
-function extractVideoIdFromUrl(videoUrl) {
-  const decodedUrl = decodeURIComponent(videoUrl);
-  const videoNameWithExtension = decodedUrl.split('/').pop();
-  const videoId = videoNameWithExtension.split('.').slice(0, -1).join('.');
-
-  return videoId;
-}
 
 function secondsToHms(d) {
     d = Number(d);
@@ -343,11 +326,12 @@ onBeforeMount(() => {
 }
 
 .container-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  &-home {
+    position: absolute;
+    padding: 16px;
+    z-index: 5;
+    text-decoration: none;
+  }
 
   .video {
     position: absolute;
@@ -458,6 +442,7 @@ onBeforeMount(() => {
     }
   }
 }
+
 
 .pointer-events-none {
   pointer-events: none;
