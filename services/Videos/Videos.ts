@@ -24,4 +24,5 @@ class VideoService extends APIBase {
     return this.get(`cut-video/${taskId}`)
   }
 }
-  export default VideoService;
+
+export default VideoService;

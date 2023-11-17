@@ -85,40 +85,46 @@ function secondsToHms(d) {
 }
 
 async function cutAndUploadVideo(start, end, videoId) {
+  console.log(`iniciando el corte del video con id ${videoId} desde ${start}, hasta ${end}` )
+
+  const formattedStart = secondsToHms(start);
+  const formattedEnd = secondsToHms(end);
+
+  console.log(`tiempo formateado para el corte: inicio: ${formattedStart}, fin ${formattedEnd}`)
+
   try {
-    const { taskId } = await videoService.cutVideo(secondsToHms(start), secondsToHms(end), videoId);
+    const response = await videoService.cutVideo(formattedStart, formattedEnd, videoId);
+    const taskId = response.taskId;
     videoProcessingTask.value.taskId = taskId;
     videoProcessingTask.value.status = 'pending';
-    console.log('Task id received:', taskId);
+    console.log('id de tarea recibida: ', taskId);
 
-    console.log('task id', videoProcessingTask.value.taskId)
-    await checkVideoStatus(videoProcessingTask.value.taskId);
-  } catch (error) {
-    console.error('error al cargar y subir el video', error)
+    checkVideoStatus(taskId);
+  } catch (error){ 
+    console.error('error al solicitar el corte del video: ', error);
   }
 }
 
 async function checkVideoStatus(taskId) {
-  if (!taskId) {
-    console.error('Task ID no definido.');
-    return;
-  }
+  console.log(`sondeando el estado del video con id de tarea ${taskId}`);
   try {
     const response = await videoService.checkVideoStatus(taskId);
-    console.log(response)
     videoProcessingTask.value.status = response.status;
+    console.log('respuesta al verificar el estado: ', response);
+
     if (response.status === 'completed') {
-      // Aquí manejarías el enlace de descarga
       videoProcessingTask.value.url = response.url;
+      console.log(`video procesado, url disponible: ${response.url}`);
+    } else if (response.status === 'pending') {
+      console.log('el video aun esta en proceso, reintentando en 5 segundos...');
+      setTimeout(() => checkVideoStatus(taskId), 5000);
     } else {
-      // Si el video aún está procesándose, vuelve a comprobar después de un tiempo
-      setTimeout(() => checkVideoStatus(taskId), 5000); // Verificar cada 5 segundos
+      console.error(`estado desconocido o error en la tarea: ${response.status}`)
     }
   } catch (error) {
-    console.error('Error al verificar el estado del video:', error);
+    console.error('error al verificar el estado del video: ', error)
   }
 }
-
 
 
 function handleSelection() {
