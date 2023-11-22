@@ -11,7 +11,22 @@ const route = useRoute();
 
 const userStore = useUserStore();
 
-const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
+const props = defineProps({
+  videoUrl: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  noShowControls: {
+    type: Boolean,
+    default: false 
+  },
+  options: {
+    type: Boolean,
+    required: false,
+    default: false,
+  }
+});
 
 const emit = defineEmits(['update:time', 'captured-video'])
 
@@ -30,7 +45,7 @@ const videoProcessingTask = ref({
 });
 
 const videoPurchased = computed(() => {
-  const video = userStore.user.videos.find(video => video.url === videoUrl);
+  const video = userStore.user.videos.find(video => video.url === props.videoUrl);
   return video ? true : false;
 });
 const isBlurred = computed(() => {
@@ -89,14 +104,16 @@ async function checkVideoStatus(taskId) {
     if (response.status === 'completed') {
       videoProcessingTask.value.url = response.url;
       console.log(`video procesado, url disponible: ${response.url}`);
+      downloadVideo(response.url);
     } else if (response.status === 'pending') {
       console.log('el video aun esta en proceso, reintentando en 5 segundos...');
       setTimeout(() => checkVideoStatus(taskId), 5000);
     } else {
-      console.error(`estado desconocido o error en la tarea: ${response.status}`)
+      alert('No pudimos descargar el video, inténtalo más tarde');
     }
   } catch (error) {
-    console.error('error al verificar el estado del video: ', error)
+    console.error('error al verificar el estado del video: ', error);
+    alert('No pudimos descargar el video, inténtalo más tarde');
   }
 }
 
@@ -105,6 +122,7 @@ function handleSelection() {
   if (selectionStart.value === null) {
     selectionStart.value = player.value.currentTime();
     console.log(`Tiempo de inicio seleccionado: ${selectionStart.value}`);
+    isRecordingActive.value = true;
   } else {
     selectionEnd.value = player.value.currentTime();
     console.log(`Tiempo de fin seleccionado: ${selectionEnd.value}`);
@@ -112,12 +130,15 @@ function handleSelection() {
     cutAndUploadVideo(selectionStart.value, selectionEnd.value, route.params.video);
     selectionStart.value = null;
     selectionEnd.value = null;
+    isRecordingActive.value = false;
   }
 }
 
-function downloadVideo() {
-  if (videoProcessingTask.value.url) {
-    window.location.href = videoProcessingTask.value.url; 
+function downloadVideo(url) {
+  if (url) {
+    window.location.href = url
+  } else {
+    alert ('No pudimos descargar el video, inténtalo más tarde')
   }
 }
 
@@ -170,7 +191,7 @@ function handleTimeUpdate(event) {
 
 onMounted(() => {
   const options = {
-    controls: noShowControls,
+    controls: props.noShowControls,
     autoplay: true,
     loop: true,
     preload: 'auto',
@@ -185,7 +206,7 @@ onMounted(() => {
     },
     playbackRates: [0.5, 1, 1.5, 2],
     sources: [{
-      src: videoUrl,
+      src: props.videoUrl,
       type: 'video/mp4'
     }]
   }
@@ -206,64 +227,57 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="container" :class="{ 'pointer-events-none': options }">
-      <div class="container-video">
-        <RouterLink 
-          to="/"
-          class="container-video-home">
-          Regresa al home
-        </RouterLink>
-        <video 
-          playsinline 
-          ref="videoEl" 
-          crossorigin="anonymous" 
-          :class="{ blurred: isBlurred && timeBlur }"
-          class="video-js video" 
-          />
-          <div v-if="isBlurred" class="overlay">
-            <button class="overlay-button">
-              <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
+  <div class="container" :class="{ 'pointer-events-none': props.options }">
+    <div class="container-video">
+      <RouterLink 
+        to="/"
+        class="container-video-home">
+        Regresa al home
+      </RouterLink>
+      <video 
+        playsinline 
+        ref="videoEl" 
+        crossorigin="anonymous" 
+        :class="{ blurred: isBlurred && timeBlur }"
+        class="video-js video" />
+        <div v-if="isBlurred" class="overlay">
+          <button class="overlay-button">
+            <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
+          </button>
+        </div>
+      <div class="buttons-center-bottom">
+        <button @click="handleSelection" class="recording" >
+          <span class="circle" :class="{ 'active': isRecordingActive }"></span>
+        </button>
+        <div class="captured-video-container" v-if="recordedBlob">
+          <video ref="capturedVideoEl" controls :src="URL.createObjectURL(recordedBlob)" width="240" height="160"></video>
+        </div>
+      </div>
+      <div class="buttons-container">
+        <div class="container-button-group">
+          <div class="container-button">
+            <span>Brillo: </span>
+            <button @pointerup="increaseBrightness" class="option">
+              <i class="fa-solid fa-plus"/>
+            </button>
+            <button @pointerup="decreaseBrightness" class="option">
+              <i class="fa-solid fa-minus"/>
             </button>
           </div>
-        <div class="buttons-center-bottom">
-          <button @click="handleSelection" class="recording" >
-            <span class="circle" :class="{ 'active': isRecordingActive }"></span>
-          </button>
-          <button
-            v-if="videoProcessingTask.status" 
-            @click="downloadVideo"  
-            class="download">
-            Descargar
-          </button>
-          <div class="captured-video-container" v-if="recordedBlob">
-            <video ref="capturedVideoEl" controls :src="URL.createObjectURL(recordedBlob)" width="240" height="160"></video>
-          </div>
-        </div>
-        <div class="buttons-container">
-          <div class="container-button-group">
-            <div class="container-button">
-              <span>Brillo: </span>
-              <button @pointerup="increaseBrightness" class="option">
-                <i class="fa-solid fa-plus"/>
-              </button>
-              <button @pointerup="decreaseBrightness" class="option">
-                <i class="fa-solid fa-minus"/>
-              </button>
-            </div>
-            <div class="container-button">
-              <span>Contraste: </span>
-              <button @pointerup="increaseContrast" class="option">
-                <i class="fa-solid fa-plus"/>
-              </button>
-              <button @pointerup="decreaseContrast" class="option">
-                <i class="fa-solid fa-minus"/>
-              </button>
-            </div>
+          <div class="container-button">
+            <span>Contraste: </span>
+            <button @pointerup="increaseContrast" class="option">
+              <i class="fa-solid fa-plus"/>
+            </button>
+            <button @pointerup="decreaseContrast" class="option">
+              <i class="fa-solid fa-minus"/>
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .option {
