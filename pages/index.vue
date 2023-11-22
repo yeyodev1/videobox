@@ -19,7 +19,7 @@ const clubStore = useClubStore();
         :key="index"
         :name="field.name"
         :image="field.image"
-        :id="`${field.id}/${field.sports[0].id}`"/>
+        :id="`${field.id}`"/>
     </div>
   </div>
 </template>
