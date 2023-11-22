@@ -1,11 +1,8 @@
 <script setup>
 import 'video.js/dist/video-js.css'
 import videojs from 'video.js';
-import saveAs from 'file-saver';
-import axios from 'axios';
 
 import VideoService from '@/services/Videos/Videos'
-
 import useUserStore from '@/store/userStore';
 
 const videoService = new VideoService();
@@ -13,8 +10,6 @@ const videoService = new VideoService();
 const route = useRoute();
 
 const userStore = useUserStore();
-
-const router = useRoute()
 
 const { videoUrl, noShowControls, options } = defineProps(['videoUrl', 'noShowControls', 'options']);
 
@@ -34,11 +29,6 @@ const videoProcessingTask = ref({
   url: ''
 });
 
-console.log('params:', route.params)
-
-const isLoggedIn = computed(() => userStore.user !== null);
-const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
-const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister');
 const videoPurchased = computed(() => {
   const video = userStore.user.videos.find(video => video.url === videoUrl);
   return video ? true : false;
@@ -56,20 +46,21 @@ const isBlurred = computed(() => {
   return true;
 });
 const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu partido' : 'Regístrate o inicia sesión para ver el video')
+const isLoggedIn = computed(() => userStore.user !== null);
+const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
+const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister');
 
 function secondsToHms(d) {
-    d = Number(d);
+  d = Number(d);
 
-    const h = Math.floor(d / 3600);
-    const m = Math.floor(d % 3600 / 60);
-    const s = Math.floor(d % 3600 % 60);
+  const h = Math.floor(d / 3600);
+  const m = Math.floor(d % 3600 / 60);
+  const s = Math.floor(d % 3600 % 60);
 
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
 async function cutAndUploadVideo(start, end, videoId) {
-  console.log(`iniciando el corte del video con id ${videoId} desde ${start}, hasta ${end}` )
-
   const formattedStart = secondsToHms(start);
   const formattedEnd = secondsToHms(end);
 
