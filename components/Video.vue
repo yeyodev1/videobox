@@ -19,7 +19,7 @@ const props = defineProps({
   },
   noShowControls: {
     type: Boolean,
-    default: false 
+    default: false
   },
   options: {
     type: Boolean,
@@ -88,7 +88,7 @@ async function cutAndUploadVideo(start, end, videoId) {
     console.log('id de tarea recibida: ', taskId);
 
     checkVideoStatus(taskId);
-  } catch (error){ 
+  } catch (error) {
     console.error('error al solicitar el corte del video: ', error);
   }
 }
@@ -137,7 +137,7 @@ function downloadVideo(url) {
   if (url) {
     window.location.href = url
   } else {
-    alert ('No pudimos descargar el video, inténtalo más tarde')
+    alert('No pudimos descargar el video, inténtalo más tarde')
   }
 }
 
@@ -237,6 +237,9 @@ onBeforeMount(() => {
         playsinline 
         ref="videoEl" 
         crossorigin="anonymous" 
+        :style="{
+          filter: `brightness(50%) contrast(50%)`
+        }"
         :class="{ blurred: isBlurred && timeBlur }"
         class="video-js video" />
         <div v-if="isBlurred" class="overlay">
