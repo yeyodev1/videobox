@@ -31,7 +31,6 @@ const props = defineProps({
 const emit = defineEmits(['update:time', 'captured-video'])
 
 const videoEl = ref(null);
-const recordedBlob = ref(null);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
@@ -249,9 +248,6 @@ onBeforeMount(() => {
         <button @click="handleSelection" class="recording" >
           <span class="circle" :class="{ 'active': isRecordingActive }"></span>
         </button>
-        <div class="captured-video-container" v-if="recordedBlob">
-          <video ref="capturedVideoEl" controls :src="URL.createObjectURL(recordedBlob)" width="240" height="160"></video>
-        </div>
       </div>
       <div class="buttons-container">
         <div class="container-button-group">
