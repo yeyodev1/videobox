@@ -262,20 +262,20 @@ onBeforeMount(() => {
         <div class="container-button-group">
           <div class="container-button">
             <span>Brillo: </span>
-            <button @click="increaseBrightness" class="option">
-              <p> ++++</p>
+            <button @touchstart="increaseBrightness" class="option">
+              <i class="fa-solid fa-plus"/>
             </button>
-            <button @click="decreaseBrightness" class="option">
-              <p> ----</p>
+            <button @touchstart="decreaseBrightness" class="option">
+              <i class="fa-solid fa-minus"/>
             </button>
           </div>
           <div class="container-button">
             <span>Contraste: </span>
-            <button @click="increaseContrast" class="option">
-              <p>++++</p>
+            <button @touchstart="increaseContrast" class="option">
+              <i class="fa-solid fa-plus"/>
             </button>
-            <button @click="decreaseContrast" class="option">
-              <p>-----</p>
+            <button @touchstart="decreaseContrast" class="option">
+              <i class="fa-solid fa-minus"/>
             </button>
           </div>
         </div>
@@ -424,8 +424,12 @@ onBeforeMount(() => {
 
   .buttons-container {
     position: absolute;
-    top: 10px;
+    top: 10%;
     right: 10px;
+
+    @media (min-width: $mobile-upper-breakpoint) {
+      top: 40%;
+    }
 
     .container-button-group {
       display: flex;
@@ -439,11 +443,10 @@ onBeforeMount(() => {
         justify-content: center;
         align-items: center;
         gap: 12px;
-
         span {
-          color: $white;
+          color: rgb(206, 67, 67);
+          font-weight: 800;
         }
-
         i {
           color: $purple;
           font-size: $body-font-size * 2;
