@@ -145,18 +145,25 @@ function downloadVideo(url) {
 
 function increaseBrightness() {
   brightness.value += 10;
+  alert('subiendo brillo')
   if (brightness.value > 200) brightness.value = 200;
 };
 function decreaseBrightness() {
   brightness.value -= 10;
+  alert('bajando brillo')
+
   if (brightness.value < 0) brightness.value = 0;
 };
 function increaseContrast() {
   contrast.value += 10;
+  alert('subiendo contaste')
+
   if (contrast.value > 200) contrast.value = 200;
 };
 function decreaseContrast() {
   contrast.value -= 10;
+  alert('bajjando contaste')
+
   if (contrast.value < 0) contrast.value = 0;
 };
 
