@@ -37,6 +37,8 @@ const player = ref(null);
 const URL = ref(window.URL);
 const selectionStart = ref(null);
 const selectionEnd = ref(null);
+const brightness = ref(100);
+const contrast = ref(100);
 const videoProcessingTask = ref({
   taskId: null,
   status: '',
@@ -142,24 +144,20 @@ function downloadVideo(url) {
 }
 
 function increaseBrightness() {
-  if (videoEl.value) {
-    adjustBrightness(videoEl.value, 0.1);
-  }
+  brightness.value += 10;
+  if (brightness.value > 200) brightness.value = 200;
 };
 function decreaseBrightness() {
-  if (videoEl.value) {
-    adjustBrightness(videoEl.value, -0.1);
-  }
+  brightness.value -= 10;
+  if (brightness.value < 0) brightness.value = 0;
 };
 function increaseContrast() {
-  if (videoEl.value) {
-    adjustContrast(videoEl.value, 0.1);
-  }
+  contrast.value += 10;
+  if (contrast.value > 200) contrast.value = 200;
 };
 function decreaseContrast() {
-  if (videoEl.value) {
-    adjustContrast(videoEl.value, -0.1);
-  }
+  contrast.value -= 10;
+  if (contrast.value < 0) contrast.value = 0;
 };
 
 function shouldPauseVideo() {
@@ -238,7 +236,7 @@ onBeforeMount(() => {
         ref="videoEl" 
         crossorigin="anonymous" 
         :style="{
-          filter: `brightness(50%) contrast(50%)`
+          filter: `brightness(${brightness}%) contrast(${contrast}%)`
         }"
         :class="{ blurred: isBlurred && timeBlur }"
         class="video-js video" />
