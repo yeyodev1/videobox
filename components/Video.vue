@@ -243,7 +243,8 @@ onBeforeMount(() => {
         ref="videoEl" 
         crossorigin="anonymous" 
         :style="{
-          filter: `brightness(${brightness}%) contrast(${contrast}%)`
+          filter: `brightness(${brightness}%) contrast(${contrast}%)`,
+          '-webkit-filter': `brightness(${brightness}%) contrast(${contrast}%)`
         }"
         :class="{ blurred: isBlurred && timeBlur }"
         class="video-js video" />
