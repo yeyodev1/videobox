@@ -262,19 +262,19 @@ onBeforeMount(() => {
         <div class="container-button-group">
           <div class="container-button">
             <span>Brillo: </span>
-            <button @touchstart="increaseBrightness" class="option">
+            <button @click="increaseBrightness" class="option">
               <i class="fa-solid fa-plus"/>
             </button>
-            <button @touchstart="decreaseBrightness" class="option">
+            <button @click="decreaseBrightness" class="option">
               <i class="fa-solid fa-minus"/>
             </button>
           </div>
           <div class="container-button">
             <span>Contraste: </span>
-            <button @touchstart="increaseContrast" class="option">
+            <button @click="increaseContrast" class="option">
               <i class="fa-solid fa-plus"/>
             </button>
-            <button @touchstart="decreaseContrast" class="option">
+            <button @click="decreaseContrast" class="option">
               <i class="fa-solid fa-minus"/>
             </button>
           </div>
