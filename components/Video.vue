@@ -427,7 +427,7 @@ onBeforeMount(() => {
     top: 10%;
     right: 10px;
 
-    @media (min-width: $mobile-upper-breakpoint) {
+    @media (min-width: $tablet-lower-breakpoint) {
       top: 40%;
     }
 
