@@ -437,18 +437,21 @@ onBeforeMount(() => {
       align-items: center;
       gap: 6px;
       margin-bottom: 25px;
-
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px;
+      border-radius: 8px;
       .container-button {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 12px;
         span {
-          color: rgb(206, 67, 67);
+          color: $purple;
           font-weight: 800;
         }
         i {
-          color: $purple;
+          color: $red;
           font-size: $body-font-size * 2;
         }
       }
