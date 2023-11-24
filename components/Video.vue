@@ -5,11 +5,11 @@ import videojs from 'video.js';
 import VideoService from '@/services/Videos/Videos'
 import useUserStore from '@/store/userStore';
 
-const videoService = new VideoService();
+const emit = defineEmits(['update:time', 'captured-video'])
 
 const route = useRoute();
 
-const userStore = useUserStore();
+const videoService = new VideoService();
 
 const props = defineProps({
   videoUrl: {
@@ -28,13 +28,12 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:time', 'captured-video'])
+const userStore = useUserStore();
 
 const videoEl = ref(null);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const player = ref(null);
-const URL = ref(window.URL);
 const selectionStart = ref(null);
 const selectionEnd = ref(null);
 const brightness = ref(100);
@@ -44,7 +43,6 @@ const videoProcessingTask = ref({
   status: '',
   url: ''
 });
-
 const videoPurchased = computed(() => {
   const video = userStore.user.videos.find(video => video.url === props.videoUrl);
   return video ? true : false;
@@ -75,7 +73,6 @@ function secondsToHms(d) {
 
   return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
-
 async function cutAndUploadVideo(start, end, videoId) {
   const formattedStart = secondsToHms(start);
   const formattedEnd = secondsToHms(end);
@@ -94,7 +91,6 @@ async function cutAndUploadVideo(start, end, videoId) {
     console.error('error al solicitar el corte del video: ', error);
   }
 }
-
 async function checkVideoStatus(taskId) {
   console.log(`sondeando el estado del video con id de tarea ${taskId}`);
   try {
@@ -117,8 +113,6 @@ async function checkVideoStatus(taskId) {
     alert('No pudimos descargar el video, inténtalo más tarde');
   }
 }
-
-
 function handleSelection() {
   if (selectionStart.value === null) {
     selectionStart.value = player.value.currentTime();
@@ -134,7 +128,6 @@ function handleSelection() {
     isRecordingActive.value = false;
   }
 }
-
 function downloadVideo(url) {
   if (url) {
     window.location.href = url
@@ -142,7 +135,6 @@ function downloadVideo(url) {
     alert('No pudimos descargar el video, inténtalo más tarde')
   }
 }
-
 function increaseBrightness() {
   brightness.value += 50;
   alert('subiendo brillo')
@@ -166,7 +158,6 @@ function decreaseContrast() {
 
   if (contrast.value < 0) contrast.value = 0;
 };
-
 function shouldPauseVideo() {
   if (isAdmin.value || videoEl.value.currentTime < 15) {
     return false;
@@ -183,7 +174,6 @@ function shouldPauseVideo() {
   }
   return false;
 }
-
 function handleTimeUpdate(event) {
   const video = event.target;
   emit('update:time', video.currentTime);
@@ -191,7 +181,6 @@ function handleTimeUpdate(event) {
     videoEl.value.pause();
   }
 };
-
 
 onMounted(() => {
   const options = {
