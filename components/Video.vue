@@ -413,13 +413,8 @@ onBeforeMount(() => {
 
   .buttons-container {
     position: absolute;
-    top: 10%;
+    top: 70%;
     right: 10px;
-
-    @media (min-width: $tablet-lower-breakpoint) {
-      top: 40%;
-    }
-
     .container-button-group {
       display: flex;
       flex-direction: column;
