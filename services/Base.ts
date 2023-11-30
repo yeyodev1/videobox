@@ -6,7 +6,7 @@ class APIBase {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = 'https://videobox-backapp.vercel.app/api' || 'http://localhost:8000/api';
+    this.baseUrl = 'https://backapp.videobox.pe/api' || 'http://localhost:8000/api';
   }
 
   private buildUrl(endpoint: string): string {
