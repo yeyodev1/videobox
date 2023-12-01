@@ -30,19 +30,20 @@ const props = defineProps({
 
 const userStore = useUserStore();
 
-const videoEl = ref(null);
-const timeBlur = ref(false);
-const isRecordingActive = ref(false);
-const player = ref(null);
-const selectionStart = ref(null);
-const selectionEnd = ref(null);
 const brightness = ref(100);
 const contrast = ref(100);
+const videoEl = ref(null);
+const selectionStart = ref(null);
+const player = ref(null);
+const selectionEnd = ref(null);
+const timeBlur = ref(false);
+const isRecordingActive = ref(false);
 const videoProcessingTask = ref({
   taskId: null,
   status: '',
   url: ''
 });
+const isLoading = ref(false);
 const videoPurchased = computed(() => {
   const video = userStore.user.videos.find(video => video.url === props.videoUrl);
   return video ? true : false;
@@ -93,20 +94,24 @@ async function cutAndUploadVideo(start, end, videoId) {
 }
 async function checkVideoStatus(taskId) {
   console.log(`sondeando el estado del video con id de tarea ${taskId}`);
+  isLoading.value = true;
   try {
     const response = await videoService.checkVideoStatus(taskId);
-    videoProcessingTask.value.status = response.status;
     console.log('respuesta al verificar el estado: ', response);
 
-    if (response.status === 'completed') {
-      videoProcessingTask.value.url = response.url;
+    if (response.message === 'Video procesado.') {
       console.log(`video procesado, url disponible: ${response.url}`);
-      downloadVideo(response.url);
-    } else if (response.status === 'pending') {
-      console.log('el video aun esta en proceso, reintentando en 5 segundos...');
-      setTimeout(() => checkVideoStatus(taskId), 5000);
+      videoProcessingTask.value.url = response.url
+      isLoading.value = false;
+
+      return
+    }
+    if (response.message === 'Video aún en proceso.') {
+      console.log('el video aun esta en proceso, reintentando en 1 segundo...');
+      setTimeout(() => checkVideoStatus(taskId), 1000);
     } else {
       alert('No pudimos descargar el video, inténtalo más tarde');
+      return 
     }
   } catch (error) {
     console.error('error al verificar el estado del video: ', error);
@@ -126,13 +131,6 @@ function handleSelection() {
     selectionStart.value = null;
     selectionEnd.value = null;
     isRecordingActive.value = false;
-  }
-}
-function downloadVideo(url) {
-  if (url) {
-    window.location.href = url
-  } else {
-    alert('No pudimos descargar el video, inténtalo más tarde')
   }
 }
 function increaseBrightness() {
@@ -237,11 +235,17 @@ onBeforeMount(() => {
         }"
         :class="{ blurred: isBlurred && timeBlur }"
         class="video-js video" />
-        <div v-if="isBlurred" class="overlay">
-          <button class="overlay-button">
-            <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
-          </button>
-        </div>
+      <LoadingCard 
+        message="video procesando"
+        :isLoading="isLoading"
+        :videoUrl="videoProcessingTask.url"
+        class="container-video-card"
+        />
+      <div v-if="isBlurred" class="overlay">
+        <button class="overlay-button">
+          <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
+        </button>
+      </div>
       <div class="buttons-center-bottom">
         <button @click="handleSelection" class="recording" >
           <span class="circle" :class="{ 'active': isRecordingActive }"></span>
@@ -331,7 +335,11 @@ onBeforeMount(() => {
     z-index: 5;
     text-decoration: none;
   }
-
+  &-card {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+  }
   .video {
     position: absolute;
     top: 50%;
