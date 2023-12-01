@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
 import CrushButton from '@nabux-crush/crush-button';
 
 const props = defineProps({
@@ -22,20 +23,21 @@ const props = defineProps({
 });
 
 function triggerDownload() {
-  if (props.videoUrl) {
-    // Crear un elemento <a> usando document.createElement
-    const a = document.createElement('a');
-    // Asignar propiedades al enlace para la descarga
-    a.download = 'video'; // Aquí puedes especificar el nombre del archivo con su extensión
-    a.href = props.videoUrl;
-    // Agregar el enlace al cuerpo del documento
-    document.body.appendChild(a);
-    // Disparar el evento de clic en el enlace
-    a.click();
-    // Eliminar el enlace del cuerpo del documento
-    document.body.removeChild(a);
-  }
-};
+  axios.get(props.videoUrl, {
+    responseType: 'blob'
+  })
+  .then(response => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'video.mp4');
+    document.body.appendChild(link);
+    link.click();
+  })
+  .catch(error => {
+    console.error(error);
+  });
+}
 </script>
 
 <template>
@@ -43,12 +45,10 @@ function triggerDownload() {
     <p v-if="isLoading">{{ message }}</p>
     <div v-else>
       <p>{{secondMessage}}</p>
-      <a
-        :href="videoUrl"
-        download="video.mp4"
-        class="boton">
-        descargar
-      </a>
+      <CrushButton
+        text="Descargar"
+        @click="triggerDownload"
+        class="boton" />
     </div>
   </div>
 </template>
