@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
-import club from '@/assets/logo-club.jpeg'
+import club from '@/assets/complejos/logo-club.jpeg';
+import deporcentro from '@/assets/complejos/deporcentro.jpeg';
 
 import VideoService from '~/services/Videos/Videos';
 import type { Club } from '~/typings/Field&Sport';
@@ -26,6 +27,19 @@ const useClubStore = defineStore("useClubStore", {
             name: 'padel',
             image: 'https://i.pinimg.com/236x/c5/3d/53/c53d537f7e8698a52ead8b02bfaba095.jpg',
             id: 'padel-1',
+            videos: []
+          }
+        ],
+      },
+      {  
+      image: deporcentro,
+      name: 'Deporcentro',
+      id: 'futbol',
+      sports: [
+          {
+            name: 'futbol',
+            image: 'https://i.pinimg.com/236x/a6/4c/9c/a64c9c65e86b2a0d24359b610a110710.jpg',
+            id: 'futbol-1',
             videos: []
           }
         ],
