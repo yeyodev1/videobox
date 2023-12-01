@@ -19,7 +19,14 @@ class APIUsers extends APIBase {
   } 
 
   async recoverPassword(email: string): Promise<AxiosResponse<ResponseMessageType>> {
-    return this.patch('auth/password-recovery', { email });
+    return this.post('auth/password-recovery-request', { email });
+  }
+
+  async updatePassword(token: string, newPassword: string): Promise<AxiosResponse<ResponseMessageType>> {
+    return this.patch("auth/password-recovery", {
+		id: token,
+		password: newPassword,
+	});
   }
 }
 

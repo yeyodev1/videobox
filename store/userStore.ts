@@ -91,6 +91,23 @@ export const useUserStore = defineStore('UserStore', {
       } finally {
         this.isLoading = false;
       }
+    },
+
+    async updatePassword (token: string, newPassword: string): Promise<void> {
+      this.isLoading = true;
+      this.errorMessage = null;
+      try {
+        const response = await userService.updatePassword(token, newPassword);
+        if(response && response.status === 200) {
+          alert('Tu contraseña ha sido actualiada');
+        } else {
+          this.errorMessage = 'No se pudo actualiar la contraseña por un error inesperado, inténtalo más tarde'
+        }
+      } catch (error: any) {
+        this.errorMessage = 'Error al actualizar la contraseña';
+      } finally {
+        this.isLoading = false;
+      }
     }
   }
 });
