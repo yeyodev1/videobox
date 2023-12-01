@@ -71,3 +71,28 @@ const useClubStore = defineStore("useClubStore", {
 });
 
 export default useClubStore;
+
+
+
+
+  // actions: {
+  //   async getVideos(): Promise<void> {
+  //     try {
+  //       const response = await videoService.getVideos();
+  //       const videosData = response.data || [];
+  //       const parsedVideos = videosData.map(video => parseVideoName(video)).filter(Boolean) as ParsedVideo[]; 
+
+  //       this.clubs.forEach(club => {
+  //         if (club.name === 'One Padel') {
+  //           club.sports[0].videos = parsedVideos;
+  //         } else {
+  //           club.sports.forEach(sport => {
+  //             sport.videos = parsedVideos.filter((video): video is ParsedVideo => video !== null && video.clubName === club.name);
+  //           });
+  //         }
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   },
+
