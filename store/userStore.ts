@@ -99,10 +99,9 @@ export const useUserStore = defineStore('UserStore', {
       try {
         const response = await userService.updatePassword(token, newPassword);
         if(response && response.status === 200) {
-          alert('Tu contraseña ha sido actualiada');
-        } else {
-          this.errorMessage = 'No se pudo actualiar la contraseña por un error inesperado, inténtalo más tarde'
-        }
+          alert('Tu contraseña ha sido actualizada');
+          this.errorMessage='Ahora inica sesion con tu nueva contraseña';
+        } 
       } catch (error: any) {
         this.errorMessage = 'Error al actualizar la contraseña';
       } finally {

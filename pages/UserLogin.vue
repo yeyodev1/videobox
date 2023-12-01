@@ -78,7 +78,7 @@ async function handlePasswordRecovery() {
     userEmailForRecovery.value = email;
     try {
       await userStore.recoverPassword(email);
-      router.push('/update-password');
+      alert('revisa tu correo electronico')
     } catch (error) {
       console.error('Error en la recuperación de contraseña:', error);
       alert('Hubo un error al intentar recuperar la contraseña. Por favor, inténtalo de nuevo más tarde.');
