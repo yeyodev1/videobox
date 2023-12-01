@@ -2,6 +2,8 @@
 import axios from 'axios';
 import CrushButton from '@nabux-crush/crush-button';
 
+const emit = defineEmits(['loading-finish'])
+
 const props = defineProps({
   isLoading: {
     type: Boolean,
@@ -37,7 +39,10 @@ function triggerDownload() {
   })
   .catch(error => {
     console.error(error); 
-  });
+  })
+  .finally(() => {
+    emit('loading-finish');
+  })
 }
 </script>
 

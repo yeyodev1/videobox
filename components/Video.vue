@@ -38,6 +38,7 @@ const player = ref(null);
 const selectionEnd = ref(null);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
+const showLoadingCard = ref(false);
 const videoProcessingTask = ref({
   taskId: null,
   status: '',
@@ -95,6 +96,7 @@ async function cutAndUploadVideo(start, end, videoId) {
 async function checkVideoStatus(taskId) {
   console.log(`sondeando el estado del video con id de tarea ${taskId}`);
   isLoading.value = true;
+  showLoadingCard.value = true;
   try {
     const response = await videoService.checkVideoStatus(taskId);
     console.log('respuesta al verificar el estado: ', response);
@@ -103,12 +105,12 @@ async function checkVideoStatus(taskId) {
       console.log(`video procesado, url disponible: ${response.url}`);
       videoProcessingTask.value.url = response.url
       isLoading.value = false;
-
       return
     }
     if (response.message === 'Video aún en proceso.') {
       console.log('el video aun esta en proceso, reintentando en 1 segundo...');
       setTimeout(() => checkVideoStatus(taskId), 1000);
+      showLoadingCard.value = true;
     } else {
       alert('No pudimos descargar el video, inténtalo más tarde');
       return 
@@ -131,6 +133,7 @@ function handleSelection() {
     selectionStart.value = null;
     selectionEnd.value = null;
     isRecordingActive.value = false;
+    showLoadingCard.value = true;
   }
 }
 function increaseBrightness() {
@@ -235,11 +238,13 @@ onBeforeMount(() => {
         }"
         :class="{ blurred: isBlurred && timeBlur }"
         class="video-js video" />
-      <LoadingCard 
+      <LoadingCard  
+        v-if="showLoadingCard"
         message="video procesandose"
         secondMessage="Descarga tu video"
         :isLoading="isLoading"
         :videoUrl="videoProcessingTask.url"
+        @loading-finish="showLoadingCard = false"
         class="container-video-card"
         />
       <div v-if="isBlurred" class="overlay">
