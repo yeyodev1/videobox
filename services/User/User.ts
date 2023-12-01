@@ -15,33 +15,8 @@ class APIUsers extends APIBase {
     return this.post('auth/register', { email, password, birthdate, role: ['user'] })
   }
 
-  async uploadUserImage(file: File): Promise<AxiosResponse<ImageFile>> {
-    const formData = new FormData();
-    formData.append('userImage', file);
-    return this.postWithFormData<AxiosResponse<ImageFile>>(`userImage`, formData);
-  }
-
   async getSession(): Promise<AxiosResponse<User>> {
     return this.get('users/profile'); 
-  } 
-
-  async updateUser(id: string, user: User): Promise<ResponseMessageType> {
-    const data = {
-      id: id,
-      ...user
-    }
-    return this.patch<ResponseMessageType>(`users/${id}`, data);
-  }
-  
-  async updatePasswordRequest(email: string): Promise<ResponseMessageType> {
-    return this.post(`auth/password-recovery-request`, { email: email })
-  }
-
-  async updatePassword(id: string, password: string): Promise<ResponseMessageType> {
-    return this.patch(`auth/password-recovery`, {
-      id: id,
-      password: password
-    })
   } 
 }
 
