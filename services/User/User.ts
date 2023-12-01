@@ -2,7 +2,6 @@ import { AxiosResponse } from 'axios';
 
 import APIBase from '../Base';
 import type { ResponseMessageType } from '@/typings/ResponseMessagesTypes';
-import type { ImageFile } from '@/typings/FileTypes';
 import type { User } from '@/typings/UserTypes';
 
 
@@ -18,6 +17,10 @@ class APIUsers extends APIBase {
   async getSession(): Promise<AxiosResponse<User>> {
     return this.get('users/profile'); 
   } 
+
+  async recoverPassword(email: string): Promise<AxiosResponse<ResponseMessageType>> {
+    return this.post('auth/recover-password', { email });
+  }
 }
 
 

@@ -16,6 +16,7 @@ const userStore = useUserStore();
 // it forces to re-render the component once the value change
 const textKey = ref(0);
 const isPasswordVisible = ref(false);
+const userEmailForRecovery = ref('');
 const userData = reactive({
   email: '',
   password: '',
@@ -69,6 +70,21 @@ async function handleLogin(): Promise<void> {
     localStorage.removeItem('lastVideoUrl');  
   } else {
     await router.push('/');
+  }
+}
+async function handlePasswordRecovery() {
+  const email = window.prompt('Por favor, introduce tu correo electrónico para recuperar tu contraseña:');
+  if (email && validateEmail(email)) {
+    userEmailForRecovery.value = email;
+    try {
+      await userStore.recoverPassword(email);
+      alert('Si tu correo está registrado, recibirás un enlace para restablecer tu contraseña.');
+    } catch (error) {
+      console.error('Error en la recuperación de contraseña:', error);
+      alert('Hubo un error al intentar recuperar la contraseña. Por favor, inténtalo de nuevo más tarde.');
+    }
+  } else if (email) {
+    alert('Por favor, introduce un correo electrónico válido.');
   }
 }
 
@@ -125,6 +141,12 @@ function resetValue(): void {
         Regístrate ahora
       </RouterLink> 
     </span>
+    <span class="login-wrapper-span">
+      ¿Olvidaste tu contraseña?
+      <a class="login-wrapper-span-link" @click="handlePasswordRecovery">
+        Recupérala aquí
+      </a>
+  </span>
   </div>
 </template>
 

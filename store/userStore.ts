@@ -81,6 +81,17 @@ export const useUserStore = defineStore('UserStore', {
       }
     },
     
+    async recoverPassword(email: string): Promise<void> {
+      this.isLoading = true;
+      try {
+        await userService.recoverPassword(email);
+        this.passwordSent = true;
+      } catch (error: any) {
+        this.errorMessage = 'Error al enviar solicitud de recuperación de contraseña';
+      } finally {
+        this.isLoading = false;
+      }
+    }
   }
 });
 
