@@ -216,6 +216,7 @@ function resetValue(): void {
     &-link {
       color: $purple;
       text-decoration: underline;
+      cursor: pointer;
     }
   }
 }
