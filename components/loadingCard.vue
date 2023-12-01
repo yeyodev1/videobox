@@ -13,7 +13,7 @@ const props = defineProps({
   },
   secondMessage: {
     type: String,
-    default: 'Tu video se está preparando...'
+    default: 'Descárgalo ahora'
   },
   videoUrl: {
     type: String,
@@ -21,6 +21,7 @@ const props = defineProps({
     default: ''
   }
 });
+const dataLoading = computed(() => props.videoUrl.length > 0);
 
 function triggerDownload() {
   axios.get(props.videoUrl, {
@@ -35,7 +36,7 @@ function triggerDownload() {
     link.click();
   })
   .catch(error => {
-    console.error(error);
+    console.error(error); 
   });
 }
 </script>
@@ -43,9 +44,12 @@ function triggerDownload() {
 <template>
   <div class="card">
     <p v-if="isLoading">{{ message }}</p>
-    <div v-else>
+    <div 
+      v-else
+      class="card-container">
       <p>{{secondMessage}}</p>
       <CrushButton
+        :dataLoading="!dataLoading"
         text="Descargar"
         @click="triggerDownload"
         class="boton" />
@@ -55,10 +59,31 @@ function triggerDownload() {
 
 <style lang="scss" scoped>
 .card {
+  padding: 24px 0;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-content: center;
   background-color: $white;
   padding: 24px;
+  &-container {
+    display:  flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    .boton {
+      background-color: $purple;
+      color: $white;
+      border: none;
+      &:hover {
+        background-color: darken($purple, 15%);
+      }
+    }
+  }
   p {
     color: $black;
     font-size: $body-font-size;
