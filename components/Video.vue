@@ -236,7 +236,8 @@ onBeforeMount(() => {
         :class="{ blurred: isBlurred && timeBlur }"
         class="video-js video" />
       <LoadingCard 
-        message="video procesando"
+        message="video procesandose"
+        secondMessage="Descarga tu video"
         :isLoading="isLoading"
         :videoUrl="videoProcessingTask.url"
         class="container-video-card"

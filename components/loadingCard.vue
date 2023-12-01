@@ -9,11 +9,11 @@ const props = defineProps({
   },
   message: {
     type: String,
-    default: 'Tu video se está preparando...'
+    default: 'Tu video se está preparandooo...'
   },
   secondMessage: {
     type: String,
-    default: 'Descárgalo ahora'
+    default: 'tu video esta listo'
   },
   videoUrl: {
     type: String,
@@ -43,11 +43,11 @@ function triggerDownload() {
 
 <template>
   <div class="card">
-    <p v-if="isLoading">{{ message }}</p>
+    <p v-if="isLoading" class="first">{{ message }}</p>
     <div 
       v-else
       class="card-container">
-      <p>{{secondMessage}}</p>
+      <p class="second">{{secondMessage}}</p>
       <CrushButton
         :dataLoading="!dataLoading"
         text="Descargar"
