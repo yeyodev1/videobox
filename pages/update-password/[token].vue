@@ -1,4 +1,5 @@
 <script setup>
+import CrushButton from '@nabux-crush/crush-button';
 import CrushTextField from '@nabux-crush/crush-text-field';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -13,8 +14,12 @@ const userStore = useUserStore();
 const recoveryCode = ref(route.params.token);
 const newPassword = ref('');
 const confirmPassword = ref('');
+const isButtonDisabled = computed(() => {
+  const isPasswordLongEnough = newPassword.value.length > 7;
+  const doPasswordsMatch = newPassword.value === confirmPassword.value;
+  return !isPasswordLongEnough || !doPasswordsMatch;
+});
 
-console.log(recoveryCode.value)
 const validationRules = {
   passwordRules: [
     {
@@ -62,7 +67,7 @@ watchEffect(() => {
       :valid-rules="validationRules.confirmPasswordRules"
       v-model="confirmPassword" 
       class="container-input"/>
-    <button @click="handleUpdatePassword">Actualizar Contraseña</button>
+    <CrushButton @click="handleUpdatePassword" :disabled="isButtonDisabled">Actualizar Contraseña</CrushButton>
   </div>
 </template>
 
@@ -90,9 +95,8 @@ watchEffect(() => {
     font-size: $body-font-size;
     border: none;
     &:hover {
-      background-color: darken($purple, 15%);
-      cursor: pointer;
-      font-weight: 700;
+      background-color: $purple;
+      border: none;
     }
   }
 }
