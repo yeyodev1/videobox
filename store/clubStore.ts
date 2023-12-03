@@ -14,85 +14,86 @@ interface RootState {
 }
 
 const useClubStore = defineStore("useClubStore", {
-  state: (): RootState => ({
-    errorMessage: null,
-    isLoading: false,
-    clubs: [
-      {  
-      image: club,
-      name: 'One Padel',
-      id: 'one-padel',
-      sports: [
-          {
-            name: 'padel',
-            image: 'https://i.pinimg.com/236x/c5/3d/53/c53d537f7e8698a52ead8b02bfaba095.jpg',
-            id: 'padel-1',
-            videos: []
-          }
-        ],
-      },
-      {  
-      image: deporcentro,
-      name: 'Deporcentro',
-      id: 'futbol',
-      sports: [
-          {
-            name: 'futbol',
-            image: 'https://i.pinimg.com/236x/a6/4c/9c/a64c9c65e86b2a0d24359b610a110710.jpg',
-            id: 'futbol-1',
-            videos: []
-          }
-        ],
-      },
-    ]
-  }),
+	state: (): RootState => ({
+		errorMessage: null,
+		isLoading: false,
+		clubs: [
+			{
+				image: club,
+				name: "One Padel",
+				id: "one-padel",
+				sports: [
+					{
+						name: "padel",
+						image: "https://i.pinimg.com/236x/c5/3d/53/c53d537f7e8698a52ead8b02bfaba095.jpg",
+						id: "padel-1",
+						videos: [],
+					},
+				],
+			},
+			{
+				image: deporcentro,
+				name: "Deporcentro",
+				id: "futbol",
+				sports: [
+					{
+						name: "futbol",
+						image: "https://i.pinimg.com/236x/a6/4c/9c/a64c9c65e86b2a0d24359b610a110710.jpg",
+						id: "futbol-1",
+						videos: [],
+					},
+				],
+			},
+		],
+	}),
 
-  actions: {
-    async getVideos(): Promise<void> {
-      try {
-        const response = await videoService.getVideos();
-        this.clubs[0].sports[0].videos = response.data?.map(video => parseVideoName(video)).filter(Boolean) as VideoType;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async releaseVideo(email: string, videoId: string): Promise<void> {
-      this.isLoading = true;
-      try {
-        await videoService.releaseVideo(email, videoId);
-      } catch(error: any) {
-        this.errorMessage = error.message;
-        console.log(this.errorMessage)
-      } finally {
-        this.isLoading = false;
-      }
-    }
-  }
+	actions: {
+      async getVideos(): Promise<void> {
+        try {
+          const response = await videoService.getVideos();
+          console.log('videos recibidos', response)
+          const a = this.clubs[0].sports[0].videos = response.data?.map(video => parseVideoName(video)).filter(Boolean) as VideoType;
+          console.log('recibido parseado:', a)  
+    } catch (error) {
+          console.log(error);
+        }
+      },
+		// async getVideos(): Promise<void> {
+		// 	try {
+    //     const response = await videoService.getVideos();
+		// 		const videosData = response.data || [];
+		// 		const parsedVideos = videosData
+		// 			.map((video) => parseVideoName(video))
+		// 			.filter(Boolean) as ParsedVideo[];
+		// 		this.clubs.forEach((club) => {
+		// 			if (club.name === "One Padel") {
+		// 				club.sports[0].videos = parsedVideos;
+		// 			} else {
+		// 				club.sports.forEach((sport) => {
+		// 					sport.videos = parsedVideos.filter(
+		// 						(video): video is ParsedVideo =>
+		// 							video !== null &&
+		// 							video.clubName === club.name
+		// 					);
+		// 				});
+		// 			}
+		// 		});
+		// 	} catch (error) {
+		// 		console.log(error);
+		// 	}
+		// },
+		async releaseVideo(email: string, videoId: string): Promise<void> {
+			this.isLoading = true;
+			try {
+				await videoService.releaseVideo(email, videoId);
+			} catch (error: any) {
+				this.errorMessage = error.message;
+				console.log(this.errorMessage);
+			} finally {
+				this.isLoading = false;
+			}
+		},
+	},
 });
 
 export default useClubStore;
-
-
-
-
-  // actions: {
-  //   async getVideos(): Promise<void> {
-  //     try {
-  //       const response = await videoService.getVideos();
-  //       const videosData = response.data || [];
-  //       const parsedVideos = videosData.map(video => parseVideoName(video)).filter(Boolean) as ParsedVideo[]; 
-
-  //       this.clubs.forEach(club => {
-  //         if (club.name === 'One Padel') {
-  //           club.sports[0].videos = parsedVideos;
-  //         } else {
-  //           club.sports.forEach(sport => {
-  //             sport.videos = parsedVideos.filter((video): video is ParsedVideo => video !== null && video.clubName === club.name);
-  //           });
-  //         }
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   },
-
