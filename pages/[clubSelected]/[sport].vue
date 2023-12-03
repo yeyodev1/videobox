@@ -14,10 +14,13 @@ const clubSelected = ref<Club | null>(null);
 const sportSelected = ref<Sport | null>(null);
 
 const sportId = route.params.sport;
+console.log('params',route.params)
 
 const uniqueFields = computed(() => {
-  const allFields = clubStore.clubs[0].sports[0].videos.map((video: ParsedVideo) => video.field);
-  return Array.from(new Set(allFields));
+  if(!sportSelected.value) return [];
+
+  const allFields = sportSelected.value.videos.map((video: ParsedVideo) => video.field);
+  return Array.from(new Set (allFields));
 })
 
 onMounted(() => {
