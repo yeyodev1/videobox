@@ -34,28 +34,25 @@ const filteredSchedule = computed(() => {
 const allFieldsSelected = computed(() => {
   return selectedDate.value !== '' && selectedTime.value !== '';
 });
-const optionDays = computed(() => {
+const optionsDay = computed(() => {
   const fieldFromRoute = route.params.fieldSelected;
-  
-  return clubStore.clubs[0].sports[0].videos
-    ?.filter(video => video.field === fieldFromRoute)
-    .map(video => video.date);
-});
+  const dates = clubStore.clubs[0].sports[0].videos
+    .filter(video => video.field === fieldFromRoute)
+    .map(video => video.date)
+
+    return Array.from(new Set (dates));
+})
 const optionsSchedule = computed(() => {
-  return filteredSchedule.value?.map(video => {
-    if(video.time) {
-      let [hour, minute] = video.time.split(':');
-      return `${hour}:${minute}`
-    }
-  }) || [];
-});
+  const times = filteredSchedule.value?.map(video => video.time?.substring(0, 5)) || [];
+  return Array.from(new Set(times))
+})
 const url = computed(() => {
   const videos = clubStore.clubs[0].sports[0].videos;
 
   const video = videos.find(v => {
     return v.field === route.params.fieldSelected &&
       v.date === selectedDate.value &&
-      v.time.substring(0, 5) === selectedTime.value;
+      v.time.startsWith(selectedTime.value);
   });
   
   videoId.value = video?.id || '';
@@ -66,7 +63,12 @@ const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false)
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 const showMessage = computed(() => success.value && !clubStore.errorMessage);
 
+const redirectLink = `${route.params.fieldSelected}/${videoId.value}`;
+console.log(redirectLink)
 async function showVideo() {
+  console.log('Selected Date:', selectedDate.value);
+  console.log('Selected Time:', selectedTime.value);
+  console.log('Video ID:', videoId.value);
   try {
     if (isAdmin.value && videoId.value) {
       clubStore.releaseVideo(email.value, videoId.value);
@@ -121,7 +123,7 @@ function handleInput(event: string, type: string): void {
     <div class="schedule-container">
       <SelectInput
         :key="apiKey"
-        :options="optionDays"
+        :options="optionsDay"
         :value="selectedDate"
         label="Escoge el día"
         @update:value="handleInput($event, 'day')"

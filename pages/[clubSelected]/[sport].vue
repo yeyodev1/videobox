@@ -15,14 +15,10 @@ const sportSelected = ref<Sport | null>(null);
 
 const sportId = route.params.sport;
 
-const sortedVideos = computed(() => {
-  console.log(clubStore.clubs[0].sports[0].videos)
-  return clubStore.clubs[0].sports[0].videos.slice().sort((a: ParsedVideo, b: ParsedVideo) => {
-    if (a.field < b.field) return -1;
-    if (a.field > b.field) return 1;
-    return 0;
-  });
-});
+const uniqueFields = computed(() => {
+  const allFields = clubStore.clubs[0].sports[0].videos.map((video: ParsedVideo) => video.field);
+  return Array.from(new Set(allFields));
+})
 
 onMounted(() => {
   const clubId = route.params.clubSelected;
@@ -41,12 +37,12 @@ onMounted(() => {
     <div class="container-cards">
       <div v-if="sportSelected" class="container-cards-card">
         <NuxtLink
-          v-for="(field, index) in sortedVideos"
-          :to="`${sportId}/${field.field}`"
+          v-for="(field, index) in uniqueFields"
+          :to="`${sportId}/${field}`"
           :key="index"
           class="container-cards-card-flag"
         >
-          {{field.field}}
+          {{field}}
         </NuxtLink>
       </div>
     </div>
