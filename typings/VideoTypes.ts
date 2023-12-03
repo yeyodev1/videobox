@@ -1,12 +1,14 @@
 export interface ParsedVideo {
+  club: string;
+  sport: string;
+  field: string;
+  cam: string;
   date: string;
   time: string;
-  field: string;
-  fileId: string;
-  id: string;
-  url: string
+  fileId: string; 
+  id: string; 
+  url: string; 
 }
-
 // export interface ParsedVideo {
 //   date: string;
 //   time: string;
