@@ -34,7 +34,7 @@ const useClubStore = defineStore("useClubStore", {
 			{
 				image: deporcentro,
 				name: "Deporcentro",
-				id: "futbol",
+				id: "deporcentro",
 				sports: [
 					{
 						name: "futbol",
