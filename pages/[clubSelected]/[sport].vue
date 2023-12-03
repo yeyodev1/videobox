@@ -2,33 +2,44 @@
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 
-import type { Club, Sport } from '@/typings/Field&Sport';
 import useClubStore from '@/store/clubStore';
-import { ParsedVideo } from '~/typings/VideoTypes';
 
 const route = useRoute();
 
 const clubStore = useClubStore();
 
-const clubSelected = ref<Club | null>(null);
-const sportSelected = ref<Sport | null>(null);
+const clubId = ref(route.params.clubSelected);
+const sportId = ref(route.params.sport);
+const clubSelected = computed(() => {
+  return clubStore.clubs.find(club => club.id === clubId.value);
+});
 
-const sportId = route.params.sport;
-console.log('params',route.params)
-
+const sportSelected = computed(() => {
+  return clubSelected.value?.sports.find(sport => sport.id === sportId.value);
+});
 const uniqueFields = computed(() => {
-  if(!sportSelected.value) return [];
+  if (!sportSelected.value || !sportSelected.value.videos) return [];
+  const fieldsSorted = sportSelected.value.videos
+    .map(video => video.field)
+    .map(field => {
+      const match = field.match(/Cancha (\d+)/);
+      return {
+        field: field,
+        number: match ? parseInt(match[1], 10) : 0
+      };
+    })
+    .sort((a, b) => a.number - b.number)
+    .map(sortedField => sortedField.field);
 
-  const allFields = sportSelected.value.videos.map((video: ParsedVideo) => video.field);
-  return Array.from(new Set (allFields));
-})
+  return Array.from(new Set(fieldsSorted));
+});
 
-onMounted(() => {
-  const clubId = route.params.clubSelected;
-  const sportId = route.params.sport;
-
-  clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
-  sportSelected.value = clubSelected.value?.sports.find((sport: Sport) => sport.id === sportId) ?? null;
+onMounted(async () => {
+  if (sportSelected.value) {
+    await clubStore.getVideos();
+    const a = sportSelected.value.videos
+    console.log(a)
+  }
 });
 </script>
 
