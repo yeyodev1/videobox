@@ -33,6 +33,7 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .link {
+  width: 100%;
   text-decoration: none;
   display: flex;
   flex-direction: column;
