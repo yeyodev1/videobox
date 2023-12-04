@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import VideoCrazy from '@/components/Video.vue';
 
 import useClubStore from '~/store/clubStore';
@@ -7,10 +7,10 @@ const route = useRoute();
 
 const clubStore = useClubStore();
 
-const clubId = route.params.clubSelected as string;
-const sportId = route.params.sports as string;
-const fieldId = route.params.fieldSelected as string;
-const videoId = route.params.video as string;
+const clubId = route.params.clubSelected;
+const sportId = route.params.sports;
+const fieldId = route.params.fieldSelected;
+const videoId = route.params.video;
 
 const url = computed(() => {
   let foundUrl = null;
