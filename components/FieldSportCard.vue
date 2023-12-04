@@ -4,6 +4,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
   id: {
     type: String,
     required: true
@@ -16,6 +20,7 @@ const props = defineProps({
     :to="id"
     class="link">
     <div class="card">
+      <img class="card-image" :src="image" :alt="name">
       <p class="card-name">
         {{ name }}
       </p>
@@ -43,6 +48,11 @@ const props = defineProps({
   transition: transform 0.3s ease;
   &:hover {
     transform: scale(1.05); 
+  }
+  &-image {
+    width: 100%;
+    height: 204px;
+    object-fit: cover;
   }
   &-name {
     font-size: $body-font-size;
