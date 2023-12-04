@@ -2,14 +2,18 @@
 import 'video.js/dist/video-js.css'
 import videojs from 'video.js';
 
-import VideoService from '@/services/Videos/Videos'
+import VideoService from '@/services/Videos/Videos';
+import useClubStore from '@/store/clubStore';
 import useUserStore from '@/store/userStore';
 
 const emit = defineEmits(['update:time', 'captured-video'])
 
 const route = useRoute();
 
+
 const videoService = new VideoService();
+
+const clubStore = useClubStore()
 
 const props = defineProps({
   videoUrl: {
@@ -39,6 +43,9 @@ const selectionEnd = ref(null);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const showLoadingCard = ref(false);
+const relatedVideos = ref([]);
+const currentCam = ref("CAM 1"); 
+const currentVideoUrl = ref(""); 
 const videoProcessingTask = ref({
   taskId: null,
   status: '',
@@ -136,6 +143,20 @@ function handleSelection() {
     showLoadingCard.value = true;
   }
 }
+function updateVideoSource() {
+  const videoForCam = relatedVideos.value.find(video => video.cam === currentCam.value);
+  if (videoForCam) {
+    currentVideoUrl.value = videoForCam.url;
+    if (player.value) {
+      player.value.src({ type: 'video/mp4', src: currentVideoUrl.value }); 
+    }
+  }
+}
+function selectCamera(camera) {
+  currentCam.value = camera; 
+  updateVideoSource(); 
+}
+
 function increaseBrightness() {
   brightness.value += 50;
   alert('subiendo brillo')
@@ -183,7 +204,7 @@ function handleTimeUpdate(event) {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   const options = {
     controls: props.noShowControls,
     autoplay: true,
@@ -210,6 +231,15 @@ onMounted(() => {
   videoEl.value.addEventListener('timeupdate', handleTimeUpdate);
 
   localStorage.setItem('lastVideoUrl', window.location.pathname + window.location.search);
+
+
+  if (Object.keys(clubStore.clubs).length === 0) {
+    await clubStore.getVideos(); // Asegúrate de que los videos estén cargados
+  }
+  const videoId = route.params.video
+  console.log(videoId)
+  relatedVideos.value = clubStore.getRelatedVideos(videoId);
+  console.log('Videos relacionados:', relatedVideos.value);
 })
 
 onBeforeMount(() => {
