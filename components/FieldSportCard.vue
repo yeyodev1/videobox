@@ -6,7 +6,7 @@ const props = defineProps({
   },
   image: {
     type: String,
-    required: true,
+    required: false,
   },
   id: {
     type: String,
@@ -20,7 +20,11 @@ const props = defineProps({
     :to="id"
     class="link">
     <div class="card">
-      <img class="card-image" :src="image" :alt="name">
+      <img
+        v-if="image" 
+        class="card-image" 
+        :src="image" 
+        :alt="name">
       <p class="card-name">
         {{ name }}
       </p>
