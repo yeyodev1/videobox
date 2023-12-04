@@ -36,6 +36,7 @@ const userStore = useUserStore();
 
 const brightness = ref(100);
 const contrast = ref(100);
+const currentTime = ref(0);
 const videoEl = ref(null);
 const selectionStart = ref(null);
 const player = ref(null);
@@ -146,9 +147,13 @@ function handleSelection() {
 function updateVideoSource() {
   const videoForCam = relatedVideos.value.find(video => video.cam === currentCam.value);
   if (videoForCam) {
+    currentTime.value = player.value.currentTime();
     currentVideoUrl.value = videoForCam.url;
     if (player.value) {
-      player.value.src({ type: 'video/mp4', src: currentVideoUrl.value }); 
+      player.value.src({ type: 'video/mp4', src: currentVideoUrl.value });
+      player.value.one('loadedmetadata', () => {
+        player.value.currentTime(currentTime.value);
+      });
     }
   }
 }
