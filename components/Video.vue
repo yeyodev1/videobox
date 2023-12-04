@@ -44,6 +44,7 @@ const selectionEnd = ref(null);
 const timeBlur = ref(false);
 const isRecordingActive = ref(false);
 const showLoadingCard = ref(false);
+const areCustomButtonsVisible = ref(true);
 const relatedVideos = ref([]);
 const currentCam = ref("CAM 1"); 
 const currentVideoUrl = ref(""); 
@@ -133,6 +134,10 @@ function handleSelection() {
     selectionStart.value = player.value.currentTime();
     console.log(`Tiempo de inicio seleccionado: ${selectionStart.value}`);
     isRecordingActive.value = true;
+    areCustomButtonsVisible.value = false; 
+    if (player.value) {
+      player.value.controls(false); 
+    }
   } else {
     selectionEnd.value = player.value.currentTime();
     console.log(`Tiempo de fin seleccionado: ${selectionEnd.value}`);
@@ -142,6 +147,10 @@ function handleSelection() {
     selectionEnd.value = null;
     isRecordingActive.value = false;
     showLoadingCard.value = true;
+    areCustomButtonsVisible.value = true; 
+    if (player.value) {
+      player.value.controls(true); 
+    }
   }
 }
 function updateVideoSource() {
@@ -292,7 +301,7 @@ onBeforeMount(() => {
           <span class="circle" :class="{ 'active': isRecordingActive }"></span>
         </button>
       </div>
-      <div class="buttons-container">
+      <div v-if="areCustomButtonsVisible" class="buttons-container">
         <div class="container-button-group">
           <div class="container-button">
             <span>Brillo: </span>
@@ -314,7 +323,7 @@ onBeforeMount(() => {
           </div>
         </div>
       </div>
-      <div class="camera-selection-container">
+      <div v-if="areCustomButtonsVisible" class="camera-selection-container">
         <button class="camera-option" @click="selectCamera('CAM 1')">Cámara 1</button>
         <button class="camera-option" @click="selectCamera('CAM 2')">Cámara 2</button>
     </div>
