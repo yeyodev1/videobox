@@ -18,6 +18,7 @@ const clubStore = useClubStore();
         v-for="(field, index) in clubStore.clubs"
         :key="index"
         :name="field.name"
+        :image="field.image"
         :id="`${field.id}`"/>
     </div>
   </div>
