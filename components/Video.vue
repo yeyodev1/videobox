@@ -74,6 +74,10 @@ const buttonText = computed(() => isLoggedIn.value ? 'Compra aquí tu partido' :
 const isLoggedIn = computed(() => userStore.user !== null);
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 const linkDestination = computed(() => isLoggedIn.value ? `/purchase` : '/userRegister');
+const hasMultipleCameras = computed(() => {
+  const cameras = new Set(relatedVideos.value.map(video => video.cam));
+  return cameras.size > 1;
+});
 
 function secondsToHms(d) {
   d = Number(d);
@@ -88,36 +92,29 @@ async function cutAndUploadVideo(start, end, videoId) {
   const formattedStart = secondsToHms(start);
   const formattedEnd = secondsToHms(end);
 
-  console.log(`tiempo formateado para el corte: inicio: ${formattedStart}, fin ${formattedEnd}`)
-
   try {
     const response = await videoService.cutVideo(formattedStart, formattedEnd, videoId);
     const taskId = response.taskId;
     videoProcessingTask.value.taskId = taskId;
     videoProcessingTask.value.status = 'pending';
-    console.log('id de tarea recibida: ', taskId);
-
     checkVideoStatus(taskId);
   } catch (error) {
     console.error('error al solicitar el corte del video: ', error);
   }
 }
 async function checkVideoStatus(taskId) {
-  console.log(`sondeando el estado del video con id de tarea ${taskId}`);
+  
   isLoading.value = true;
   showLoadingCard.value = true;
   try {
     const response = await videoService.checkVideoStatus(taskId);
-    console.log('respuesta al verificar el estado: ', response);
 
     if (response.message === 'Video procesado.') {
-      console.log(`video procesado, url disponible: ${response.url}`);
       videoProcessingTask.value.url = response.url
       isLoading.value = false;
       return
     }
     if (response.message === 'Video aún en proceso.') {
-      console.log('el video aun esta en proceso, reintentando en 1 segundo...');
       setTimeout(() => checkVideoStatus(taskId), 1000);
       showLoadingCard.value = true;
     } else {
@@ -132,7 +129,7 @@ async function checkVideoStatus(taskId) {
 function handleSelection() {
   if (selectionStart.value === null) {
     selectionStart.value = player.value.currentTime();
-    console.log(`Tiempo de inicio seleccionado: ${selectionStart.value}`);
+    
     isRecordingActive.value = true;
     areCustomButtonsVisible.value = false; 
     if (player.value) {
@@ -140,8 +137,6 @@ function handleSelection() {
     }
   } else {
     selectionEnd.value = player.value.currentTime();
-    console.log(`Tiempo de fin seleccionado: ${selectionEnd.value}`);
-    console.log('videoid: ', route.params.video)
     cutAndUploadVideo(selectionStart.value, selectionEnd.value, route.params.video);
     selectionStart.value = null;
     selectionEnd.value = null;
@@ -170,7 +165,6 @@ function selectCamera(camera) {
   currentCam.value = camera; 
   updateVideoSource(); 
 }
-
 function increaseBrightness() {
   brightness.value += 50;
   alert('subiendo brillo')
@@ -191,7 +185,6 @@ function increaseContrast() {
 function decreaseContrast() {
   contrast.value -= 50;
   alert('bajjando contaste')
-
   if (contrast.value < 0) contrast.value = 0;
 };
 function shouldPauseVideo() {
@@ -246,14 +239,11 @@ onMounted(async () => {
 
   localStorage.setItem('lastVideoUrl', window.location.pathname + window.location.search);
 
-
   if (Object.keys(clubStore.clubs).length === 0) {
-    await clubStore.getVideos(); // Asegúrate de que los videos estén cargados
+    await clubStore.getVideos(); 
   }
-  const videoId = route.params.video
-  console.log(videoId)
+  const videoId = route.params.video;
   relatedVideos.value = clubStore.getRelatedVideos(videoId);
-  console.log('Videos relacionados:', relatedVideos.value);
 })
 
 onBeforeMount(() => {
@@ -323,7 +313,7 @@ onBeforeMount(() => {
           </div>
         </div>
       </div>
-      <div v-if="areCustomButtonsVisible" class="camera-selection-container">
+      <div v-if="areCustomButtonsVisible && hasMultipleCameras" class="camera-selection-container">
         <button class="camera-option" @click="selectCamera('CAM 1')">Cámara 1</button>
         <button class="camera-option" @click="selectCamera('CAM 2')">Cámara 2</button>
     </div>

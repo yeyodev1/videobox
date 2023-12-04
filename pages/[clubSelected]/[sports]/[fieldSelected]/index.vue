@@ -24,18 +24,14 @@ const fieldId = ref(route.params.fieldSelected as string);
 const sportId = ref(route.params.sports as string);
 const clubSelected = computed(() => {
   const club = clubStore.clubs[clubId.value];
-  console.log("Club seleccionado:", club);
   return club;
 });
 const sportSelected = computed(() => {
-  console.log('value sport',sportId.value)
   const sport = clubSelected.value?.sports[sportId.value];
-  console.log("Deporte seleccionado:", sport);
   return sport;
 });
 const fieldSelected = computed(() => {
   const field = sportSelected.value?.fields[fieldId.value];
-  console.log("Campo seleccionado:", field);
   return field;
 });
 
@@ -44,52 +40,38 @@ const allFieldsSelected = computed(() => {
 });
 const optionsDay = computed(() => {
   if (!fieldSelected.value) return [];
-
   const dates = Object.keys(fieldSelected.value.dates);
-  console.log("Fechas disponibles:", dates);
   return dates;
 });
 const optionsSchedule = computed(() => {
   if (!fieldSelected.value || !selectedDate.value) return [];
-
   const times = fieldSelected.value.dates[selectedDate.value]
     ? Object.keys(fieldSelected.value.dates[selectedDate.value])
     : [];
-  console.log("Horarios disponibles:", times);
+
   return times;
 });
 const url = computed(() => {
-  if (!selectedDate.value || !selectedTime.value || !fieldSelected.value) {
-    console.log("Fecha o hora no seleccionada");
+  if (!selectedDate.value || !selectedTime.value || !fieldSelected.value) {    
     return null;
   }
   const timeslotVideos = fieldSelected.value.dates[selectedDate.value][selectedTime.value];
 
-  if (!timeslotVideos || timeslotVideos.length === 0) {
-    console.log("No hay videos para el timeslot seleccionado");
+  if (!timeslotVideos || timeslotVideos.length === 0) {    
     return null;
   }
 
   const video = timeslotVideos[0]; 
-  console.log('Video seleccionado:', video);
 
   videoId.value = video.id; 
   return video.url;
 });
 
-
-
 const removeText = computed(() => !videoVisible.value )
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
 const showMessage = computed(() => success.value && !clubStore.errorMessage);
-
-const redirectLink = `${route.params.fieldSelected}/${videoId.value}`;
-console.log(redirectLink)
 async function showVideo() {
-  console.log('Selected Date:', selectedDate.value);
-  console.log('Selected Time:', selectedTime.value);
-  console.log('Video ID:', videoId.value);
   try {
     if (isAdmin.value && videoId.value) {
       clubStore.releaseVideo(email.value, videoId.value);
@@ -121,7 +103,7 @@ function handleInput(event: string, type: string): void {
 
 onMounted(async () => {
   if (Object.keys(clubStore.clubs).length === 0) {
-    console.log("Cargando videos...");
+    
     await clubStore.getVideos();
   }
 });

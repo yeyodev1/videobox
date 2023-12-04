@@ -14,20 +14,12 @@ const sportId = ref(route.params.sport as string);
 const clubSelected = ref<Club | null>(null);
 const sportSelected = ref<Sport | null>(null);
 
-console.log('params',route.params)
-
 const uniqueFields = computed(() => {
   if(!sportSelected.value) return [];
-  
   const fields = sportSelected.value.fields;
-  console.log('Campos antes de filtrar:', fields);
-
   const uniqueFieldsKeys = Object.keys(fields);
-  console.log('Claves de campos únicos:', uniqueFieldsKeys);
-
   return uniqueFieldsKeys
 })
-
 
 onMounted(async () => {
   if(Object.keys(clubStore.clubs).length === 0) {
@@ -35,9 +27,7 @@ onMounted(async () => {
   }
 
   clubSelected.value = clubStore.clubs[clubId.value];
-  console.log('club seleccionado:', clubSelected.value);
   sportSelected.value = clubSelected.value?.sports[sportId.value];
-  console.log('deporte seleccionado:', sportSelected.value);
 });
 </script>
 

@@ -26,7 +26,6 @@ const useClubStore = defineStore("useClubStore", {
       this.isLoading = true;
 			try {
         const response = await videoService.getVideos();
-        console.log(response.data)
         if (response.data) {
           const parsedVideos: ParsedVideo[] = response.data
             .map(video => parseVideoName(video))
