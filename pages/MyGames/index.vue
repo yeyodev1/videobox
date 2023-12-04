@@ -9,22 +9,28 @@ const router = useRouter();
 
 const isLogged  = computed(() => userStore.user !== null);
 
+function setLink(video: VideoInput): string {
+  const parsedVideo = parseVideoName(video);
+  if (!parsedVideo) {
+    console.error('Error parsing video input:', video);
+    return '#'; 
+  }
+  const clubPart = encodeURIComponent(parsedVideo.club);
+  const sportPart = encodeURIComponent(parsedVideo.sport);
+  const fieldPart = encodeURIComponent(parsedVideo.field);
+  const videoIdPart = encodeURIComponent(parsedVideo.id);
+  return `/${clubPart}/${sportPart}/${fieldPart}/${videoIdPart}`;
+}
+function setDate(name: VideoInput): string {
+  const video = parseVideoName(name);
+  return video?.date!;
+}
+
 onMounted(() => {
   if (!isLogged.value) {
     router.push('/userRegister')
   }
 });
-
-function setLink(name: VideoInput): string {
-  const video = parseVideoName(name);
-  const formattedTime = video?.time.substring(0, 5);
-  return `/one-padel/padel-1/${video?.field}/${video?.id}`
-}
-
-function setDate(name: VideoInput): string {
-  const video = parseVideoName(name);
-  return video?.date!;
-}
 </script>
 
 <template>

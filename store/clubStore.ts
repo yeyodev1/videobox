@@ -58,7 +58,7 @@ const useClubStore = defineStore("useClubStore", {
             if (!(time in this.clubs[club].sports[sport].fields[field].dates[date])) {
               this.clubs[club].sports[sport].fields[field].dates[date][time] = [] as { cam: string; url: string; }[];
             }
-            this.clubs[club].sports[sport].fields[field].dates[date][time].push({ cam, url, time, id});
+            this.clubs[club].sports[sport].fields[field].dates[date][time].push({ cam, url, time, id, date});
           });
         }
       } catch (error: any) {

@@ -6,7 +6,8 @@ const props = defineProps({
   },
   date: {
     type: String,
-    required: true,
+    required: false,
+    default: 'tu partido'
   },
   videoUrl: {
     type: String,
