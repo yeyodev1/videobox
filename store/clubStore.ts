@@ -67,6 +67,33 @@ const useClubStore = defineStore("useClubStore", {
         this.isLoading = false;
       }
     },
+    getRelatedVideos(videoId: any) {
+      let relatedVideos = [];
+      for (const clubKey in this.clubs) {
+        for (const sportKey in this.clubs[clubKey].sports) {
+          for (const fieldKey in this.clubs[clubKey].sports[sportKey].fields) {
+            for (const dateKey in this.clubs[clubKey].sports[sportKey].fields[fieldKey].dates) {
+              for (const timeKey in this.clubs[clubKey].sports[sportKey].fields[fieldKey].dates[dateKey]) {
+                const videos = this.clubs[clubKey].sports[sportKey].fields[fieldKey].dates[dateKey][timeKey];
+                if (Array.isArray(videos)) {
+                  const foundVideo = videos.find(v => v.id === videoId);
+                  if (foundVideo) {
+                    relatedVideos = videos.filter(v => v.id !== videoId);
+                    break; 
+                  }
+                }
+              }
+              if (relatedVideos.length > 0) break; 
+            }
+            if (relatedVideos.length > 0) break;
+          }
+          if (relatedVideos.length > 0) break;
+        }
+        if (relatedVideos.length > 0) break;
+      }
+      return relatedVideos;
+    },
+  
 		async releaseVideo(email: string, videoId: string): Promise<void> {
 			this.isLoading = true;
 			try {
