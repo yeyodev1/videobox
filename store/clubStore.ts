@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia';
 
-import club from '@/assets/complejos/logo-club.jpeg';
-import deporcentro from '@/assets/complejos/deporcentro.jpeg';
+import onepadelImage from '@/assets/complejos/onepadel.jpeg';
+import deporcentroImage from '@/assets/complejos/deporcentro.jpeg';
 
 import VideoService from '~/services/Videos/Videos';
 import type { Club, Sport, VideoField, VideoDate, VideoTimeSlot } from '~/typings/Field&Sport';
 import { ParsedVideo } from '~/typings/VideoTypes';
 
 const videoService = new VideoService();
+
 interface RootState {
   clubs: Record<string, Club>;
   errorMessage: string | null;
@@ -32,11 +33,13 @@ const useClubStore = defineStore("useClubStore", {
             .filter((video): video is ParsedVideo => video !== null);
           parsedVideos.forEach(video => {
             const { club, sport, field, date, time, cam, url, id } = video;
+            const clubImage = club == 'OnePadel' ? onepadelImage : club === 'Deporcentro' ? deporcentroImage : 'https://i.pinimg.com/236x/7a/65/42/7a654280173c584dc7ac481affe2d4a3.jpg';
             if (!this.clubs[club]) {
               this.clubs[club] = {
                 name: club, 
                 id: club,
-                sports: {}
+                sports: {},
+                image: clubImage,
               };
             }
             if (!this.clubs[club].sports[sport]) {
