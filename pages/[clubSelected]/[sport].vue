@@ -18,7 +18,8 @@ const uniqueFields = computed(() => {
   if(!sportSelected.value) return [];
   const fields = sportSelected.value.fields;
   const uniqueFieldsKeys = Object.keys(fields);
-  return uniqueFieldsKeys
+  uniqueFieldsKeys.sort((a, b) => a.localeCompare(b, undefined, {numeric: true}));
+  return uniqueFieldsKeys;
 })
 
 onMounted(async () => {
