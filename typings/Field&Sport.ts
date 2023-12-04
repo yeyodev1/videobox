@@ -1,20 +1,32 @@
-import { ParsedVideo } from "./VideoTypes"
+import { ParsedVideo } from "./VideoTypes";
 
+interface VideoTimeSlot {
+  [time: string]: {
+    cam: string;
+    url: string;
+    time: string;
+    id: string;
+  }[];
+}
+
+interface VideoDate {
+  [date: string]: VideoTimeSlot;
+}
+
+interface VideoField {
+  [fieldId: string]: VideoDate;
+}
 
 interface Sport {
-  image: string,
-  name: string,
-  id: string,
-  videos: ParsedVideo[],
-}
-interface Club {
-  image: string,
-  name: string,
-  id: string,
-  sports: Sport[]
+  name: string;
+  id: string;
+  fields: VideoField;
 }
 
-export type {
-  Club,
-  Sport
+interface Club {
+  name: string;
+  id: string;
+  sports: Record<string, Sport>;
 }
+
+export type { Club, Sport, VideoField, VideoDate, VideoTimeSlot };

@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 
-import type { Club } from '~/typings/Field&Sport';
+import type { Club, Sport } from '~/typings/Field&Sport';
 import useClubStore from '@/store/clubStore';
 
 const route = useRoute();
-
 const clubStore = useClubStore();
-
-const clubSelected = ref<Club | null>(null);
+const clubSelected = ref<Club | undefined>();
 
 const sportsForSelectedClub = computed(() => {
-  return clubSelected.value ? clubSelected.value.sports : [];
+  return clubSelected.value ? Object.values(clubSelected.value.sports) : [];
 });
 
-onMounted(() => {
-  const clubId = route.params.club
-  clubSelected.value = clubStore.clubs.find((club: Club) => club.id === clubId) ?? null;
+onMounted(async () => {
+  if (Object.keys(clubStore.clubs).length === 0) {
+    await clubStore.getVideos(); 
+  }
+  const clubId = route.params.club as string;
+  clubSelected.value = clubStore.clubs[clubId];
 }); 
 </script>
 

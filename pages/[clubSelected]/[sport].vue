@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue';
+
+import type { Club, Sport } from '@/typings/Field&Sport';
 
 import useClubStore from '@/store/clubStore';
 
@@ -8,38 +9,35 @@ const route = useRoute();
 
 const clubStore = useClubStore();
 
-const clubId = ref(route.params.clubSelected);
-const sportId = ref(route.params.sport);
-const clubSelected = computed(() => {
-  return clubStore.clubs.find(club => club.id === clubId.value);
-});
+const clubId = ref(route.params.clubSelected as string);
+const sportId = ref(route.params.sport as string);
+const clubSelected = ref<Club | null>(null);
+const sportSelected = ref<Sport | null>(null);
 
-const sportSelected = computed(() => {
-  return clubSelected.value?.sports.find(sport => sport.id === sportId.value);
-});
+console.log('params',route.params)
+
 const uniqueFields = computed(() => {
-  if (!sportSelected.value || !sportSelected.value.videos) return [];
-  const fieldsSorted = sportSelected.value.videos
-    .map(video => video.field)
-    .map(field => {
-      const match = field.match(/Cancha (\d+)/);
-      return {
-        field: field,
-        number: match ? parseInt(match[1], 10) : 0
-      };
-    })
-    .sort((a, b) => a.number - b.number)
-    .map(sortedField => sortedField.field);
+  if(!sportSelected.value) return [];
+  
+  const fields = sportSelected.value.fields;
+  console.log('Campos antes de filtrar:', fields);
 
-  return Array.from(new Set(fieldsSorted));
-});
+  const uniqueFieldsKeys = Object.keys(fields);
+  console.log('Claves de campos únicos:', uniqueFieldsKeys);
+
+  return uniqueFieldsKeys
+})
+
 
 onMounted(async () => {
-  if (sportSelected.value) {
+  if(Object.keys(clubStore.clubs).length === 0) {
     await clubStore.getVideos();
-    const a = sportSelected.value.videos
-    console.log(a)
   }
+
+  clubSelected.value = clubStore.clubs[clubId.value];
+  console.log('club seleccionado:', clubSelected.value);
+  sportSelected.value = clubSelected.value?.sports[sportId.value];
+  console.log('deporte seleccionado:', sportSelected.value);
 });
 </script>
 
@@ -52,8 +50,8 @@ onMounted(async () => {
       <div v-if="sportSelected" class="container-cards-card">
         <NuxtLink
           v-for="(field, index) in uniqueFields"
-          :to="`${sportId}/${field}`"
           :key="index"
+          :to="`${sportId}/${field}`"
           class="container-cards-card-flag"
         >
           {{field}}

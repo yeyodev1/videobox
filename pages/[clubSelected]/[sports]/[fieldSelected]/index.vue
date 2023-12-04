@@ -12,52 +12,73 @@ const router = useRouter();
 const userStore = useUserStore();
 const clubStore = useClubStore();
 
-const selectedDate = ref('');
-const selectedTime = ref('');
-const videoVisible = ref(false);
-const email = ref('');
-const videoId = ref('');
 const apiKey = ref(0);
+const selectedTime = ref('');
+const selectedDate = ref('');
+const videoId = ref('');
+const email = ref('');
+const videoVisible = ref(false);
 const success = ref(false);
-
-const filteredSchedule = computed(() => {
-  const fieldFromRoute = route.params.fieldSelected;
-
-  if (clubStore.clubs[0].sports[0].videos && clubStore.clubs[0].sports[0].videos.length > 0) {
-    return clubStore.clubs[0].sports[0].videos.filter(video => 
-      video && video.time && video.field &&
-      video.field === fieldFromRoute 
-    );
-  }
-  return [];
+const clubId = ref(route.params.clubSelected as string);
+const fieldId = ref(route.params.fieldSelected as string);
+const sportId = ref(route.params.sports as string);
+const clubSelected = computed(() => {
+  const club = clubStore.clubs[clubId.value];
+  console.log("Club seleccionado:", club);
+  return club;
 });
+const sportSelected = computed(() => {
+  console.log('value sport',sportId.value)
+  const sport = clubSelected.value?.sports[sportId.value];
+  console.log("Deporte seleccionado:", sport);
+  return sport;
+});
+const fieldSelected = computed(() => {
+  const field = sportSelected.value?.fields[fieldId.value];
+  console.log("Campo seleccionado:", field);
+  return field;
+});
+
 const allFieldsSelected = computed(() => {
   return selectedDate.value !== '' && selectedTime.value !== '';
 });
 const optionsDay = computed(() => {
-  const fieldFromRoute = route.params.fieldSelected;
-  const dates = clubStore.clubs[0].sports[0].videos
-    .filter(video => video.field === fieldFromRoute)
-    .map(video => video.date)
+  if (!fieldSelected.value) return [];
 
-    return Array.from(new Set (dates));
-})
-const optionsSchedule = computed(() => {
-  const times = filteredSchedule.value?.map(video => video.time?.substring(0, 5)) || [];
-  return Array.from(new Set(times))
-})
-const url = computed(() => {
-  const videos = clubStore.clubs[0].sports[0].videos;
-
-  const video = videos.find(v => {
-    return v.field === route.params.fieldSelected &&
-      v.date === selectedDate.value &&
-      v.time.startsWith(selectedTime.value);
-  });
-  
-  videoId.value = video?.id || '';
-  return video ? video.url : null;
+  const dates = Object.keys(fieldSelected.value.dates);
+  console.log("Fechas disponibles:", dates);
+  return dates;
 });
+const optionsSchedule = computed(() => {
+  if (!fieldSelected.value || !selectedDate.value) return [];
+
+  const times = fieldSelected.value.dates[selectedDate.value]
+    ? Object.keys(fieldSelected.value.dates[selectedDate.value])
+    : [];
+  console.log("Horarios disponibles:", times);
+  return times;
+});
+const url = computed(() => {
+  if (!selectedDate.value || !selectedTime.value || !fieldSelected.value) {
+    console.log("Fecha o hora no seleccionada");
+    return null;
+  }
+  const timeslotVideos = fieldSelected.value.dates[selectedDate.value][selectedTime.value];
+
+  if (!timeslotVideos || timeslotVideos.length === 0) {
+    console.log("No hay videos para el timeslot seleccionado");
+    return null;
+  }
+
+  const video = timeslotVideos[0]; 
+  console.log('Video seleccionado:', video);
+
+  videoId.value = video.id; 
+  return video.url;
+});
+
+
+
 const removeText = computed(() => !videoVisible.value )
 const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 const buttonTextForButton = computed(() => isAdmin.value ? 'Liberar video' : 'Buscar video');
@@ -97,6 +118,13 @@ function handleInput(event: string, type: string): void {
     selectedTime.value = event
   }
 }
+
+onMounted(async () => {
+  if (Object.keys(clubStore.clubs).length === 0) {
+    console.log("Cargando videos...");
+    await clubStore.getVideos();
+  }
+});
 </script>
 
 <template>

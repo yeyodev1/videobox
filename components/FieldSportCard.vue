@@ -4,10 +4,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
-    required: true,
-  },
   id: {
     type: String,
     required: true
@@ -20,13 +16,9 @@ const props = defineProps({
     :to="id"
     class="link">
     <div class="card">
-    <img 
-      :src="image" 
-      :alt="name"
-      class="card-image">
-    <p class="card-name">
-      {{ name }}
-    </p>
+      <p class="card-name">
+        {{ name }}
+      </p>
   </div>
   </NuxtLink>
 </template>
@@ -48,15 +40,14 @@ const props = defineProps({
   width: 100%;
   border: 1px solid $white;
   border-radius: 8px;
-  &-image {
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
-    height: 160px;
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.05); 
   }
   &-name {
     font-size: $body-font-size;
     text-transform: capitalize;
+    text-align: center;
   }
 }
 }

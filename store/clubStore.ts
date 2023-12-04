@@ -4,64 +4,69 @@ import club from '@/assets/complejos/logo-club.jpeg';
 import deporcentro from '@/assets/complejos/deporcentro.jpeg';
 
 import VideoService from '~/services/Videos/Videos';
-import type { Club } from '~/typings/Field&Sport';
+import type { Club, Sport, VideoField, VideoDate, VideoTimeSlot } from '~/typings/Field&Sport';
+import { ParsedVideo } from '~/typings/VideoTypes';
 
 const videoService = new VideoService();
 interface RootState {
-  clubs: Club[];
-  errorMessage: string | null,
-  isLoading: boolean,
+  clubs: Record<string, Club>;
+  errorMessage: string | null;
+  isLoading: boolean;
 }
 
 const useClubStore = defineStore("useClubStore", {
 	state: (): RootState => ({
-		errorMessage: null,
-		isLoading: false,
-		clubs: [
-			{
-				image: club,
-				name: "One Padel",
-				id: "one-padel",
-				sports: [
-					{
-						name: "padeleate",
-						image: "https://i.pinimg.com/236x/c5/3d/53/c53d537f7e8698a52ead8b02bfaba095.jpg",
-						id: "padel",
-						videos: [],
-					},
-				],
-			},
-			{
-				image: deporcentro,
-				name: "Deporcentro",
-				id: "deporcentro",
-				sports: [
-					{
-						name: "soccer",
-						image: "https://i.pinimg.com/236x/a6/4c/9c/a64c9c65e86b2a0d24359b610a110710.jpg",
-						id: "futbol",
-						videos: [],
-					},
-				],
-			},
-		],
-	}),
+    errorMessage: null,
+    isLoading: false,
+    clubs: {} 
+  }),
 
 	actions: {
 		async getVideos(): Promise<void> {
+      this.isLoading = true;
 			try {
-				const response = await videoService.getVideos();
-				const parsedVideos = response.data?.map(video => parseVideoName(video)).filter(Boolean);
-
-				this.clubs.forEach(club => {
-					club.sports.forEach(sport => {
-						sport.videos = (parsedVideos ?? []).filter(Boolean) as VideoType[];
-					});
-				});
-			} catch (error) {
-				console.log(error);
-			}
-		},
+        const response = await videoService.getVideos();
+        console.log(response.data)
+        if (response.data) {
+          const parsedVideos: ParsedVideo[] = response.data
+            .map(video => parseVideoName(video))
+            .filter((video): video is ParsedVideo => video !== null);
+          parsedVideos.forEach(video => {
+            const { club, sport, field, date, time, cam, url, id } = video;
+            if (!this.clubs[club]) {
+              this.clubs[club] = {
+                name: club, 
+                id: club,
+                sports: {}
+              };
+            }
+            if (!this.clubs[club].sports[sport]) {
+              this.clubs[club].sports[sport] = {
+                name: sport, 
+                id: sport,
+                fields: {}
+              };
+            }
+            if (!this.clubs[club].sports[sport].fields[field]) {
+              this.clubs[club].sports[sport].fields[field] = {
+                dates: {}
+              };
+            }
+						if (!this.clubs[club].sports[sport].fields[field].dates[date]) {
+              this.clubs[club].sports[sport].fields[field].dates[date] = {};
+            }
+            if (!(time in this.clubs[club].sports[sport].fields[field].dates[date])) {
+              this.clubs[club].sports[sport].fields[field].dates[date][time] = [] as { cam: string; url: string; }[];
+            }
+            this.clubs[club].sports[sport].fields[field].dates[date][time].push({ cam, url, time, id});
+          });
+        }
+      } catch (error: any) {
+        this.errorMessage = error.message;
+      } finally {
+        this.isLoading = false;
+      }
+    },
 		async releaseVideo(email: string, videoId: string): Promise<void> {
 			this.isLoading = true;
 			try {
