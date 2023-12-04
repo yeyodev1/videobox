@@ -279,6 +279,10 @@ onBeforeMount(() => {
           </div>
         </div>
       </div>
+      <div class="camera-selection-container">
+        <button class="camera-option" @click="selectCamera('CAM 1')">Cámara 1</button>
+        <button class="camera-option" @click="selectCamera('CAM 2')">Cámara 2</button>
+    </div>
     </div>
   </div>
 </template>
@@ -458,6 +462,31 @@ onBeforeMount(() => {
   }
 }
 
+.camera-selection-container {
+  position: absolute;
+  top: 70%;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+
+  .camera-option {
+    background-color: rgba($color: #fff, $alpha: 0.8);
+    border: 2px solid $purple; 
+    color: $purple; 
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: $purple; 
+      color: #fff;
+    }
+  }
+}
 
 .pointer-events-none {
   pointer-events: none;
