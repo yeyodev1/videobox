@@ -25,17 +25,8 @@ onMounted(async () => {
 
 <template>
   <div class="verification-message">
-    <p v-if="verificationStatus === 'loading'">
-      Verificando tu correo electrónico...
-    </p>
-    <p v-else-if="verificationStatus === 'success'">
+    <p >
       Tu correo ha sido verificado, vuelve al home.
-    </p>
-    <p v-else-if="verificationStatus === 'error'">
-      Hubo un error al verificar tu correo electrónico.
-    </p>
-    <p v-else>
-      Enlace de verificación inválido.
     </p>
     <NuxtLink to="/">Página de inicio</NuxtLink>
   </div>
