@@ -466,7 +466,7 @@ onBeforeMount(() => {
 
   .buttons-container {
     position: absolute;
-    top: 70%;
+    top: 60%;
     right: 10px;
     .container-button-group {
       display: flex;
@@ -474,22 +474,32 @@ onBeforeMount(() => {
       align-items: center;
       gap: 6px;
       margin-bottom: 25px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      padding: 8px;
       border-radius: 8px;
       .container-button {
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 12px;
+        background-color: rgba($color: #fff, $alpha: 0.8);
+        border: 2px solid $purple; 
+        color: $purple; 
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        gap: 8px;
+        &:hover {
+          background-color: $white; 
+          color: #fff;
+        }
         span {
-          color: $purple;
+          color: $black;
           font-weight: 800;
+          font-size: 13px;
         }
         i {
           color: $red;
-          font-size: $body-font-size * 2;
+          font-size: 24px;
         }
       }
     }
@@ -498,7 +508,7 @@ onBeforeMount(() => {
 
 .camera-selection-container {
   position: absolute;
-  top: 70%;
+  top: 60%;
   left: 10px;
   display: flex;
   flex-direction: column;
