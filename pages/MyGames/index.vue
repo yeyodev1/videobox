@@ -1,30 +1,18 @@
 <script setup lang="ts">
 import useUserStore from '@/store/userStore';
 import { parseVideoName } from '@/utils/videoParser';
-import { VideoInput } from '@/typings/VideoTypes';
+import { ParsedVideo, VideoInput } from '@/typings/VideoTypes';
 
 const userStore = useUserStore();
 
 const router = useRouter();
 
 const isLogged  = computed(() => userStore.user !== null);
-
-function setLink(video: VideoInput): string {
-  const parsedVideo = parseVideoName(video);
-  if (!parsedVideo) {
-    console.error('Error parsing video input:', video);
-    return '#'; 
-  }
-  const clubPart = encodeURIComponent(parsedVideo.club);
-  const sportPart = encodeURIComponent(parsedVideo.sport);
-  const fieldPart = encodeURIComponent(parsedVideo.field);
-  const videoIdPart = encodeURIComponent(parsedVideo.id);
-  return `/${clubPart}/${sportPart}/${fieldPart}/${videoIdPart}`;
-}
-function setDate(name: VideoInput): string {
-  const video = parseVideoName(name);
-  return video?.date!;
-}
+const processedVideos = computed(() => {
+  return userStore.user?.videos.map(videoInput => {
+    return parseVideoName(videoInput) as ParsedVideo;
+  }).filter(video => video !== null); 
+});
 
 onMounted(() => {
   if (!isLogged.value) {
@@ -40,10 +28,11 @@ onMounted(() => {
     </p>
     <div class="container-games">
       <GameCard
-        v-for="(video, index) in userStore.user?.videos"
+        v-for="(video, index) in processedVideos"
         :key="index"
-        :link="setLink(video)"
-        :date="setDate(video)"
+        :link="video.url"
+        :date="video.date"
+        :club="video.club"
         :video-url="video.url" />
     </div>
   </div>
