@@ -12,6 +12,10 @@ const props = defineProps({
   videoUrl: {
     type: String,
     required: true
+  },
+  club: {
+    type: String,
+    required: true,
   }
 })
 </script>
@@ -21,7 +25,7 @@ const props = defineProps({
     <NuxtLink :to="link" class="card-link">
       <video :src="videoUrl" poster="@/assets/padel.jpg" class="video"></video>
       <p class="card-link-date">
-        {{ date }}
+        {{ club }} - {{ date }}
       </p>
     </NuxtLink>
   </div>
