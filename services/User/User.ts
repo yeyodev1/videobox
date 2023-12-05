@@ -22,11 +22,17 @@ class APIUsers extends APIBase {
     return this.post('auth/password-recovery-request', { email });
   }
 
+  async verifyEmail(token: String): Promise<AxiosResponse<ResponseMessageType>>{
+    return this.patch(`auth/verify-email/${token}`, {token});
+  }
+
+
   async updatePassword(token: string, newPassword: string): Promise<AxiosResponse<ResponseMessageType>> {
     return this.patch("auth/password-recovery", {
 		id: token,
 		password: newPassword,
 	});
+
   }
 }
 
