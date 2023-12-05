@@ -28,13 +28,26 @@ onMounted(async () => {
     <p >
       Tu correo ha sido verificado, vuelve al home.
     </p>
-    <NuxtLink to="/">Página de inicio</NuxtLink>
+    <NuxtLink class="button" to="/">Página de inicio</NuxtLink>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.verification-message {
+.verification-message  {
   text-align: center;
-  font-size: $body-font-size * 1.5;
+  font-size: $body-font-size * 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+p {
+  font-size: $body-font-size * 3;
+}
+.button {
+  font-size: $body-font-size * 2;
+  text-align: center;
+  width: 100%;
 }
 </style>
