@@ -1,8 +1,6 @@
 <script setup>
 import APIUsers from '@/services/User/User';
 
-import APIUsers from '@/services/User/User';
-
 const apiUSers = new APIUsers();
 
 const route = useRoute();
