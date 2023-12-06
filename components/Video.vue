@@ -47,6 +47,7 @@ const showLoadingCard = ref(false);
 const areCustomButtonsVisible = ref(true);
 const relatedVideos = ref([]);
 const currentCam = ref("CAM 1"); 
+const videoId = ref('');
 const currentVideoUrl = ref(""); 
 const videoProcessingTask = ref({
   taskId: null,
@@ -78,6 +79,10 @@ const hasMultipleCameras = computed(() => {
   const cameras = new Set(relatedVideos.value.map(video => video.cam));
   return cameras.size > 1;
 });
+// const videoSelected = computed(() => {
+//   const id = !videoId.value.length ?? route.params.video : videoId.value
+
+// })
 
 function secondsToHms(d) {
   d = Number(d);
@@ -137,7 +142,8 @@ function handleSelection() {
     }
   } else {
     selectionEnd.value = player.value.currentTime();
-    cutAndUploadVideo(selectionStart.value, selectionEnd.value, route.params.video);
+    const id = !videoId.value.length ? route.params.video : videoId.value
+    cutAndUploadVideo(selectionStart.value, selectionEnd.value, id);
     selectionStart.value = null;
     selectionEnd.value = null;
     isRecordingActive.value = false;
@@ -151,6 +157,7 @@ function handleSelection() {
 function updateVideoSource() {
   const videoForCam = relatedVideos.value.find(video => video.cam === currentCam.value);
   if (videoForCam) {
+    videoId.value = videoForCam.id
     currentTime.value = player.value.currentTime();
     currentVideoUrl.value = videoForCam.url;
     if (player.value) {
