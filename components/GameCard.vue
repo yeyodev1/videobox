@@ -18,12 +18,14 @@ const props = defineProps({
     required: true,
   }
 })
+
+
 </script>
 
 <template>
   <div class="card">
     <NuxtLink :to="link" class="card-link">
-      <video :src="videoUrl" poster="@/assets/padel.jpg" class="video"></video>
+      <video :src="videoUrl" poster="@/assets/videobox.png" class="video"></video>
       <p class="card-link-date">
         {{ club }} - {{ date }}
       </p>
@@ -36,6 +38,11 @@ const props = defineProps({
   width: 100%;
   max-width: $mobile-lower-breakpoint;
   padding: 16px;
+  border: 1px solid $purple;
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 8px;
   &-link {
     text-decoration: none;
     &-image {
