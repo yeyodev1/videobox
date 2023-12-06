@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useUserStore from '@/store/userStore';
 import { parseVideoName } from '@/utils/videoParser';
-import { ParsedVideo, VideoInput } from '@/typings/VideoTypes';
+import { ParsedVideo } from '@/typings/VideoTypes';
 
 const userStore = useUserStore();
 const router = useRouter();
