@@ -48,12 +48,16 @@ onMounted(() => {
 <style lang="scss" scoped>
 .container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
   &-title {
     font-family: $font;
     font-size: $h2-font-size;
     text-align: center;
   }
   &-games {
+    padding: 24px;
     width: 100%;
     display: flex;
     flex-wrap: wrap;
