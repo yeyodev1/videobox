@@ -4,19 +4,26 @@ import { parseVideoName } from '@/utils/videoParser';
 import { ParsedVideo, VideoInput } from '@/typings/VideoTypes';
 
 const userStore = useUserStore();
-
 const router = useRouter();
-
-const isLogged  = computed(() => userStore.user !== null);
+const isLogged = computed(() => userStore.user !== null);
 const processedVideos = computed(() => {
   return userStore.user?.videos.map(videoInput => {
-    return parseVideoName(videoInput) as ParsedVideo;
-  }).filter(video => video !== null); 
+    const parsed = parseVideoName(videoInput);
+    return parsed ? { ...videoInput, ...parsed } : null;
+  }).filter(video => video !== null) as ParsedVideo[];
 });
+
+function setLink(video: ParsedVideo): string {
+  const clubPart = encodeURIComponent(video.club);
+  const sportPart = encodeURIComponent(video.sport);
+  const fieldPart = encodeURIComponent(video.field);
+  const videoIdPart = encodeURIComponent(video.id);
+  return `/${clubPart}/${sportPart}/${fieldPart}/${videoIdPart}`;
+}
 
 onMounted(() => {
   if (!isLogged.value) {
-    router.push('/userRegister')
+    router.push('/userRegister');
   }
 });
 </script>
@@ -30,9 +37,9 @@ onMounted(() => {
       <GameCard
         v-for="(video, index) in processedVideos"
         :key="index"
-        :link="video.url"
-        :date="video.date"
-        :club="video.club"
+        :link="setLink(video)" 
+        :date="video.date" 
+        :club="video.club" 
         :video-url="video.url" />
     </div>
   </div>
