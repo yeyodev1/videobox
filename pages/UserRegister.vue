@@ -112,7 +112,7 @@ async function handleRegister(): Promise<void> {
     );
     resetValue();
 
-    alert('Revisa tu correo y verifica tu cuenta')
+    alert('¡Gracias por registrarte! Por favor, revisa tu correo para complementar la verificación de tu cuenta.')
   } catch (error) {
     console.error('Error en el registro:', error);
   }
