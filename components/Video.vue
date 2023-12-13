@@ -436,6 +436,9 @@ onBeforeMount(() => {
     }
   }
   .buttons-center-bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
     position: absolute;
     bottom: 30px;
     left: 50%;
@@ -562,9 +565,6 @@ onBeforeMount(() => {
       color: #fff;
     }
   }
-}
-.buttonsToSkipAndBack {
-  position: absolute;
 }
 
 .pointer-events-none {
