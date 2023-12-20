@@ -27,6 +27,7 @@ interface Club {
   name: string;
   id: string;
   sports: Record<string, Sport>;
+  image: string,
 }
 
 export type { Club, Sport, VideoField, VideoDate, VideoTimeSlot };

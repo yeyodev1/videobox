@@ -1,34 +1,29 @@
 <script setup lang="ts">
 import useUserStore from '@/store/userStore';
 import { parseVideoName } from '@/utils/videoParser';
-import { VideoInput } from '@/typings/VideoTypes';
+import { ParsedVideo } from '@/typings/VideoTypes';
 
 const userStore = useUserStore();
-
 const router = useRouter();
+const isLogged = computed(() => userStore.user !== null);
+const processedVideos = computed(() => {
+  return userStore.user?.videos.map(videoInput => {
+    const parsed = parseVideoName(videoInput);
+    return parsed ? { ...videoInput, ...parsed } : null;
+  }).filter(video => video !== null) as ParsedVideo[];
+});
 
-const isLogged  = computed(() => userStore.user !== null);
-
-function setLink(video: VideoInput): string {
-  const parsedVideo = parseVideoName(video);
-  if (!parsedVideo) {
-    console.error('Error parsing video input:', video);
-    return '#'; 
-  }
-  const clubPart = encodeURIComponent(parsedVideo.club);
-  const sportPart = encodeURIComponent(parsedVideo.sport);
-  const fieldPart = encodeURIComponent(parsedVideo.field);
-  const videoIdPart = encodeURIComponent(parsedVideo.id);
+function setLink(video: ParsedVideo): string {
+  const clubPart = encodeURIComponent(video.club);
+  const sportPart = encodeURIComponent(video.sport);
+  const fieldPart = encodeURIComponent(video.field);
+  const videoIdPart = encodeURIComponent(video.id);
   return `/${clubPart}/${sportPart}/${fieldPart}/${videoIdPart}`;
-}
-function setDate(name: VideoInput): string {
-  const video = parseVideoName(name);
-  return video?.date!;
 }
 
 onMounted(() => {
   if (!isLogged.value) {
-    router.push('/userRegister')
+    router.push('/userRegister');
   }
 });
 </script>
@@ -40,10 +35,11 @@ onMounted(() => {
     </p>
     <div class="container-games">
       <GameCard
-        v-for="(video, index) in userStore.user?.videos"
+        v-for="(video, index) in processedVideos"
         :key="index"
-        :link="setLink(video)"
-        :date="setDate(video)"
+        :link="setLink(video)" 
+        :date="video.date" 
+        :club="video.club" 
         :video-url="video.url" />
     </div>
   </div>
@@ -52,12 +48,16 @@ onMounted(() => {
 <style lang="scss" scoped>
 .container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
   &-title {
     font-family: $font;
     font-size: $h2-font-size;
     text-align: center;
   }
   &-games {
+    padding: 24px;
     width: 100%;
     display: flex;
     flex-wrap: wrap;

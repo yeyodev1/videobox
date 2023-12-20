@@ -112,7 +112,7 @@ async function handleRegister(): Promise<void> {
     );
     resetValue();
 
-    await router.push('/userlogin');
+    alert('¡Gracias por registrarte! Por favor, revisa tu correo para complementar la verificación de tu cuenta.')
   } catch (error) {
     console.error('Error en el registro:', error);
   }

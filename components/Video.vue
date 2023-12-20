@@ -47,6 +47,7 @@ const showLoadingCard = ref(false);
 const areCustomButtonsVisible = ref(true);
 const relatedVideos = ref([]);
 const currentCam = ref("CAM 1"); 
+const videoId = ref('');
 const currentVideoUrl = ref(""); 
 const videoProcessingTask = ref({
   taskId: null,
@@ -78,6 +79,10 @@ const hasMultipleCameras = computed(() => {
   const cameras = new Set(relatedVideos.value.map(video => video.cam));
   return cameras.size > 1;
 });
+// const videoSelected = computed(() => {
+//   const id = !videoId.value.length ?? route.params.video : videoId.value
+
+// })
 
 function secondsToHms(d) {
   d = Number(d);
@@ -137,7 +142,8 @@ function handleSelection() {
     }
   } else {
     selectionEnd.value = player.value.currentTime();
-    cutAndUploadVideo(selectionStart.value, selectionEnd.value, route.params.video);
+    const id = !videoId.value.length ? route.params.video : videoId.value
+    cutAndUploadVideo(selectionStart.value, selectionEnd.value, id);
     selectionStart.value = null;
     selectionEnd.value = null;
     isRecordingActive.value = false;
@@ -151,6 +157,7 @@ function handleSelection() {
 function updateVideoSource() {
   const videoForCam = relatedVideos.value.find(video => video.cam === currentCam.value);
   if (videoForCam) {
+    videoId.value = videoForCam.id
     currentTime.value = player.value.currentTime();
     currentVideoUrl.value = videoForCam.url;
     if (player.value) {
@@ -210,6 +217,18 @@ function handleTimeUpdate(event) {
     videoEl.value.pause();
   }
 };
+function rewindVideo () {
+  if(player.value) {
+    const newTime = Math.max(player.value.currentTime() - 10, 0);
+    player.value.currentTime(newTime);
+  }
+};
+function fastForwardVideo () {
+  if (player.value) {
+    const newTime = Math.min(player.value.currentTime() + 10, player.value.duration());
+    player.value.currentTime(newTime);
+  }
+}
 
 onMounted(async () => {
   const options = {
@@ -263,7 +282,7 @@ onBeforeMount(() => {
         Regresa al home
       </RouterLink>
       <video 
-        playsinline 
+        playsinline
         ref="videoEl" 
         crossorigin="anonymous" 
         :style="{
@@ -286,9 +305,16 @@ onBeforeMount(() => {
           <NuxtLink :to="linkDestination"> {{ buttonText }} </NuxtLink> 
         </button>
       </div>
-      <div class="buttons-center-bottom">
+      <div 
+        class="buttons-center-bottom" >
+        <button v-if="areCustomButtonsVisible" @click="rewindVideo" class="rewind">
+          <i class="fa fa-undo"></i> Retroceder 10s
+        </button>
         <button @click="handleSelection" class="recording" >
           <span class="circle" :class="{ 'active': isRecordingActive }"></span>
+        </button>
+        <button v-if="areCustomButtonsVisible" @click="fastForwardVideo" class="forward">
+          <i class="fa fa-redo"></i> Adelantar 10s
         </button>
       </div>
       <div v-if="areCustomButtonsVisible" class="buttons-container">
@@ -316,7 +342,7 @@ onBeforeMount(() => {
       <div v-if="areCustomButtonsVisible && hasMultipleCameras" class="camera-selection-container">
         <button class="camera-option" @click="selectCamera('CAM 1')">Cámara 1</button>
         <button class="camera-option" @click="selectCamera('CAM 2')">Cámara 2</button>
-    </div>
+      </div>
     </div>
   </div>
 </template>
@@ -396,28 +422,37 @@ onBeforeMount(() => {
     transform: translate(-50%, -50%);
     object-fit: cover;
     object-position: center;
-  }
+    &-control-button {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .rewind {
+      left: 10px;
+    }
 
+    .forward {
+      right: 10px;
+    }
+  }
   .buttons-center-bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
     position: absolute;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    flex-direction: column;
     gap: 10px;
-
-    .captured-video-container {
-      position: absolute;
-      bottom: 30px;
-      right: 30px;
-      z-index: 1000;
-
-      video {
-        border: 3px solid #fff;
-      }
+    display: flex;
+    .forward, .rewind {
+      background: none;
+      color: $white;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
     }
-
     .recording,
     .download {
       background: none;
@@ -466,7 +501,7 @@ onBeforeMount(() => {
 
   .buttons-container {
     position: absolute;
-    top: 70%;
+    top: 60%;
     right: 10px;
     .container-button-group {
       display: flex;
@@ -474,22 +509,32 @@ onBeforeMount(() => {
       align-items: center;
       gap: 6px;
       margin-bottom: 25px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      padding: 8px;
       border-radius: 8px;
       .container-button {
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 12px;
+        background-color: rgba($color: #fff, $alpha: 0.8);
+        border: 2px solid $purple; 
+        color: $purple; 
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        gap: 8px;
+        &:hover {
+          background-color: $white; 
+          color: #fff;
+        }
         span {
-          color: $purple;
+          color: $black;
           font-weight: 800;
+          font-size: 13px;
         }
         i {
           color: $red;
-          font-size: $body-font-size * 2;
+          font-size: 24px;
         }
       }
     }
@@ -498,7 +543,7 @@ onBeforeMount(() => {
 
 .camera-selection-container {
   position: absolute;
-  top: 70%;
+  top: 60%;
   left: 10px;
   display: flex;
   flex-direction: column;

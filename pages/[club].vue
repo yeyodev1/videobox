@@ -33,7 +33,6 @@ onMounted(async () => {
         v-for="sport in sportsForSelectedClub"
         :key="sport.id"
         :name="sport.name"
-        :image="sport.image"
         :id="`${clubSelected.id}/${sport.id}`" />
     </div>
   </div>
