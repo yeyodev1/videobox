@@ -4,10 +4,12 @@ import { useRoute } from 'vue-router';
 import type { Club, Sport } from '@/typings/Field&Sport';
 
 import useClubStore from '@/store/clubStore';
+import useUserStore from '~/store/userStore';
 
 const route = useRoute();
 
 const clubStore = useClubStore();
+const userStore = useUserStore();
 
 const clubId = ref(route.params.clubSelected as string);
 const sportId = ref(route.params.sport as string);
@@ -21,10 +23,15 @@ const uniqueFields = computed(() => {
   uniqueFieldsKeys.sort((a, b) => a.localeCompare(b, undefined, {numeric: true}));
   return uniqueFieldsKeys;
 })
+const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 
 onMounted(async () => {
-  if(Object.keys(clubStore.clubs).length === 0) {
-    await clubStore.getVideos();
+  if (Object.keys(clubStore.clubs).length === 0) {
+    if (!isAdmin.value) {
+      await clubStore.getVideos();
+    } else {
+      await clubStore.getVideos(true);
+    }
   }
 
   clubSelected.value = clubStore.clubs[clubId.value];

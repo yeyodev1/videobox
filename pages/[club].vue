@@ -3,18 +3,25 @@ import { useRoute } from 'vue-router';
 
 import type { Club, Sport } from '~/typings/Field&Sport';
 import useClubStore from '@/store/clubStore';
+import useUserStore from '~/store/userStore';
 
 const route = useRoute();
 const clubStore = useClubStore();
+const userStore = useUserStore();
 const clubSelected = ref<Club | undefined>();
 
 const sportsForSelectedClub = computed(() => {
   return clubSelected.value ? Object.values(clubSelected.value.sports) : [];
 });
+const isAdmin = computed(() => userStore.user?.role?.includes('admin') ?? false);
 
 onMounted(async () => {
   if (Object.keys(clubStore.clubs).length === 0) {
-    await clubStore.getVideos(); 
+    if (!isAdmin.value) {
+      await clubStore.getVideos();
+    } else {
+      await clubStore.getVideos(true);
+    }
   }
   const clubId = route.params.club as string;
   clubSelected.value = clubStore.clubs[clubId];

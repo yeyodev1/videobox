@@ -2,8 +2,12 @@ import { AxiosResponse } from 'axios';
 import APIBase from '../Base';
 import type { VideoType } from '~/typings/VideoTypes';
 class VideoService extends APIBase {
-  async getVideos(): Promise<AxiosResponse<VideoType[] | null>> {
-    return this.get('videos')
+  async getVideos(isAdmin?: boolean): Promise<AxiosResponse<VideoType[] | null>> {
+    if (isAdmin) {
+      return this.get('admin-videos')
+    } else {
+      return this.get('videos')
+    }
   }
 
   async uploadVideo(file: File): Promise<AxiosResponse> {

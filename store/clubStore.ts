@@ -23,10 +23,10 @@ const useClubStore = defineStore("useClubStore", {
   }),
 
 	actions: {
-		async getVideos(): Promise<void> {
+		async getVideos(isAdmin?: boolean): Promise<void> {
       this.isLoading = true;
-			try {
-        const response = await videoService.getVideos();
+      try {   
+        const response = await videoService.getVideos(isAdmin);
         if (response.data) {
           const parsedVideos: ParsedVideo[] = response.data
             .map(video => parseVideoName(video))

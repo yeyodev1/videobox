@@ -103,8 +103,12 @@ function handleInput(event: string, type: string): void {
 
 onMounted(async () => {
   if (Object.keys(clubStore.clubs).length === 0) {
-    
-    await clubStore.getVideos();
+    if (!isAdmin.value) {
+      console.log('me ejecuto')
+      await clubStore.getVideos();
+    } else {
+      await clubStore.getVideos(true);
+    }
   }
 });
 </script>
