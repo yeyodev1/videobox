@@ -80,8 +80,7 @@ const useClubStore = defineStore("useClubStore", {
                 if (Array.isArray(videos)) {
                   const foundVideo = videos.find(v => v.id === videoId);
                   if (foundVideo) {
-                    relatedVideos = videos.filter(v => v.id !== videoId);
-                    break; 
+                    return videos; 
                   }
                 }
               }
@@ -93,7 +92,6 @@ const useClubStore = defineStore("useClubStore", {
         }
         if (relatedVideos.length > 0) break;
       }
-      return relatedVideos;
     },
   
 		async releaseVideo(email: string, videoId: string): Promise<void> {

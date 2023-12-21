@@ -6,7 +6,7 @@ export function parseVideoName({ name, fileId, _id, url }: VideoInput): ParsedVi
 
   if (match) {
     const [ , fieldNumber, camNumber, clubAcronym, sportAcronym, date, time] = match;
-    const formattedDate = `20${date.replace(/-/g, '/')}`; // Asume que el año es 20xx
+    const formattedDate = `${date.replace(/-/g, '/').split('/').reverse().join('/')}`; // Asume que el año es 20xx
     const formattedTime = time.replace(/-/g, ':');
 
     const getClubName = clubAcronym === 'DC' ? 'Deporcentro' : 'One Padel';
