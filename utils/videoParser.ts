@@ -10,7 +10,7 @@ export function parseVideoName({ name, fileId, _id, url }: VideoInput): ParsedVi
     const formattedTime = time.replace(/-/g, ':');
 
     const getClubName = clubAcronym === 'DC' ? 'Deporcentro' : 'One Padel';
-    const getSportName = sportAcronym === 'FUT' ? 'Futbol' : 'Paddle';
+    const getSportName = sportAcronym === 'FUT' ? 'Futbol' : 'Padel';
 
     return {
       field: `Cancha ${fieldNumber}`,
