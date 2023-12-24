@@ -33,7 +33,7 @@ const useClubStore = defineStore("useClubStore", {
             .filter((video): video is ParsedVideo => video !== null);
           parsedVideos.forEach(video => {
             const { club, sport, field, date, time, cam, url, id } = video;
-            const clubImage = club == 'OnePadel' ? onepadelImage : club === 'Deporcentro' ? deporcentroImage : 'https://i.pinimg.com/236x/7a/65/42/7a654280173c584dc7ac481affe2d4a3.jpg';
+            const clubImage = club == 'OnePadel' ? onepadelImage : club === 'Deporcentro' ? deporcentroImage : onepadelImage;
             if (!this.clubs[club]) {
               this.clubs[club] = {
                 name: club, 
